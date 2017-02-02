@@ -1,14 +1,17 @@
 package expression
 
-import "fmt"
-import "github.com/mikeyhu/mekkanism/types"
-import "github.com/mikeyhu/mekkanism/inbuilt"
+import (
+	"fmt"
+	"github.com/mikeyhu/mekkanism/inbuilt"
+	"github.com/mikeyhu/mekkanism/interfaces"
+	"github.com/mikeyhu/mekkanism/types"
+)
 
 type Expression struct {
 	FunctionName  string
 	File          string
 	StartPosition string
-	Arguments     []types.Argtype
+	Arguments     []interfaces.Argument
 }
 
 func (exp *Expression) Evaluate() types.Argtype {

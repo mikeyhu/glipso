@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mikeyhu/mekkanism/expression"
+	"github.com/mikeyhu/mekkanism/interfaces"
 	"github.com/mikeyhu/mekkanism/types"
 	"strconv"
 	"strings"
@@ -36,7 +37,7 @@ func parseExpression(s scanner.Scanner) (*expression.Expression, error) {
 		tok := s.Scan()
 		functionName := s.TokenText()
 		fmt.Println("FunctionName: ", functionName)
-		args := []types.Argtype{}
+		args := []interfaces.Argument{}
 		for tok != scanner.EOF {
 			tok = s.Scan()
 			token := s.TokenText()
@@ -45,7 +46,7 @@ func parseExpression(s scanner.Scanner) (*expression.Expression, error) {
 			}
 			fmt.Println("Argument: ", token)
 			integer, _ := strconv.Atoi(token)
-			args = append(args, types.Argtype{Integer: integer})
+			args = append(args, &types.Argtype{Integer: integer})
 		}
 		return nil, errors.New("Expected end of Expression")
 	} else {
