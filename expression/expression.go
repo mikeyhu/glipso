@@ -12,13 +12,11 @@ type Expression struct {
 }
 
 func (exp *Expression) Evaluate() types.Argtype {
-	if(exp.FunctionName == "+") {
+	if exp.FunctionName == "+" {
 		return inbuilt.PlusAll(exp.Arguments)
-	} else if(exp.FunctionName == "-") {
+	} else if exp.FunctionName == "-" {
 		return inbuilt.MinusAll(exp.Arguments)
 	} else {
 		panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", exp.FunctionName))
 	}
 }
-
-

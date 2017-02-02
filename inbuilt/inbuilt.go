@@ -2,18 +2,18 @@ package inbuilt
 
 import "github.com/mikeyhu/mekkanism/types"
 
-func PlusAll (arguments []types.Argtype) types.Argtype {
+func PlusAll(arguments []types.Argtype) types.Argtype {
 	all := 0
 	for _, v := range arguments {
 		all += v.Integer
 	}
-	return types.Argtype{Integer:all}
+	return types.Argtype{Integer: all}
 }
 
-func MinusAll (arguments []types.Argtype) types.Argtype {
+func MinusAll(arguments []types.Argtype) types.Argtype {
 	var all int
 	head := true
-	for _,v := range arguments {
+	for _, v := range arguments {
 		if head {
 			all = v.Integer
 			head = false
@@ -21,5 +21,5 @@ func MinusAll (arguments []types.Argtype) types.Argtype {
 			all -= v.Integer
 		}
 	}
-	return types.Argtype{Integer:all}
+	return types.Argtype{Integer: all}
 }

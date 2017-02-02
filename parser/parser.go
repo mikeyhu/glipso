@@ -3,11 +3,11 @@ package parser
 import (
 	"errors"
 	"fmt"
+	"github.com/mikeyhu/mekkanism/expression"
+	"github.com/mikeyhu/mekkanism/types"
 	"strconv"
 	"strings"
 	"text/scanner"
-	"github.com/mikeyhu/mekkanism/expression"
-	"github.com/mikeyhu/mekkanism/types"
 )
 
 func Parse(input string) (*expression.Expression, error) {
@@ -22,8 +22,7 @@ func Parse(input string) (*expression.Expression, error) {
 		return nil, errors.New("Unexpected EOF")
 	}
 	fmt.Println("At position", pos, ":", text)
-	if text == "(" {
-		//new Expression
+	if text == "(" { //new Expression
 		return parseExpression(s)
 	} else {
 		return nil, errors.New("no Expression found")
