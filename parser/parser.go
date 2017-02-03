@@ -3,15 +3,14 @@ package parser
 import (
 	"errors"
 	"fmt"
-	"github.com/mikeyhu/mekkanism/expression"
 	"github.com/mikeyhu/mekkanism/interfaces"
-	"github.com/mikeyhu/mekkanism/types"
+	"github.com/mikeyhu/mekkanism/common"
 	"strconv"
 	"strings"
 	"text/scanner"
 )
 
-func Parse(input string) (*expression.Expression, error) {
+func Parse(input string) (*common.Expression, error) {
 	var s scanner.Scanner
 	s.Filename = "input"
 	s.Init(strings.NewReader(input))
@@ -31,7 +30,7 @@ func Parse(input string) (*expression.Expression, error) {
 
 }
 
-func parseExpression(s scanner.Scanner) (*expression.Expression, error) {
+func parseExpression(s scanner.Scanner) (*common.Expression, error) {
 	var tok rune
 	if tok != scanner.EOF {
 		tok := s.Scan()
@@ -42,11 +41,11 @@ func parseExpression(s scanner.Scanner) (*expression.Expression, error) {
 			tok = s.Scan()
 			token := s.TokenText()
 			if token == ")" {
-				return &expression.Expression{FunctionName: functionName, Arguments: args}, nil
+				return &common.Expression{FunctionName: functionName, Arguments: args}, nil
 			}
 			fmt.Println("Argument: ", token)
 			integer, _ := strconv.Atoi(token)
-			args = append(args, types.I(integer))
+			args = append(args, common.I(integer))
 		}
 		return nil, errors.New("Expected end of Expression")
 	} else {

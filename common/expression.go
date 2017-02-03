@@ -1,8 +1,7 @@
-package expression
+package common
 
 import (
 	"fmt"
-	"github.com/mikeyhu/mekkanism/inbuilt"
 	"github.com/mikeyhu/mekkanism/interfaces"
 )
 
@@ -17,9 +16,9 @@ func (exp Expression) IsArg() {}
 
 func (exp Expression) Evaluate() interfaces.Argument {
 	if exp.FunctionName == "+" {
-		return inbuilt.PlusAll(exp.Arguments)
+		return PlusAll(exp.Arguments)
 	} else if exp.FunctionName == "-" {
-		return inbuilt.MinusAll(exp.Arguments)
+		return MinusAll(exp.Arguments)
 	} else {
 		panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", exp.FunctionName))
 	}
