@@ -8,19 +8,19 @@ import (
 )
 
 func TestEvaluatePlusWith2Arguments(t *testing.T) {
-	exp := &Expression{FunctionName: "+", Arguments: []interfaces.Argument{&types.Argtype{Integer: 1}, &types.Argtype{Integer: 2}}}
+	exp := &Expression{FunctionName: "+", Arguments: []interfaces.Argument{types.I(1), types.I(2)}}
 	result := exp.Evaluate()
-	assert.Equal(t, 3, result.Integer)
+	assert.Equal(t, types.I(3), result)
 }
 
 func TestEvaluatePlusWithManyArguments(t *testing.T) {
-	exp := &Expression{FunctionName: "+", Arguments: []interfaces.Argument{&types.Argtype{Integer: 1}, &types.Argtype{Integer: 2}, &types.Argtype{Integer: 3}}}
+	exp := &Expression{FunctionName: "+", Arguments: []interfaces.Argument{types.I(1), types.I(2), types.I(3)}}
 	result := exp.Evaluate()
-	assert.Equal(t, 6, result.Integer)
+	assert.Equal(t, types.I(6), result)
 }
 
 func TestEvaluateMinusWith2Arguments(t *testing.T) {
-	exp := &Expression{FunctionName: "-", Arguments: []interfaces.Argument{&types.Argtype{Integer: 5}, &types.Argtype{Integer: 1}}}
+	exp := &Expression{FunctionName: "-", Arguments: []interfaces.Argument{types.I(5), types.I(1)}}
 	result := exp.Evaluate()
-	assert.Equal(t, 4, result.Integer)
+	assert.Equal(t, types.I(4), result)
 }

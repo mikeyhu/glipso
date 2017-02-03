@@ -5,5 +5,5 @@ type Evaluatable interface {
 }
 
 type Argument interface {
-	GetInteger() int
+	IsArg()
 }

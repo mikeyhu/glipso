@@ -5,24 +5,24 @@ import (
 	"github.com/mikeyhu/mekkanism/types"
 )
 
-func PlusAll(arguments []interfaces.Argument) types.Argtype {
-	all := 0
+func PlusAll(arguments []interfaces.Argument) interfaces.Argument {
+	all := types.I(0)
 	for _, v := range arguments {
-		all += v.GetInteger()
+		all += v.(types.I)
 	}
-	return types.Argtype{Integer: all}
+	return all
 }
 
-func MinusAll(arguments []interfaces.Argument) types.Argtype {
-	var all int
+func MinusAll(arguments []interfaces.Argument) interfaces.Argument {
+	var all types.I
 	head := true
 	for _, v := range arguments {
 		if head {
-			all = v.GetInteger()
+			all = v.(types.I)
 			head = false
 		} else {
-			all -= v.GetInteger()
+			all -= v.(types.I)
 		}
 	}
-	return types.Argtype{Integer: all}
+	return all
 }

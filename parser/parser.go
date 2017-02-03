@@ -46,7 +46,7 @@ func parseExpression(s scanner.Scanner) (*expression.Expression, error) {
 			}
 			fmt.Println("Argument: ", token)
 			integer, _ := strconv.Atoi(token)
-			args = append(args, &types.Argtype{Integer: integer})
+			args = append(args, types.I(integer))
 		}
 		return nil, errors.New("Expected end of Expression")
 	} else {

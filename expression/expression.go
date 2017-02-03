@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mikeyhu/mekkanism/inbuilt"
 	"github.com/mikeyhu/mekkanism/interfaces"
-	"github.com/mikeyhu/mekkanism/types"
 )
 
 type Expression struct {
@@ -14,7 +13,9 @@ type Expression struct {
 	Arguments     []interfaces.Argument
 }
 
-func (exp *Expression) Evaluate() types.Argtype {
+func (exp Expression) IsArg() {}
+
+func (exp Expression) Evaluate() interfaces.Argument {
 	if exp.FunctionName == "+" {
 		return inbuilt.PlusAll(exp.Arguments)
 	} else if exp.FunctionName == "-" {
