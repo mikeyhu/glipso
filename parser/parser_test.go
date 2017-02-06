@@ -17,5 +17,19 @@ func TestParserReturnsExpressionArguments(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, result.Arguments[0].(common.I).Int(), 1, "1st element")
 	assert.Equal(t, result.Arguments[1].(common.I).Int(), 3, "2nd element")
-	assert.Equal(t, len(result.Arguments), 2, "array length")
+	assert.Equal(t, len(result.Arguments), 2, "array length of arguments")
+}
+
+func TestParserReturnsErrorWhenNoClosingBrackets(t *testing.T) {
+	_, err := Parse("(+ 1")
+	assert.EqualError(t, err, "Expected end of Expression")
+}
+
+func TestParserReturnsNestedExpression(t *testing.T) {
+	result, err := Parse("(+ 1 (+ 1 3))")
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0].(common.I).Int(), 1, "1st element")
+	assert.Equal(t, len(result.Arguments), 2, "array length of outer arguements")
+	assert.Equal(t, args[1].(common.Expression).FunctionName, "+", "Nested Expression")
 }

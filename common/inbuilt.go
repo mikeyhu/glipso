@@ -1,4 +1,5 @@
 package common
+
 import (
 	"github.com/mikeyhu/mekkanism/interfaces"
 )
