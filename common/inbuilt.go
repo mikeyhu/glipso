@@ -1,8 +1,8 @@
 package common
 
 import (
-	"github.com/mikeyhu/mekkanism/interfaces"
 	"fmt"
+	"github.com/mikeyhu/mekkanism/interfaces"
 )
 
 func PlusAll(arguments []interfaces.Argument) interfaces.Argument {
@@ -76,7 +76,7 @@ func Apply(arguments []interfaces.Argument) interfaces.Argument {
 	s, okScope := arguments[0].(SCOPE)
 	p, okPair := arguments[1].(P)
 	if okScope && okPair {
-		return Expression{FunctionName:s.String(), Arguments: p.ToSlice()}
+		return Expression{FunctionName: s.String(), Arguments: p.ToSlice()}
 	} else {
 		panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 	}

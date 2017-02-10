@@ -46,8 +46,12 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.Expression, er
 				s = ms
 				args = append(args, *arg)
 			} else {
-				integer, _ := strconv.Atoi(token)
-				args = append(args, common.I(integer))
+
+				if integer, err := strconv.Atoi(token); err == nil {
+					args = append(args, common.I(integer))
+				} else {
+					args = append(args, common.SCOPE(token))
+				}
 			}
 		}
 		return s, nil, errors.New("Expected end of Expression")

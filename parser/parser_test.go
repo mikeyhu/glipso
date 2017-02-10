@@ -33,3 +33,10 @@ func TestParserReturnsNestedExpression(t *testing.T) {
 	assert.Equal(t, len(result.Arguments), 2, "array length of outer arguements")
 	assert.Equal(t, args[1].(common.Expression).FunctionName, "+", "Nested Expression")
 }
+
+func TestParserReturnsSymbolsAsScopes(t *testing.T) {
+	result, err := Parse("(+ symbol)")
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0].(common.SCOPE).String(), "symbol")
+}

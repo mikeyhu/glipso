@@ -37,7 +37,7 @@ func (exp Expression) evaluateArguments() {
 	for p, arg := range exp.Arguments {
 		switch t := arg.(type) {
 		case Expression:
-			exp.Arguments[p] = t.Evaluate().(I)
+			exp.Arguments[p] = t.Evaluate()
 		}
 	}
 }

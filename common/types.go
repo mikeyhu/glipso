@@ -40,7 +40,7 @@ func (p P) String() string {
 func (p P) ToSlice() []interfaces.Argument {
 	slice := []interfaces.Argument{p.head}
 	tail := p.tail
-	for i:=1;i<10;i++ {
+	for {
 		if tail == nil {
 			return slice
 		} else {
