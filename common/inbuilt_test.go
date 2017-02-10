@@ -50,3 +50,9 @@ func TestConsRetrievesTailOfPair(t *testing.T) {
 	result := exp.Evaluate().(P)
 	assert.Equal(t, I(6), result.head)
 }
+
+func TestApplySendsListToFunction(t *testing.T) {
+	exp := Expression{FunctionName: "apply", Arguments: []interfaces.Argument{SCOPE("+"), P{I(2), &P{ I(10), nil}}}}
+	result := exp.Evaluate()
+	assert.Equal(t, I(12), result)
+}

@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/mikeyhu/mekkanism/interfaces"
+	"fmt"
 )
 
 func PlusAll(arguments []interfaces.Argument) interfaces.Argument {
@@ -71,13 +72,24 @@ func Tail(arguments []interfaces.Argument) interfaces.Argument {
 	}
 }
 
-type F func([]interfaces.Argument) interfaces.Argument
+func Apply(arguments []interfaces.Argument) interfaces.Argument {
+	s, okScope := arguments[0].(SCOPE)
+	p, okPair := arguments[1].(P)
+	if okScope && okPair {
+		return Expression{FunctionName:s.String(), Arguments: p.ToSlice()}
+	} else {
+		panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
+	}
+}
 
-var inbuilt = map[string]F{
+type evaluations func([]interfaces.Argument) interfaces.Argument
+
+var inbuilt = map[string]evaluations{
 	"cons":  Cons,
 	"first": First,
 	"tail":  Tail,
 	"=":     Equals,
 	"+":     PlusAll,
 	"-":     MinusAll,
+	"apply": Apply,
 }

@@ -37,3 +37,23 @@ func (p P) IsArg() {}
 func (p P) String() string {
 	return fmt.Sprintf("￿`(%v %v)", p.head, p.tail)
 }
+func (p P) ToSlice() []interfaces.Argument {
+	slice := []interfaces.Argument{p.head}
+	tail := p.tail
+	for i:=1;i<10;i++ {
+		if tail == nil {
+			return slice
+		} else {
+			slice = append(slice, tail.head)
+			tail = tail.tail
+		}
+	}
+	return slice
+}
+
+type SCOPE string //symbol for something in scope, variable or function
+
+func (s SCOPE) IsArg() {}
+func (s SCOPE) String() string {
+	return fmt.Sprintf("%v", string(s))
+}

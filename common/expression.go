@@ -27,6 +27,9 @@ func (exp Expression) Evaluate() interfaces.Argument {
 		panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", exp.FunctionName))
 	}
 	exp.printExpression(result)
+	if exp, ok := result.(Expression); ok {
+		result = exp.Evaluate()
+	}
 	return result
 }
 
