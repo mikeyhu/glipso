@@ -19,12 +19,10 @@ func (exp Expression) String() string {
 }
 
 func (exp Expression) Evaluate() interfaces.Argument {
-	exp.preEvaluate()
+	exp.evaluateArguments()
 	var result interfaces.Argument
-	if exp.FunctionName == "+" {
-		result = PlusAll(exp.Arguments)
-	} else if exp.FunctionName == "-" {
-		result = MinusAll(exp.Arguments)
+	if f, ok := inbuilt[exp.FunctionName]; ok {
+		result = f(exp.Arguments)
 	} else {
 		panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", exp.FunctionName))
 	}
@@ -32,7 +30,7 @@ func (exp Expression) Evaluate() interfaces.Argument {
 	return result
 }
 
-func (exp Expression) preEvaluate() {
+func (exp Expression) evaluateArguments() {
 	for p, arg := range exp.Arguments {
 		switch t := arg.(type) {
 		case Expression:
