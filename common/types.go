@@ -14,6 +14,12 @@ func (i I) String() string {
 func (i I) Int() int {
 	return int(i)
 }
+func (i I) Equals(o interfaces.Argument) B {
+	if other, ok := o.(I); ok {
+		return B(i.Int() == other.Int())
+	}
+	return B(false)
+}
 
 type B bool
 
@@ -24,8 +30,11 @@ func (b B) String() string {
 func (b B) Bool() bool {
 	return bool(b)
 }
-func (b B) Equals(o B) B {
-	return B(b.Bool() == o.Bool())
+func (b B) Equals(o interfaces.Argument) B {
+	if other, ok := o.(B); ok {
+		return B(b.Bool() == other.Bool())
+	}
+	return B(false)
 }
 
 type P struct {

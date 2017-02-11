@@ -28,7 +28,14 @@ func MinusAll(arguments []interfaces.Argument) interfaces.Argument {
 }
 
 func Equals(arguments []interfaces.Argument) interfaces.Argument {
-	return arguments[0].(B).Equals(arguments[1].(B))
+	switch t := arguments[0].(type) {
+	case B:
+		return t.Equals(arguments[1])
+	case I:
+		return t.Equals(arguments[1])
+	default:
+		panic("Equals : unsupported type")
+	}
 }
 
 func allArgumentsAreB(arguments []interfaces.Argument) bool {
@@ -82,14 +89,43 @@ func Apply(arguments []interfaces.Argument) interfaces.Argument {
 	}
 }
 
+func If(arguments []interfaces.Argument) interfaces.Argument {
+	var test interfaces.Argument
+	fmt.Printf("If Args: %v\n", arguments)
+	fmt.Printf("If 1st arg %v", arguments[0])
+	if exp, ok := arguments[0].(Expression); ok {
+		fmt.Printf("If evaluating\n")
+		test = exp.Evaluate()
+	} else {
+		fmt.Printf("If skipping evaluation\n")
+		test = arguments[0]
+	}
+	fmt.Printf("If test %v\n", test)
+	if test.(B).Bool() {
+		return arguments[1]
+	} else {
+		return arguments[2]
+	}
+}
+
 type evaluations func([]interfaces.Argument) interfaces.Argument
 
-var inbuilt = map[string]evaluations{
-	"cons":  Cons,
-	"first": First,
-	"tail":  Tail,
-	"=":     Equals,
-	"+":     PlusAll,
-	"-":     MinusAll,
-	"apply": Apply,
+type FunctionInfo struct {
+	function     evaluations
+	evaluateArgs bool
+}
+
+var inbuilt map[string]FunctionInfo
+
+func init() {
+	inbuilt = map[string]FunctionInfo{
+		"cons":  {Cons, true},
+		"first": {First, true},
+		"tail":  {Tail, true},
+		"=":     {Equals, true},
+		"+":     {PlusAll, true},
+		"-":     {MinusAll, true},
+		"apply": {Apply, true},
+		"if":    {If, false},
+	}
 }

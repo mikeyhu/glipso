@@ -18,8 +18,8 @@ func TestEqualityEqual(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestEqualityPanicsIfTypesNotBoolean(t *testing.T) {
-	exp := Expression{FunctionName: "=", Arguments: []interfaces.Argument{B(true), I(1)}}
+func TestEqualityPanicsIfTypesNotValid(t *testing.T) {
+	exp := Expression{FunctionName: "=", Arguments: []interfaces.Argument{P{}, I(1)}}
 	assert.Panics(t, func() {
 		exp.Evaluate()
 	})
@@ -55,4 +55,16 @@ func TestApplySendsListToFunction(t *testing.T) {
 	exp := Expression{FunctionName: "apply", Arguments: []interfaces.Argument{SCOPE("+"), P{I(2), &P{I(10), nil}}}}
 	result := exp.Evaluate()
 	assert.Equal(t, I(12), result)
+}
+
+func TestIfTrueReturnsSecondArgument(t *testing.T) {
+	exp := Expression{FunctionName: "if", Arguments: []interfaces.Argument{B(true), I(1), I(2)}}
+	result := exp.Evaluate()
+	assert.Equal(t, I(1), result)
+}
+
+func TestIfFalseReturnsThirdArgument(t *testing.T) {
+	exp := Expression{FunctionName: "if", Arguments: []interfaces.Argument{B(false), I(1), I(2)}}
+	result := exp.Evaluate()
+	assert.Equal(t, I(2), result)
 }

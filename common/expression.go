@@ -19,10 +19,12 @@ func (exp Expression) String() string {
 }
 
 func (exp Expression) Evaluate() interfaces.Argument {
-	exp.evaluateArguments()
 	var result interfaces.Argument
-	if f, ok := inbuilt[exp.FunctionName]; ok {
-		result = f(exp.Arguments)
+	if fi, ok := inbuilt[exp.FunctionName]; ok {
+		if fi.evaluateArgs {
+			exp.evaluateArguments()
+		}
+		result = fi.function(exp.Arguments)
 	} else {
 		panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", exp.FunctionName))
 	}
