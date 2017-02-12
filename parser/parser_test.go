@@ -38,5 +38,5 @@ func TestParserReturnsSymbolsAsScopes(t *testing.T) {
 	result, err := Parse("(+ symbol)")
 	assert.NoError(t, err)
 	args := result.Arguments
-	assert.Equal(t, args[0].(common.SCOPE).String(), "symbol")
+	assert.Equal(t, args[0].(common.REF).String(), "symbol")
 }

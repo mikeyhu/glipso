@@ -60,9 +60,9 @@ func (p P) ToSlice() []interfaces.Argument {
 	return slice
 }
 
-type SCOPE string //symbol for something in scope, variable or function
+type REF string //symbol for something in scope, variable or function
 
-func (s SCOPE) IsArg() {}
-func (s SCOPE) String() string {
-	return fmt.Sprintf("%v", string(s))
+func (r REF) IsArg() {}
+func (r REF) String() string {
+	return fmt.Sprintf("%v", string(r))
 }

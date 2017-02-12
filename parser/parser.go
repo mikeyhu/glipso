@@ -50,7 +50,7 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.Expression, er
 				if integer, err := strconv.Atoi(token); err == nil {
 					args = append(args, common.I(integer))
 				} else {
-					args = append(args, common.SCOPE(token))
+					args = append(args, common.REF(token))
 				}
 			}
 		}

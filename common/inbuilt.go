@@ -80,7 +80,7 @@ func Tail(arguments []interfaces.Argument) interfaces.Argument {
 }
 
 func Apply(arguments []interfaces.Argument) interfaces.Argument {
-	s, okScope := arguments[0].(SCOPE)
+	s, okScope := arguments[0].(REF)
 	p, okPair := arguments[1].(P)
 	if okScope && okPair {
 		return Expression{FunctionName: s.String(), Arguments: p.ToSlice()}
