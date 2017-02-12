@@ -37,9 +37,8 @@ func (exp Expression) Evaluate() interfaces.Argument {
 
 func (exp Expression) evaluateArguments() {
 	for p, arg := range exp.Arguments {
-		switch t := arg.(type) {
-		case Expression:
-			exp.Arguments[p] = t.Evaluate()
+		if e, ok := arg.(interfaces.Evaluatable);ok {
+			exp.Arguments[p] = e.Evaluate()
 		}
 	}
 }

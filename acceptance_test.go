@@ -36,3 +36,15 @@ func TestIfEvaluatesThirdExpression(t *testing.T) {
 	result := exp.Evaluate()
 	assert.Equal(t, common.I(6), result)
 }
+
+func TestCreatesAndUsesVariable(t *testing.T) {
+	code := `
+	(do
+		(def one 1)
+		(def two 2)
+		(+ one two))
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate()
+	assert.Equal(t, common.I(3), result)
+}

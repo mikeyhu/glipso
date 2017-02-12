@@ -66,3 +66,6 @@ func (r REF) IsArg() {}
 func (r REF) String() string {
 	return fmt.Sprintf("%v", string(r))
 }
+func (r REF) Evaluate() interfaces.Argument {
+	return GlobalEnvironment.resolveRef(r)
+}

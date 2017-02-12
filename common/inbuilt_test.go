@@ -68,3 +68,15 @@ func TestIfFalseReturnsThirdArgument(t *testing.T) {
 	result := exp.Evaluate()
 	assert.Equal(t, I(2), result)
 }
+
+func TestDefRecordsReferences(t *testing.T) {
+	exp := Expression{FunctionName: "def", Arguments: []interfaces.Argument{REF("one"), I(1)}}
+	exp.Evaluate()
+	assert.Equal(t, I(1), GlobalEnvironment.resolveRef(REF("one")))
+}
+
+func TestDoReturnsLastArgument(t *testing.T) {
+	exp := Expression{FunctionName:"do", Arguments: []interfaces.Argument{I(1), I(2)}}
+	result := exp.Evaluate()
+	assert.Equal(t, I(2), result)
+}

@@ -5,7 +5,7 @@ import (
 	"github.com/mikeyhu/mekkanism/interfaces"
 )
 
-func PlusAll(arguments []interfaces.Argument) interfaces.Argument {
+func plusAll(arguments []interfaces.Argument) interfaces.Argument {
 	all := I(0)
 	for _, v := range arguments {
 		all += v.(I)
@@ -13,7 +13,7 @@ func PlusAll(arguments []interfaces.Argument) interfaces.Argument {
 	return all
 }
 
-func MinusAll(arguments []interfaces.Argument) interfaces.Argument {
+func minusAll(arguments []interfaces.Argument) interfaces.Argument {
 	var all I
 	head := true
 	for _, v := range arguments {
@@ -27,7 +27,7 @@ func MinusAll(arguments []interfaces.Argument) interfaces.Argument {
 	return all
 }
 
-func Equals(arguments []interfaces.Argument) interfaces.Argument {
+func equals(arguments []interfaces.Argument) interfaces.Argument {
 	switch t := arguments[0].(type) {
 	case B:
 		return t.Equals(arguments[1])
@@ -47,7 +47,7 @@ func allArgumentsAreB(arguments []interfaces.Argument) bool {
 	return true
 }
 
-func Cons(arguments []interfaces.Argument) interfaces.Argument {
+func cons(arguments []interfaces.Argument) interfaces.Argument {
 	if len(arguments) == 0 {
 		return P{}
 	} else if len(arguments) == 1 {
@@ -61,7 +61,7 @@ func Cons(arguments []interfaces.Argument) interfaces.Argument {
 	return P{}
 }
 
-func First(arguments []interfaces.Argument) interfaces.Argument {
+func first(arguments []interfaces.Argument) interfaces.Argument {
 	pair, ok := arguments[0].(P)
 	if ok {
 		return pair.head
@@ -70,7 +70,7 @@ func First(arguments []interfaces.Argument) interfaces.Argument {
 	}
 }
 
-func Tail(arguments []interfaces.Argument) interfaces.Argument {
+func tail(arguments []interfaces.Argument) interfaces.Argument {
 	pair, ok := arguments[0].(P)
 	if ok {
 		return *pair.tail
@@ -79,17 +79,20 @@ func Tail(arguments []interfaces.Argument) interfaces.Argument {
 	}
 }
 
-func Apply(arguments []interfaces.Argument) interfaces.Argument {
-	s, okScope := arguments[0].(REF)
+func apply(arguments []interfaces.Argument) interfaces.Argument {
+	if ap, okEval := arguments[1].(interfaces.Evaluatable); okEval {
+			arguments[1] = ap.Evaluate()
+	}
+	s, okRef := arguments[0].(REF)
 	p, okPair := arguments[1].(P)
-	if okScope && okPair {
+	if okRef && okPair {
 		return Expression{FunctionName: s.String(), Arguments: p.ToSlice()}
 	} else {
 		panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 	}
 }
 
-func If(arguments []interfaces.Argument) interfaces.Argument {
+func iff(arguments []interfaces.Argument) interfaces.Argument {
 	var test interfaces.Argument
 	fmt.Printf("If Args: %v\n", arguments)
 	fmt.Printf("If 1st arg %v", arguments[0])
@@ -108,6 +111,22 @@ func If(arguments []interfaces.Argument) interfaces.Argument {
 	}
 }
 
+func def(arguments []interfaces.Argument) interfaces.Argument {
+	return GlobalEnvironment.createRef(arguments[0].(REF), arguments[1])
+}
+
+func do(arguments []interfaces.Argument) interfaces.Argument {
+	var result interfaces.Argument
+	for _, a := range arguments {
+		if e, ok := a.(interfaces.Evaluatable); ok {
+			result = e.Evaluate()
+		} else {
+			result = a
+		}
+	}
+	return result
+}
+
 type evaluations func([]interfaces.Argument) interfaces.Argument
 
 type FunctionInfo struct {
@@ -119,13 +138,15 @@ var inbuilt map[string]FunctionInfo
 
 func init() {
 	inbuilt = map[string]FunctionInfo{
-		"cons":  {Cons, true},
-		"first": {First, true},
-		"tail":  {Tail, true},
-		"=":     {Equals, true},
-		"+":     {PlusAll, true},
-		"-":     {MinusAll, true},
-		"apply": {Apply, true},
-		"if":    {If, false},
+		"cons":  {cons, true},
+		"first": {first, true},
+		"tail":  {tail, true},
+		"=":     {equals, true},
+		"+":     {plusAll, true},
+		"-":     {minusAll, true},
+		"apply": {apply, false},
+		"if":    {iff, false},
+		"def":   {def, false},
+		"do":    {do, false},
 	}
 }
