@@ -44,5 +44,5 @@ func (exp Expression) evaluateArguments() {
 }
 
 func (exp Expression) printExpression(result interfaces.Argument) {
-	fmt.Printf("%v = %v\n", exp, result)
+	//fmt.Printf("%v = %v\n", exp, result)
 }

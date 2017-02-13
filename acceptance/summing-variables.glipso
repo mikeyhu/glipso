@@ -1,0 +1,7 @@
+code:
+(do
+    (def one 1)
+    (def two 2)
+    (+ one two))
+expect:
+3

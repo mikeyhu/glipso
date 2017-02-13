@@ -57,7 +57,6 @@ func (p P) ToSlice() []interfaces.Argument {
 			tail = tail.tail
 		}
 	}
-	return slice
 }
 
 type REF string //symbol for something in scope, variable or function
