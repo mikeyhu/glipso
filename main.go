@@ -2,12 +2,20 @@ package main
 
 import (
 	"fmt"
+	"github.com/mikeyhu/glipso/common"
 	"github.com/mikeyhu/glipso/parser"
+	"os"
 )
 
 func main() {
-	exp, _ := parser.Parse("(+(- 2 1) 3)")
-
-	fmt.Println("Result: ", exp.Evaluate())
+	args := os.Args[1:]
+	var exp *common.Expression
+	if len(args) > 0 {
+		file, _ := os.Open(args[0])
+		exp, _ = parser.ParseFile(file)
+	} else {
+		exp, _ = parser.ParseFile(os.Stdin)
+	}
+	fmt.Println(exp.Evaluate())
 
 }

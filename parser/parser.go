@@ -1,19 +1,34 @@
+/*
+The parser package takes a string (either in memony or in a file) representation of some code and parses it into a tree of Expressions
+*/
 package parser
 
 import (
 	"errors"
 	"github.com/mikeyhu/glipso/common"
 	"github.com/mikeyhu/glipso/interfaces"
+	"os"
 	"strconv"
 	"strings"
 	"text/scanner"
 )
 
+//Parse parses a string containing some code and returns an Expression that represents it
 func Parse(input string) (*common.Expression, error) {
 	var s scanner.Scanner
 	s.Filename = "input"
 	s.Init(strings.NewReader(input))
+	return parseRoot(s)
+}
 
+//ParseFile parses code from the provided file and returns an Expression that represents it
+func ParseFile(inputFile *os.File) (*common.Expression, error) {
+	var s scanner.Scanner
+	s.Init(inputFile)
+	return parseRoot(s)
+}
+
+func parseRoot(s scanner.Scanner) (*common.Expression, error) {
 	tok := s.Scan()
 	text := s.TokenText()
 	if tok == scanner.EOF {
