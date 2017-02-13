@@ -2,8 +2,8 @@ package parser
 
 import (
 	"errors"
-	"github.com/mikeyhu/mekkanism/common"
-	"github.com/mikeyhu/mekkanism/interfaces"
+	"github.com/mikeyhu/glipso/common"
+	"github.com/mikeyhu/glipso/interfaces"
 	"strconv"
 	"strings"
 	"text/scanner"

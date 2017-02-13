@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"github.com/mikeyhu/mekkanism/interfaces"
+	"github.com/mikeyhu/glipso/interfaces"
 )
 
 type Expression struct {
@@ -37,7 +37,7 @@ func (exp Expression) Evaluate() interfaces.Argument {
 
 func (exp Expression) evaluateArguments() {
 	for p, arg := range exp.Arguments {
-		if e, ok := arg.(interfaces.Evaluatable);ok {
+		if e, ok := arg.(interfaces.Evaluatable); ok {
 			exp.Arguments[p] = e.Evaluate()
 		}
 	}

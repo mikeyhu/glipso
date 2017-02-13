@@ -10,4 +10,4 @@ go test ./...
 echo "Building..."
 go build
 
-echo "Successfully built mekkanism!"
+echo "Successfully built glipso!"

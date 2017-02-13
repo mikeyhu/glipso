@@ -9,5 +9,5 @@ go test ./...
 go build
 
 #run
-./mekkanism
+./glipso
 ```

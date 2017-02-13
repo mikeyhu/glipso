@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/mikeyhu/mekkanism/interfaces"
+	"github.com/mikeyhu/glipso/interfaces"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

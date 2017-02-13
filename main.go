@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/mikeyhu/mekkanism/parser"
+	"github.com/mikeyhu/glipso/parser"
 )
 
 func main() {

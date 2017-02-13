@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/mikeyhu/mekkanism/interfaces"
+	"github.com/mikeyhu/glipso/interfaces"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -76,7 +76,7 @@ func TestDefRecordsReferences(t *testing.T) {
 }
 
 func TestDoReturnsLastArgument(t *testing.T) {
-	exp := Expression{FunctionName:"do", Arguments: []interfaces.Argument{I(1), I(2)}}
+	exp := Expression{FunctionName: "do", Arguments: []interfaces.Argument{I(1), I(2)}}
 	result := exp.Evaluate()
 	assert.Equal(t, I(2), result)
 }

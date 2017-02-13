@@ -1,8 +1,8 @@
 package common
 
 import (
-	"github.com/mikeyhu/mekkanism/interfaces"
 	"fmt"
+	"github.com/mikeyhu/glipso/interfaces"
 )
 
 type Environment struct {
@@ -24,7 +24,7 @@ func (env Environment) createRef(name REF, arg interfaces.Argument) REF {
 
 var GlobalEnvironment Environment
 
-func init(){
+func init() {
 	GlobalEnvironment = Environment{
 		variables: map[string]interfaces.Argument{},
 	}

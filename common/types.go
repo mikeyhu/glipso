@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"github.com/mikeyhu/mekkanism/interfaces"
+	"github.com/mikeyhu/glipso/interfaces"
 )
 
 type I int

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/mikeyhu/mekkanism/common"
-	"github.com/mikeyhu/mekkanism/parser"
+	"github.com/mikeyhu/glipso/common"
+	"github.com/mikeyhu/glipso/parser"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

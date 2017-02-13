@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/mikeyhu/mekkanism/common"
+	"github.com/mikeyhu/glipso/common"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"github.com/mikeyhu/mekkanism/interfaces"
+	"github.com/mikeyhu/glipso/interfaces"
 )
 
 func plusAll(arguments []interfaces.Argument) interfaces.Argument {
@@ -81,7 +81,7 @@ func tail(arguments []interfaces.Argument) interfaces.Argument {
 
 func apply(arguments []interfaces.Argument) interfaces.Argument {
 	if ap, okEval := arguments[1].(interfaces.Evaluatable); okEval {
-			arguments[1] = ap.Evaluate()
+		arguments[1] = ap.Evaluate()
 	}
 	s, okRef := arguments[0].(REF)
 	p, okPair := arguments[1].(P)
