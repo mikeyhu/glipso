@@ -7,3 +7,8 @@ type Evaluatable interface {
 type Argument interface {
 	IsArg()
 }
+
+type Iterable interface {
+	Iterate() Iterable
+	ToSlice() []Argument
+}

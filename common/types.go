@@ -46,6 +46,9 @@ func (p P) IsArg() {}
 func (p P) String() string {
 	return fmt.Sprintf("￿`(%v %v)", p.head, p.tail)
 }
+func (p P) Iterate() interfaces.Iterable {
+	panic("Iterate called on PAIR")
+}
 func (p P) ToSlice() []interfaces.Argument {
 	slice := []interfaces.Argument{p.head}
 	tail := p.tail
@@ -67,4 +70,34 @@ func (r REF) String() string {
 }
 func (r REF) Evaluate() interfaces.Argument {
 	return GlobalEnvironment.resolveRef(r)
+}
+
+type LAZYP struct {
+	head interfaces.Argument
+	tail *Expression
+}
+
+func (l LAZYP) IsArg() {}
+func (l LAZYP) String() string {
+	return fmt.Sprintf("￿`(%v %v)", l.head, l.tail)
+}
+func (l LAZYP) Iterate() interfaces.Iterable {
+	if nextIter, ok := l.tail.Evaluate().(LAZYP); ok {
+		return nextIter
+	} else {
+		panic(fmt.Sprintf("Iterate : expected an LAZYP, got %v", l))
+	}
+}
+func (l LAZYP) ToSlice() []interfaces.Argument {
+	slice := []interfaces.Argument{}
+	next := l
+	for {
+		slice = append(slice, next.head)
+		if next.tail == nil {
+			return slice
+		} else {
+
+			next = next.Iterate().(LAZYP)
+		}
+	}
 }

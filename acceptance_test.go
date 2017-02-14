@@ -48,3 +48,9 @@ func TestCreatesAndUsesVariable(t *testing.T) {
 	result := exp.Evaluate()
 	assert.Equal(t, common.I(3), result)
 }
+
+func TestSummingRange(t *testing.T) {
+	exp, _ := parser.Parse("(apply + (range 1 5))")
+	result := exp.Evaluate()
+	assert.Equal(t, common.I(15), result)
+}

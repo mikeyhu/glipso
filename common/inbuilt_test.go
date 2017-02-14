@@ -80,3 +80,11 @@ func TestDoReturnsLastArgument(t *testing.T) {
 	result := exp.Evaluate()
 	assert.Equal(t, I(2), result)
 }
+
+func TestRangeReturnsLazyPair(t *testing.T) {
+	exp := Expression{FunctionName: "range", Arguments: []interfaces.Argument{I(1), I(10)}}
+	result := exp.Evaluate()
+	assert.Equal(t,
+		LAZYP{I(1), &Expression{FunctionName: "range", Arguments: []interfaces.Argument{I(2), I(10)}}},
+		result)
+}

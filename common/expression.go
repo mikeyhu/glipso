@@ -5,6 +5,8 @@ import (
 	"github.com/mikeyhu/glipso/interfaces"
 )
 
+var DEBUG = false
+
 type Expression struct {
 	FunctionName  string
 	File          string
@@ -44,5 +46,7 @@ func (exp Expression) evaluateArguments() {
 }
 
 func (exp Expression) printExpression(result interfaces.Argument) {
-	//fmt.Printf("%v = %v\n", exp, result)
+	if DEBUG {
+		fmt.Printf("%v = %v\n", exp, result)
+	}
 }

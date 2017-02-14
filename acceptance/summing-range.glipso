@@ -1,0 +1,4 @@
+code:
+(apply + (range 1 9999))
+expect:
+49995000

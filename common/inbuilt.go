@@ -84,7 +84,7 @@ func apply(arguments []interfaces.Argument) interfaces.Argument {
 		arguments[1] = ap.Evaluate()
 	}
 	s, okRef := arguments[0].(REF)
-	p, okPair := arguments[1].(P)
+	p, okPair := arguments[1].(interfaces.Iterable)
 	if okRef && okPair {
 		return Expression{FunctionName: s.String(), Arguments: p.ToSlice()}
 	} else {
@@ -94,8 +94,6 @@ func apply(arguments []interfaces.Argument) interfaces.Argument {
 
 func iff(arguments []interfaces.Argument) interfaces.Argument {
 	var test interfaces.Argument
-	fmt.Printf("If Args: %v\n", arguments)
-	fmt.Printf("If 1st arg %v", arguments[0])
 	if exp, ok := arguments[0].(Expression); ok {
 		fmt.Printf("If evaluating\n")
 		test = exp.Evaluate()
@@ -103,7 +101,6 @@ func iff(arguments []interfaces.Argument) interfaces.Argument {
 		fmt.Printf("If skipping evaluation\n")
 		test = arguments[0]
 	}
-	fmt.Printf("If test %v\n", test)
 	if test.(B).Bool() {
 		return arguments[1]
 	} else {
@@ -127,6 +124,21 @@ func do(arguments []interfaces.Argument) interfaces.Argument {
 	return result
 }
 
+func rnge(arguments []interfaces.Argument) interfaces.Argument {
+	start := arguments[0].(I)
+	end := arguments[1].(I)
+	if start < end {
+		return LAZYP{
+			start,
+			&Expression{FunctionName: "range", Arguments: []interfaces.Argument{
+				I(start.Int() + 1),
+				end,
+			}}}
+	}
+	return LAZYP{end, nil}
+
+}
+
 type evaluations func([]interfaces.Argument) interfaces.Argument
 
 type FunctionInfo struct {
@@ -148,5 +160,6 @@ func init() {
 		"if":    {iff, false},
 		"def":   {def, false},
 		"do":    {do, false},
+		"range": {rnge, true},
 	}
 }
