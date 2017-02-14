@@ -12,9 +12,8 @@ type Environment struct {
 func (env Environment) resolveRef(ref REF) interfaces.Argument {
 	if result, ok := env.variables[ref.String()]; ok {
 		return result
-	} else {
-		panic(fmt.Sprintf("Unable to resolve reference %q", ref))
 	}
+	panic(fmt.Sprintf("Unable to resolve reference %q", ref))
 }
 
 func (env Environment) createRef(name REF, arg interfaces.Argument) REF {

@@ -55,10 +55,9 @@ func (p P) ToSlice() []interfaces.Argument {
 	for {
 		if tail == nil {
 			return slice
-		} else {
-			slice = append(slice, tail.head)
-			tail = tail.tail
 		}
+		slice = append(slice, tail.head)
+		tail = tail.tail
 	}
 }
 
@@ -84,9 +83,8 @@ func (l LAZYP) String() string {
 func (l LAZYP) Iterate() interfaces.Iterable {
 	if nextIter, ok := l.tail.Evaluate().(LAZYP); ok {
 		return nextIter
-	} else {
-		panic(fmt.Sprintf("Iterate : expected an LAZYP, got %v", l))
 	}
+	panic(fmt.Sprintf("Iterate : expected an LAZYP, got %v", l))
 }
 func (l LAZYP) ToSlice() []interfaces.Argument {
 	slice := []interfaces.Argument{}
@@ -95,9 +93,7 @@ func (l LAZYP) ToSlice() []interfaces.Argument {
 		slice = append(slice, next.head)
 		if next.tail == nil {
 			return slice
-		} else {
-
-			next = next.Iterate().(LAZYP)
 		}
+		next = next.Iterate().(LAZYP)
 	}
 }

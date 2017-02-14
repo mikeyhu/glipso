@@ -37,9 +37,8 @@ func parseRoot(s scanner.Scanner) (*common.Expression, error) {
 	if text == "(" {
 		_, exp, err := parseExpression(s)
 		return exp, err
-	} else {
-		return nil, errors.New("no Expression found")
 	}
+	return nil, errors.New("no Expression found")
 }
 
 func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.Expression, error) {
@@ -70,7 +69,6 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.Expression, er
 			}
 		}
 		return s, nil, errors.New("Expected end of Expression")
-	} else {
-		return s, nil, errors.New("Unexpected EOF")
 	}
+	return s, nil, errors.New("Unexpected EOF")
 }

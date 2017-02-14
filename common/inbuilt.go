@@ -65,18 +65,16 @@ func first(arguments []interfaces.Argument) interfaces.Argument {
 	pair, ok := arguments[0].(P)
 	if ok {
 		return pair.head
-	} else {
-		panic("Panic - Cannot get head of non Pair type")
 	}
+	panic("Panic - Cannot get head of non Pair type")
 }
 
 func tail(arguments []interfaces.Argument) interfaces.Argument {
 	pair, ok := arguments[0].(P)
 	if ok {
 		return *pair.tail
-	} else {
-		panic("Panic - Cannot get tail of non Pair type")
 	}
+	panic("Panic - Cannot get tail of non Pair type")
 }
 
 func apply(arguments []interfaces.Argument) interfaces.Argument {
@@ -87,9 +85,8 @@ func apply(arguments []interfaces.Argument) interfaces.Argument {
 	p, okPair := arguments[1].(interfaces.Iterable)
 	if okRef && okPair {
 		return Expression{FunctionName: s.String(), Arguments: p.ToSlice()}
-	} else {
-		panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 	}
+	panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 }
 
 func iff(arguments []interfaces.Argument) interfaces.Argument {
@@ -103,9 +100,8 @@ func iff(arguments []interfaces.Argument) interfaces.Argument {
 	}
 	if test.(B).Bool() {
 		return arguments[1]
-	} else {
-		return arguments[2]
 	}
+	return arguments[2]
 }
 
 func def(arguments []interfaces.Argument) interfaces.Argument {
