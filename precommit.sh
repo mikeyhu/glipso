@@ -17,24 +17,27 @@ Building:"
 go build
 
 echo "
-Successfully built glipso."
-
-echo "
 Running Acceptance Tests:
 "
+ERR=0
 FILES=acceptance/*
 for f in $FILES
 do
-
-  # take action on each file. $f store current file name
   CODE=$(awk '/expect:/{found=0} {if(found) print} /code:/{found=1}' $f)
   EXPECT=$(awk '{if(found) print} /expect:/{found=1}' $f)
   RESULT=$(echo "$CODE" | ./glipso)
   if [ "$EXPECT" == "$RESULT" ];  then
-    echo "$f Y"
+    printf "$f \e[92m✔\e[0m\n"
   else
-    echo "$f N"
+    printf "$f \e[31m✘\e[0m\n"
     echo "expected: $EXPECT"
     echo "received: $RESULT"
+    ERR=$((ERR + 1))
   fi
 done
+if [ $ERR == 0 ]; then
+    echo "Successful Build"
+else
+    echo "Failed Build"
+    exit $ERR
+fi
