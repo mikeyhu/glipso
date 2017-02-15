@@ -10,7 +10,7 @@ go test ./...
 
 echo "
 Linting:"
-golint ./...
+golint ./... || echo "Linter not found!"
 
 echo "
 Building:"
