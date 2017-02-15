@@ -84,14 +84,14 @@ func apply(arguments []interfaces.Argument) interfaces.Argument {
 	s, okRef := arguments[0].(REF)
 	p, okPair := arguments[1].(interfaces.Iterable)
 	if okRef && okPair {
-		return Expression{FunctionName: s.String(), Arguments: p.ToSlice()}
+		return EXP{FunctionName: s.String(), Arguments: p.ToSlice()}
 	}
 	panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 }
 
 func iff(arguments []interfaces.Argument) interfaces.Argument {
 	var test interfaces.Argument
-	if exp, ok := arguments[0].(Expression); ok {
+	if exp, ok := arguments[0].(EXP); ok {
 		fmt.Printf("If evaluating\n")
 		test = exp.Evaluate()
 	} else {
@@ -126,7 +126,7 @@ func rnge(arguments []interfaces.Argument) interfaces.Argument {
 	if start < end {
 		return LAZYP{
 			start,
-			&Expression{FunctionName: "range", Arguments: []interfaces.Argument{
+			&EXP{FunctionName: "range", Arguments: []interfaces.Argument{
 				I(start.Int() + 1),
 				end,
 			}}}

@@ -13,22 +13,22 @@ import (
 	"text/scanner"
 )
 
-//Parse parses a string containing some code and returns an Expression that represents it
-func Parse(input string) (*common.Expression, error) {
+//Parse parses a string containing some code and returns an EXP that represents it
+func Parse(input string) (*common.EXP, error) {
 	var s scanner.Scanner
 	s.Filename = "input"
 	s.Init(strings.NewReader(input))
 	return parseRoot(s)
 }
 
-//ParseFile parses code from the provided file and returns an Expression that represents it
-func ParseFile(inputFile *os.File) (*common.Expression, error) {
+//ParseFile parses code from the provided file and returns an EXP that represents it
+func ParseFile(inputFile *os.File) (*common.EXP, error) {
 	var s scanner.Scanner
 	s.Init(inputFile)
 	return parseRoot(s)
 }
 
-func parseRoot(s scanner.Scanner) (*common.Expression, error) {
+func parseRoot(s scanner.Scanner) (*common.EXP, error) {
 	tok := s.Scan()
 	text := s.TokenText()
 	if tok == scanner.EOF {
@@ -38,10 +38,10 @@ func parseRoot(s scanner.Scanner) (*common.Expression, error) {
 		_, exp, err := parseExpression(s)
 		return exp, err
 	}
-	return nil, errors.New("no Expression found")
+	return nil, errors.New("no EXP found")
 }
 
-func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.Expression, error) {
+func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 	var tok rune
 	if tok != scanner.EOF {
 		tok := s.Scan()
@@ -51,7 +51,7 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.Expression, er
 			tok = s.Scan()
 			token := s.TokenText()
 			if token == ")" {
-				return s, &common.Expression{FunctionName: functionName, Arguments: args}, nil
+				return s, &common.EXP{FunctionName: functionName, Arguments: args}, nil
 			} else if token == "(" {
 				ms, arg, err := parseExpression(s)
 				if err != nil {

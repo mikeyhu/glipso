@@ -9,7 +9,7 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	var exp *common.Expression
+	var exp *common.EXP
 	if len(args) > 0 {
 		file, _ := os.Open(args[0])
 		exp, _ = parser.ParseFile(file)

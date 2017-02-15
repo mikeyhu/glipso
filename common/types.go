@@ -73,7 +73,7 @@ func (r REF) Evaluate() interfaces.Argument {
 
 type LAZYP struct {
 	head interfaces.Argument
-	tail *Expression
+	tail *EXP
 }
 
 func (l LAZYP) IsArg() {}
