@@ -17,6 +17,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (first list)            get first element in list
 (tail list)             get tail of the list
 (do exp...)             run the expressions in order
+(range start end)	creates a lazily evaluated list from start to end (inclusive)
 ```
 
 ## Types
