@@ -45,7 +45,7 @@ go build
 
 ## Running
 ```bash
-./glipso acceptance/summing-numbers.glipso
+./glipso examples/summing-range.glipso
 
 #or
 
