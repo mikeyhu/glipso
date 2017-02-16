@@ -5,23 +5,22 @@ import (
 	"github.com/mikeyhu/glipso/interfaces"
 )
 
+// DEBUG enable to display debug information for function evaluation
 var DEBUG = false
 
 type EXP struct {
-	FunctionName  string
-	File          string
-	StartPosition string
-	Arguments     []interfaces.Argument
+	FunctionName string
+	Arguments    []interfaces.Type
 }
 
-func (exp EXP) IsArg() {}
+func (exp EXP) IsType() {}
 
 func (exp EXP) String() string {
 	return fmt.Sprintf("(%s %v)", exp.FunctionName, exp.Arguments)
 }
 
-func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Argument {
-	var result interfaces.Argument
+func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
+	var result interfaces.Type
 	if fi, ok := inbuilt[exp.FunctionName]; ok {
 		if fi.evaluateArgs {
 			exp.evaluateArguments(sco)
@@ -51,7 +50,7 @@ func (exp EXP) evaluateArguments(sco interfaces.Scope) {
 	}
 }
 
-func (exp EXP) printExpression(result interfaces.Argument) {
+func (exp EXP) printExpression(result interfaces.Type) {
 	if DEBUG {
 		fmt.Printf("%v = %v\n", exp, result)
 	}
@@ -59,13 +58,13 @@ func (exp EXP) printExpression(result interfaces.Argument) {
 
 type EXPN struct {
 	Function  FN
-	Arguments []interfaces.Argument
+	Arguments []interfaces.Type
 }
 
 func (e EXPN) IsArg() {
 
 }
-func (e EXPN) Evaluate(sco interfaces.Scope) interfaces.Argument {
+func (e EXPN) Evaluate(sco interfaces.Scope) interfaces.Type {
 	env := sco.NewChildScope()
 	if len(e.Function.Arguments.Vector) != len(e.Arguments) {
 		panic("Invalid number of arguments")

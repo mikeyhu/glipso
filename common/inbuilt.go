@@ -5,7 +5,7 @@ import (
 	"github.com/mikeyhu/glipso/interfaces"
 )
 
-func plusAll(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func plusAll(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	all := I(0)
 	for _, v := range arguments {
 		all += v.(I)
@@ -13,7 +13,7 @@ func plusAll(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.A
 	return all
 }
 
-func minusAll(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func minusAll(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	var all I
 	head := true
 	for _, v := range arguments {
@@ -27,7 +27,7 @@ func minusAll(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.
 	return all
 }
 
-func equals(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func equals(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	switch t := arguments[0].(type) {
 	case B:
 		return t.Equals(arguments[1])
@@ -38,7 +38,7 @@ func equals(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Ar
 	}
 }
 
-func cons(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func cons(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	if len(arguments) == 0 {
 		return P{}
 	} else if len(arguments) == 1 {
@@ -52,7 +52,7 @@ func cons(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argu
 	return P{}
 }
 
-func first(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func first(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	pair, ok := arguments[0].(P)
 	if ok {
 		return pair.head
@@ -60,7 +60,7 @@ func first(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Arg
 	panic("Panic - Cannot get head of non Pair type")
 }
 
-func tail(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func tail(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	pair, ok := arguments[0].(P)
 	if ok {
 		return *pair.tail
@@ -68,7 +68,7 @@ func tail(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argu
 	panic("Panic - Cannot get tail of non Pair type")
 }
 
-func apply(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	if ap, okEval := arguments[1].(interfaces.Evaluatable); okEval {
 		arguments[1] = ap.Evaluate(sco)
 	}
@@ -80,8 +80,8 @@ func apply(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Arg
 	panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 }
 
-func iff(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
-	var test interfaces.Argument
+func iff(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	var test interfaces.Type
 	if exp, ok := arguments[0].(EXP); ok {
 		test = exp.Evaluate(sco)
 	} else {
@@ -93,15 +93,15 @@ func iff(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argum
 	return arguments[2]
 }
 
-func def(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func def(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	if eval, ok := arguments[1].(interfaces.Evaluatable); ok {
 		arguments[1] = eval.Evaluate(sco.NewChildScope())
 	}
 	return GlobalEnvironment.CreateRef(arguments[0].(REF), arguments[1])
 }
 
-func do(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
-	var result interfaces.Argument
+func do(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	var result interfaces.Type
 	for _, a := range arguments {
 		if e, ok := a.(interfaces.Evaluatable); ok {
 			result = e.Evaluate(sco)
@@ -112,13 +112,13 @@ func do(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argume
 	return result
 }
 
-func rnge(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func rnge(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	start := arguments[0].(I)
 	end := arguments[1].(I)
 	if start < end {
 		return LAZYP{
 			start,
-			&EXP{FunctionName: "range", Arguments: []interfaces.Argument{
+			&EXP{FunctionName: "range", Arguments: []interfaces.Type{
 				I(start.Int() + 1),
 				end,
 			}}}
@@ -127,11 +127,11 @@ func rnge(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argu
 
 }
 
-func fn(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	return FN{arguments[0].(VEC), arguments[1].(EXP)}
 }
 
-type evaluator func([]interfaces.Argument, interfaces.Scope) interfaces.Argument
+type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
 
 type FunctionInfo struct {
 	function     evaluator

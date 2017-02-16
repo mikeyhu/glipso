@@ -1,20 +1,20 @@
 package interfaces
 
 type Evaluatable interface {
-	Evaluate(Scope) Argument
+	Evaluate(Scope) Type
 }
 
-type Argument interface {
-	IsArg()
+type Type interface {
+	IsType()
 }
 
 type Iterable interface {
 	Iterate(Scope) Iterable
-	ToSlice(Scope) []Argument
+	ToSlice(Scope) []Type
 }
 
 type Scope interface {
-	ResolveRef(argument Argument) Argument
-	CreateRef(ref Argument, arg Argument) Argument
+	ResolveRef(argument Type) Type
+	CreateRef(ref Type, arg Type) Type
 	NewChildScope() Scope
 }

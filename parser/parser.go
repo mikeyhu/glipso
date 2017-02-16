@@ -46,7 +46,7 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 	if tok != scanner.EOF {
 		tok := s.Scan()
 		functionName := s.TokenText()
-		args := []interfaces.Argument{}
+		args := []interfaces.Type{}
 		for tok != scanner.EOF {
 			tok = s.Scan()
 			token := s.TokenText()
@@ -81,7 +81,7 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 }
 
 func parseVector(s scanner.Scanner) (scanner.Scanner, *common.VEC, error) {
-	vec := []interfaces.Argument{}
+	vec := []interfaces.Type{}
 	var tok rune
 	tok = s.Scan()
 	for tok != scanner.EOF {
