@@ -7,12 +7,12 @@ import (
 
 func TestEnvironmentPanicsIfReferenceNotFound(t *testing.T) {
 	assert.Panics(t, func() {
-		GlobalEnvironment.resolveRef(REF("unset"))
+		GlobalEnvironment.ResolveRef(REF("unset"))
 	})
 }
 
 func TestEnvironmentReturnsReferencesIfFound(t *testing.T) {
-	GlobalEnvironment.createRef("one", I(1))
-	result := GlobalEnvironment.resolveRef(REF("one"))
+	GlobalEnvironment.CreateRef(REF("one"), I(1))
+	result := GlobalEnvironment.ResolveRef(REF("one"))
 	assert.Equal(t, I(1), result)
 }

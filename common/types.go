@@ -46,10 +46,10 @@ func (p P) IsArg() {}
 func (p P) String() string {
 	return fmt.Sprintf("￿`(%v %v)", p.head, p.tail)
 }
-func (p P) Iterate() interfaces.Iterable {
+func (p P) Iterate(sco interfaces.Scope) interfaces.Iterable {
 	panic("Iterate called on PAIR")
 }
-func (p P) ToSlice() []interfaces.Argument {
+func (p P) ToSlice(sco interfaces.Scope) []interfaces.Argument {
 	slice := []interfaces.Argument{p.head}
 	tail := p.tail
 	for {
@@ -67,8 +67,8 @@ func (r REF) IsArg() {}
 func (r REF) String() string {
 	return fmt.Sprintf("%v", string(r))
 }
-func (r REF) Evaluate() interfaces.Argument {
-	return GlobalEnvironment.resolveRef(r)
+func (r REF) Evaluate(sco interfaces.Scope) interfaces.Argument {
+	return sco.ResolveRef(r)
 }
 
 type LAZYP struct {
@@ -80,13 +80,13 @@ func (l LAZYP) IsArg() {}
 func (l LAZYP) String() string {
 	return fmt.Sprintf("￿`(%v %v)", l.head, l.tail)
 }
-func (l LAZYP) Iterate() interfaces.Iterable {
-	if nextIter, ok := l.tail.Evaluate().(LAZYP); ok {
+func (l LAZYP) Iterate(sco interfaces.Scope) interfaces.Iterable {
+	if nextIter, ok := l.tail.Evaluate(sco).(LAZYP); ok {
 		return nextIter
 	}
 	panic(fmt.Sprintf("Iterate : expected an LAZYP, got %v", l))
 }
-func (l LAZYP) ToSlice() []interfaces.Argument {
+func (l LAZYP) ToSlice(sco interfaces.Scope) []interfaces.Argument {
 	slice := []interfaces.Argument{}
 	next := l
 	for {
@@ -94,6 +94,24 @@ func (l LAZYP) ToSlice() []interfaces.Argument {
 		if next.tail == nil {
 			return slice
 		}
-		next = next.Iterate().(LAZYP)
+		next = next.Iterate(sco.NewChildScope()).(LAZYP)
 	}
 }
+
+type VEC struct {
+	Vector []interfaces.Argument
+}
+func (v VEC) IsArg() {}
+func (v VEC) String() string {
+	return fmt.Sprintf("%v", v.Vector)
+}
+func (v VEC) Get(loc int) interfaces.Argument {
+	return v.Vector[loc]
+}
+
+type FN struct {
+	Arguments VEC
+	Expression EXP
+}
+func (f FN) IsArg() {}
+

@@ -1,7 +1,7 @@
 package interfaces
 
 type Evaluatable interface {
-	Evaluate() Argument
+	Evaluate(Scope) Argument
 }
 
 type Argument interface {
@@ -9,6 +9,12 @@ type Argument interface {
 }
 
 type Iterable interface {
-	Iterate() Iterable
-	ToSlice() []Argument
+	Iterate(Scope) Iterable
+	ToSlice(Scope) []Argument
+}
+
+type Scope interface {
+	ResolveRef(argument Argument) Argument
+	CreateRef(ref Argument, arg Argument) Argument
+	NewChildScope() Scope
 }

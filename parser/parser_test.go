@@ -40,3 +40,18 @@ func TestParserReturnsSymbolsAsScopes(t *testing.T) {
 	args := result.Arguments
 	assert.Equal(t, args[0].(common.REF).String(), "symbol")
 }
+
+func TestParserReturnsVector(t *testing.T) {
+	result, err := Parse("(+ [1 2])")
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0].(common.VEC).Get(0), common.I(1))
+	assert.Equal(t, args[0].(common.VEC).Get(1), common.I(2))
+}
+
+func TestParserReturnsVectorWithSymbolsInside(t *testing.T) {
+	result, err := Parse("(fn [a])")
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0].(common.VEC).Get(0), common.REF("a"))
+}

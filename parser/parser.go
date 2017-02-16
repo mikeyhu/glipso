@@ -59,6 +59,13 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 				}
 				s = ms
 				args = append(args, *arg)
+			} else if token == "[" {
+				ms, vec, err := parseVector(s)
+				if err != nil {
+					return ms, nil, err
+				}
+				s = ms
+				args = append(args, *vec)
 			} else {
 
 				if integer, err := strconv.Atoi(token); err == nil {
@@ -70,5 +77,33 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 		}
 		return s, nil, errors.New("Expected end of Expression")
 	}
-	return s, nil, errors.New("Unexpected EOF")
+	return s, nil, errors.New("Unexpected EOF while parsing EXP")
+}
+
+func parseVector(s scanner.Scanner) (scanner.Scanner, *common.VEC, error) {
+	vec := []interfaces.Argument{}
+	var tok rune
+	tok = s.Scan()
+	for tok != scanner.EOF {
+		token := s.TokenText()
+		if token == "]" {
+			return s, &common.VEC{vec}, nil
+		} else if token == "(" {
+			ms, item, err := parseExpression(s)
+			if err != nil {
+				return ms, nil, err
+			}
+			s = ms
+			vec = append(vec, *item)
+		} else {
+
+			if integer, err := strconv.Atoi(token); err == nil {
+				vec = append(vec, common.I(integer))
+			} else {
+				vec = append(vec, common.REF(token))
+			}
+		}
+		tok = s.Scan()
+	}
+	return s, nil, errors.New("Unexpected EOF while parsing VEC")
 }

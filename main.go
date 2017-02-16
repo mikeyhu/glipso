@@ -16,6 +16,6 @@ func main() {
 	} else {
 		exp, _ = parser.ParseFile(os.Stdin)
 	}
-	fmt.Println(exp.Evaluate())
+	fmt.Println(exp.Evaluate(common.GlobalEnvironment))
 
 }
