@@ -83,10 +83,8 @@ func apply(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Arg
 func iff(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
 	var test interfaces.Argument
 	if exp, ok := arguments[0].(EXP); ok {
-		fmt.Printf("If evaluating\n")
 		test = exp.Evaluate(sco)
 	} else {
-		fmt.Printf("If skipping evaluation\n")
 		test = arguments[0]
 	}
 	if test.(B).Bool() {

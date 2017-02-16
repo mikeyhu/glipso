@@ -29,7 +29,6 @@ func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Argument {
 		result = fi.function(exp.Arguments, sco)
 	} else {
 		function := sco.ResolveRef(REF(exp.FunctionName))
-		fmt.Printf("%v\n", fn)
 		if function, ok := function.(FN); ok {
 			expn := EXPN{function, exp.Arguments}
 			result = expn.Evaluate(sco)

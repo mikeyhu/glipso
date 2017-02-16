@@ -1,0 +1,7 @@
+code:
+(do
+    (def oneortwo (fn [c] (if (= c 1) 2 1)))
+    (oneortwo 1)
+    )
+expect:
+2
