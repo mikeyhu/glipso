@@ -17,7 +17,8 @@ Glipso has *very few* features. So far it supports the following functions:
 (first list)            get first element in list
 (tail list)             get tail of the list
 (do exp...)             run the expressions in order
-(range start end)	creates a lazily evaluated list from start to end (inclusive)
+(range start end)       creates a lazily evaluated list from start to end (inclusive)
+(fn [args] exp)         creates a function that accepts n arguments are an expression
 ```
 
 ## Types
@@ -29,6 +30,15 @@ B   boolean
 P   pair/list
 EXP expression
 REF reference
+VEC Vector
+```
+
+## Example Code
+```
+	(do
+		(def add1 (fn [a] (+ 1 a)))
+		(add1 5)
+	)
 ```
 
 ## Building

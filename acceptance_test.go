@@ -54,3 +54,14 @@ func TestSummingRange(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(15), result)
 }
+
+func TestGlobalAdd1Function(t *testing.T) {
+	code := `
+	(do
+		(def add1 (fn [a] (+ 1 a)))
+		(add1 5))
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(6), result)
+}

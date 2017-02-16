@@ -101,6 +101,7 @@ func (l LAZYP) ToSlice(sco interfaces.Scope) []interfaces.Argument {
 type VEC struct {
 	Vector []interfaces.Argument
 }
+
 func (v VEC) IsArg() {}
 func (v VEC) String() string {
 	return fmt.Sprintf("%v", v.Vector)
@@ -110,8 +111,8 @@ func (v VEC) Get(loc int) interfaces.Argument {
 }
 
 type FN struct {
-	Arguments VEC
+	Arguments  VEC
 	Expression EXP
 }
-func (f FN) IsArg() {}
 
+func (f FN) IsArg() {}

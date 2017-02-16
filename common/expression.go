@@ -28,7 +28,14 @@ func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Argument {
 		}
 		result = fi.function(exp.Arguments, sco)
 	} else {
-		panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", exp.FunctionName))
+		function := sco.ResolveRef(REF(exp.FunctionName))
+		fmt.Printf("%v\n", fn)
+		if function, ok := function.(FN); ok {
+			expn := EXPN{function, exp.Arguments}
+			result = expn.Evaluate(sco)
+		} else {
+			panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", exp.FunctionName))
+		}
 	}
 	exp.printExpression(result)
 	if exp, ok := result.(EXP); ok {

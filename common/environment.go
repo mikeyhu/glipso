@@ -7,7 +7,7 @@ import (
 
 type Environment struct {
 	variables map[string]interfaces.Argument
-	parent *Environment
+	parent    *Environment
 }
 
 func (env Environment) ResolveRef(ref interfaces.Argument) interfaces.Argument {

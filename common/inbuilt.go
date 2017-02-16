@@ -96,6 +96,9 @@ func iff(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argum
 }
 
 func def(arguments []interfaces.Argument, sco interfaces.Scope) interfaces.Argument {
+	if eval, ok := arguments[1].(interfaces.Evaluatable); ok {
+		arguments[1] = eval.Evaluate(sco.NewChildScope())
+	}
 	return GlobalEnvironment.CreateRef(arguments[0].(REF), arguments[1])
 }
 
@@ -136,6 +139,7 @@ type FunctionInfo struct {
 	function     evaluator
 	evaluateArgs bool
 }
+
 var inbuilt map[string]FunctionInfo
 
 func init() {
