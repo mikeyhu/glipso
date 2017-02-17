@@ -9,7 +9,7 @@ import (
 func TestParserReturnsExpressionFunctionName(t *testing.T) {
 	result, err := Parse("(+ 1 2)")
 	assert.NoError(t, err)
-	assert.Equal(t, result.FunctionName, "+")
+	assert.Equal(t, result.Function, common.REF("+"))
 }
 
 func TestParserReturnsExpressionArguments(t *testing.T) {
@@ -22,7 +22,7 @@ func TestParserReturnsExpressionArguments(t *testing.T) {
 
 func TestParserReturnsErrorWhenNoClosingBrackets(t *testing.T) {
 	_, err := Parse("(+ 1")
-	assert.EqualError(t, err, "Expected end of Expression")
+	assert.EqualError(t, err, "Unexpected EOF while parsing EXP")
 }
 
 func TestParserReturnsNestedExpression(t *testing.T) {
@@ -31,7 +31,7 @@ func TestParserReturnsNestedExpression(t *testing.T) {
 	args := result.Arguments
 	assert.Equal(t, args[0].(common.I).Int(), 1, "1st element")
 	assert.Equal(t, len(result.Arguments), 2, "array length of outer arguements")
-	assert.Equal(t, args[1].(common.EXP).FunctionName, "+", "Nested Expression")
+	assert.Equal(t, args[1].(common.EXP).Function, common.REF("+"), "Nested Expression")
 }
 
 func TestParserReturnsSymbolsAsScopes(t *testing.T) {

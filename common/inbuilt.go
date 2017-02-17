@@ -75,7 +75,7 @@ func apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	s, okRef := arguments[0].(REF)
 	p, okPair := arguments[1].(interfaces.Iterable)
 	if okRef && okPair {
-		return EXP{FunctionName: s.String(), Arguments: p.ToSlice(sco.NewChildScope())}
+		return EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}
 	}
 	panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 }
@@ -118,7 +118,7 @@ func rnge(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	if start < end {
 		return LAZYP{
 			start,
-			&EXP{FunctionName: "range", Arguments: []interfaces.Type{
+			&EXP{Function: REF("range"), Arguments: []interfaces.Type{
 				I(start.Int() + 1),
 				end,
 			}}}

@@ -43,39 +43,36 @@ func parseRoot(s scanner.Scanner) (*common.EXP, error) {
 
 func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 	var tok rune
-	if tok != scanner.EOF {
-		tok := s.Scan()
-		functionName := s.TokenText()
-		args := []interfaces.Type{}
-		for tok != scanner.EOF {
-			tok = s.Scan()
-			token := s.TokenText()
-			if token == ")" {
-				return s, &common.EXP{FunctionName: functionName, Arguments: args}, nil
-			} else if token == "(" {
-				ms, arg, err := parseExpression(s)
-				if err != nil {
-					return ms, arg, err
-				}
-				s = ms
-				args = append(args, *arg)
-			} else if token == "[" {
-				ms, vec, err := parseVector(s)
-				if err != nil {
-					return ms, nil, err
-				}
-				s = ms
-				args = append(args, *vec)
-			} else {
+	args := []interfaces.Type{}
+	for tok != scanner.EOF {
+		tok = s.Scan()
+		token := s.TokenText()
+		if token == ")" {
+			head := args[0]
+			tail := args[1:]
+			return s, &common.EXP{Function: head, Arguments: tail}, nil
+		} else if token == "(" {
+			ms, arg, err := parseExpression(s)
+			if err != nil {
+				return ms, arg, err
+			}
+			s = ms
+			args = append(args, *arg)
+		} else if token == "[" {
+			ms, vec, err := parseVector(s)
+			if err != nil {
+				return ms, nil, err
+			}
+			s = ms
+			args = append(args, *vec)
+		} else {
 
-				if integer, err := strconv.Atoi(token); err == nil {
-					args = append(args, common.I(integer))
-				} else {
-					args = append(args, common.REF(token))
-				}
+			if integer, err := strconv.Atoi(token); err == nil {
+				args = append(args, common.I(integer))
+			} else {
+				args = append(args, common.REF(token))
 			}
 		}
-		return s, nil, errors.New("Expected end of Expression")
 	}
 	return s, nil, errors.New("Unexpected EOF while parsing EXP")
 }

@@ -65,3 +65,12 @@ func TestGlobalAdd1Function(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
+
+func TestAnonymousAdd1Function(t *testing.T) {
+	code := `
+	((fn [a] (+ 1 a)) 5)
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(6), result)
+}
