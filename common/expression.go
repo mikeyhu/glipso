@@ -22,6 +22,16 @@ func (exp EXP) String() string {
 func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 	var result interfaces.Type
 	switch exp.Function.(type) {
+	case FN:
+		fun := exp.Function.(FN)
+		env := sco.NewChildScope()
+		if len(fun.Arguments.Vector) != len(exp.Arguments) {
+			panic("Invalid number of arguments")
+		}
+		for i, v := range fun.Arguments.Vector {
+			env.CreateRef(v.(REF), exp.Arguments[i])
+		}
+		return fun.Expression.Evaluate(env)
 	case EXP:
 		fun := exp.Function.(EXP).Evaluate(sco.NewChildScope()).(FN)
 		env := sco.NewChildScope()
@@ -42,7 +52,7 @@ func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 		} else {
 			function := sco.ResolveRef(fn)
 			if function, ok := function.(FN); ok {
-				expn := EXPN{function, exp.Arguments}
+				expn := EXP{function, exp.Arguments}
 				result = expn.Evaluate(sco)
 			} else {
 				panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", fn))
@@ -68,22 +78,4 @@ func (exp EXP) printExpression(result interfaces.Type) {
 	if DEBUG {
 		fmt.Printf("%v = %v\n", exp, result)
 	}
-}
-
-type EXPN struct {
-	Function  FN
-	Arguments []interfaces.Type
-}
-
-func (e EXPN) IsType() {}
-
-func (e EXPN) Evaluate(sco interfaces.Scope) interfaces.Type {
-	env := sco.NewChildScope()
-	if len(e.Function.Arguments.Vector) != len(e.Arguments) {
-		panic("Invalid number of arguments")
-	}
-	for i, v := range e.Function.Arguments.Vector {
-		env.CreateRef(v.(REF), e.Arguments[i])
-	}
-	return e.Function.Expression.Evaluate(env)
 }

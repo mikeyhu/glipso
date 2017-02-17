@@ -33,7 +33,7 @@ func TestEvaluateNestedFunction(t *testing.T) {
 }
 
 func TestEvaluateFN(t *testing.T) {
-	exp := EXPN{Function: FN{
+	exp := EXP{Function: FN{
 		VEC{[]interfaces.Type{REF("a")}},
 		EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
 		Arguments: []interfaces.Type{I(2)}}
@@ -42,7 +42,7 @@ func TestEvaluateFN(t *testing.T) {
 }
 
 func TestEvaluateFNHasMoreArgumentsThanProvided(t *testing.T) {
-	exp := EXPN{Function: FN{
+	exp := EXP{Function: FN{
 		VEC{[]interfaces.Type{REF("a"), REF("b")}},
 		EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
 		Arguments: []interfaces.Type{I(2)}}
@@ -53,7 +53,7 @@ func TestEvaluateFNHasMoreArgumentsThanProvided(t *testing.T) {
 }
 
 func TestEvaluateFNHasLessArgumentsThanProvided(t *testing.T) {
-	exp := EXPN{Function: FN{
+	exp := EXP{Function: FN{
 		VEC{[]interfaces.Type{REF("a")}},
 		EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
 		Arguments: []interfaces.Type{I(2), I(3)}}
