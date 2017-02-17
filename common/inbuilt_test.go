@@ -72,7 +72,8 @@ func TestIfFalseReturnsThirdArgument(t *testing.T) {
 func TestDefRecordsReferences(t *testing.T) {
 	exp := EXP{Function: REF("def"), Arguments: []interfaces.Type{REF("one"), I(1)}}
 	exp.Evaluate(GlobalEnvironment)
-	assert.Equal(t, I(1), GlobalEnvironment.ResolveRef(REF("one")))
+	resolved, _ := GlobalEnvironment.ResolveRef(REF("one"))
+	assert.Equal(t, I(1), resolved)
 }
 
 func TestDoReturnsLastArgument(t *testing.T) {

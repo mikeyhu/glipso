@@ -1,7 +1,6 @@
 package common
 
 import (
-	"fmt"
 	"github.com/mikeyhu/glipso/interfaces"
 )
 
@@ -12,14 +11,14 @@ type Environment struct {
 }
 
 // ResolveRef will try to resolve a provided reference to a value in this or parent scope
-func (env Environment) ResolveRef(ref interfaces.Type) interfaces.Type {
+func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
 	if result, ok := env.variables[ref.(REF).String()]; ok {
-		return result
+		return result, true
 	}
 	if env.parent != nil {
 		return env.parent.ResolveRef(ref)
 	}
-	panic(fmt.Sprintf("Unable to resolve reference %q", ref))
+	return nil, false
 }
 
 // CreateRef will create a variable in this scope

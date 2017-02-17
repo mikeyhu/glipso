@@ -14,7 +14,7 @@ type Iterable interface {
 }
 
 type Scope interface {
-	ResolveRef(argument Type) Type
+	ResolveRef(argument Type) (Type, bool)
 	CreateRef(ref Type, arg Type) Type
 	NewChildScope() Scope
 }

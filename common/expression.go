@@ -20,58 +20,52 @@ func (exp EXP) String() string {
 }
 
 func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
+	env := sco.NewChildScope()
 	var result interfaces.Type
-	switch exp.Function.(type) {
-	case FN:
-		fun := exp.Function.(FN)
-		env := sco.NewChildScope()
-		if len(fun.Arguments.Vector) != len(exp.Arguments) {
-			panic("Invalid number of arguments")
-		}
-		for i, v := range fun.Arguments.Vector {
-			env.CreateRef(v.(REF), exp.Arguments[i])
-		}
-		return fun.Expression.Evaluate(env)
-	case EXP:
-		fun := exp.Function.(EXP).Evaluate(sco.NewChildScope()).(FN)
-		env := sco.NewChildScope()
-		if len(fun.Arguments.Vector) != len(exp.Arguments) {
-			panic("Invalid number of arguments")
-		}
-		for i, v := range fun.Arguments.Vector {
-			env.CreateRef(v.(REF), exp.Arguments[i])
-		}
-		return fun.Expression.Evaluate(env)
-	case REF:
-		fn := exp.Function.(REF)
-		if fi, ok := inbuilt[fn.String()]; ok {
-			if fi.evaluateArgs {
-				exp.evaluateArguments(sco)
-			}
-			result = fi.function(exp.Arguments, sco)
-		} else {
-			function := sco.ResolveRef(fn)
-			if function, ok := function.(FN); ok {
-				expn := EXP{function, exp.Arguments}
-				result = expn.Evaluate(sco)
-			} else {
-				panic(fmt.Sprintf("Panic - Cannot resolve FunctionName '%s'", fn))
-			}
+	function := exp.Function
+
+	if toEval, ok := function.(EXP); ok {
+		function = toEval.Evaluate(env)
+	}
+
+	if toREF, ok := function.(REF); ok {
+		if fn, ok := sco.ResolveRef(toREF); ok {
+			function = fn
+		} else if fi, ok := inbuilt[toREF.String()]; ok {
+			result = exp.evaluateInbuilt(fi, env)
 		}
 	}
+
+	if toFN, ok := function.(FN); ok {
+		result = exp.evaluateFN(toFN, env)
+	}
+
 	exp.printExpression(result)
 	if exp, ok := result.(EXP); ok {
-		result = exp.Evaluate(sco.NewChildScope())
+		result = exp.Evaluate(env)
 	}
 	return result
 }
 
-func (exp EXP) evaluateArguments(sco interfaces.Scope) {
-	for p, arg := range exp.Arguments {
-		if e, ok := arg.(interfaces.Evaluatable); ok {
-			exp.Arguments[p] = e.Evaluate(sco.NewChildScope())
+func (exp EXP) evaluateFN(fn FN, env interfaces.Scope) interfaces.Type {
+	if len(fn.Arguments.Vector) != len(exp.Arguments) {
+		panic("Invalid number of arguments")
+	}
+	for i, v := range fn.Arguments.Vector {
+		env.CreateRef(v.(REF), exp.Arguments[i])
+	}
+	return fn.Expression.Evaluate(env)
+}
+
+func (exp EXP) evaluateInbuilt(fi FunctionInfo, env interfaces.Scope) interfaces.Type {
+	if fi.evaluateArgs {
+		for p, arg := range exp.Arguments {
+			if e, ok := arg.(interfaces.Evaluatable); ok {
+				exp.Arguments[p] = e.Evaluate(env.NewChildScope())
+			}
 		}
 	}
+	return fi.function(exp.Arguments, env)
 }
 
 func (exp EXP) printExpression(result interfaces.Type) {

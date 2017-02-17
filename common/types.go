@@ -97,7 +97,10 @@ func (r REF) String() string {
 	return fmt.Sprintf("%v", string(r))
 }
 func (r REF) Evaluate(sco interfaces.Scope) interfaces.Type {
-	return sco.ResolveRef(r)
+	if resolved, ok := sco.ResolveRef(r); ok {
+		return resolved
+	}
+	panic(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
 }
 
 // LAZYP (Lazily evaluated Pair)
