@@ -73,3 +73,6 @@ In no particular order:
 * support some kind of HashMap datatype
 * support for more datatypes, i.e. String, Decimal
 * support functions such as `<`, `>` & `%`
+* investigate the need for a `nil` datatype (or maybe just empty list?)
+* better parser support so names like `some-function` can be used
+* implement some goroutine support to push expressions onto other threads and receive notifications when complete
