@@ -21,7 +21,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (fn [args] exp)         creates a function that accepts n arguments are an expression
 ```
 
-## Types
+### Types
 
 Glipso internally supports the following types:
 ```
@@ -33,7 +33,7 @@ REF reference
 VEC Vector
 ```
 
-## Example Code
+### Example Code
 ```
 	(do
 		(def add1 (fn [a] (+ 1 a)))
@@ -41,7 +41,7 @@ VEC Vector
 	)
 ```
 
-## Building
+### Building
 ```bash
 #run all tests
 go test ./...
@@ -53,7 +53,7 @@ go build
 ./precommit.sh
 ```
 
-## Running
+### Running
 ```bash
 ./glipso examples/summing-range.glipso
 
@@ -61,3 +61,15 @@ go build
 
 echo "(+ 1 2 3)" | ./glipso
 ```
+
+## Roadmap
+
+In no particular order:
+
+* implement `map` and `filter` functions
+* add function to create a lazy pair
+* make list functions work on lazy, non-lazy and vector lists
+* add initial set of functions written in Lisp, i.e. some kind of Prelude
+* support some kind of HashMap datatype
+* support for more datatypes, i.e. String, Decimal
+* support functions such as `<`, `>` & `%`
