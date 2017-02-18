@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"github.com/mikeyhu/glipso/interfaces"
 )
 
@@ -32,6 +33,19 @@ func (env Environment) NewChildScope() interfaces.Scope {
 	return Environment{
 		map[string]interfaces.Type{},
 		&env,
+	}
+}
+
+func (env Environment) DisplayEnvironment() {
+	env.displayEnvironment(0)
+}
+
+func (env Environment) displayEnvironment(i int) {
+	for k := range env.variables {
+		fmt.Printf("Scope[%d] %v := %v\n", i, k, env.variables[k])
+	}
+	if env.parent != nil {
+		env.parent.displayEnvironment(i + 1)
 	}
 }
 

@@ -29,7 +29,7 @@ func (exp EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 	}
 
 	if toREF, ok := function.(REF); ok {
-		if fn, ok := sco.ResolveRef(toREF); ok {
+		if fn, ok := env.ResolveRef(toREF); ok {
 			function = fn
 		} else if fi, ok := inbuilt[toREF.String()]; ok {
 			result = exp.evaluateInbuilt(fi, env)
@@ -58,14 +58,21 @@ func (exp EXP) evaluateFN(fn FN, env interfaces.Scope) interfaces.Type {
 }
 
 func (exp EXP) evaluateInbuilt(fi FunctionInfo, env interfaces.Scope) interfaces.Type {
+	evaluatedArgs := make([]interfaces.Type, len(exp.Arguments))
 	if fi.evaluateArgs {
 		for p, arg := range exp.Arguments {
-			if e, ok := arg.(interfaces.Evaluatable); ok {
-				exp.Arguments[p] = e.Evaluate(env.NewChildScope())
+			if r, ok := arg.(REF); ok {
+				arg = r.Evaluate(env)
 			}
+			if e, ok := arg.(interfaces.Evaluatable); ok {
+				arg = e.Evaluate(env.NewChildScope())
+			}
+			evaluatedArgs[p] = arg
 		}
+	} else {
+		copy(evaluatedArgs, exp.Arguments)
 	}
-	return fi.function(exp.Arguments, env)
+	return fi.function(evaluatedArgs, env)
 }
 
 func (exp EXP) printExpression(result interfaces.Type) {

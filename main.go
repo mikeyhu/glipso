@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"github.com/mikeyhu/glipso/common"
 	"github.com/mikeyhu/glipso/parser"
+	"github.com/mikeyhu/glipso/prelude"
 	"os"
 )
 
 func main() {
+	env := common.GlobalEnvironment
+	prelude.ParsePrelude(env)
 	args := os.Args[1:]
 	var exp *common.EXP
 	if len(args) > 0 {
@@ -16,6 +19,5 @@ func main() {
 	} else {
 		exp, _ = parser.ParseFile(os.Stdin)
 	}
-	fmt.Println(exp.Evaluate(common.GlobalEnvironment))
-
+	fmt.Println(exp.Evaluate(env))
 }

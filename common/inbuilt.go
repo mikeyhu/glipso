@@ -94,17 +94,20 @@ func iff(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func def(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	var value interfaces.Type
 	if eval, ok := arguments[1].(interfaces.Evaluatable); ok {
-		arguments[1] = eval.Evaluate(sco.NewChildScope())
+		value = eval.Evaluate(sco.NewChildScope())
+	} else {
+		value = arguments[1]
 	}
-	return GlobalEnvironment.CreateRef(arguments[0].(REF), arguments[1])
+	return GlobalEnvironment.CreateRef(arguments[0].(REF).EvaluateToRef(sco.NewChildScope()), value)
 }
 
 func do(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	var result interfaces.Type
 	for _, a := range arguments {
 		if e, ok := a.(interfaces.Evaluatable); ok {
-			result = e.Evaluate(sco)
+			result = e.Evaluate(sco.NewChildScope())
 		} else {
 			result = a
 		}
@@ -128,7 +131,19 @@ func rnge(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	return FN{arguments[0].(VEC), arguments[1].(EXP)}
+	var argVec VEC
+	if args, ok := arguments[0].(REF); ok {
+		argVec = args.Evaluate(sco).(VEC)
+	} else {
+		argVec = arguments[0].(VEC)
+	}
+
+	if arg1, ok := arguments[1].(REF); ok {
+		return FN{argVec, arg1.Evaluate(sco.NewChildScope()).(EXP)}
+	} else {
+
+	}
+	return FN{argVec, arguments[1].(EXP)}
 }
 
 type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type

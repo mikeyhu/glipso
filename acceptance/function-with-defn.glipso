@@ -1,0 +1,7 @@
+code:
+(do
+    (defn add5 [a] (+ a 5))
+    (add5 10)
+)
+expect:
+15

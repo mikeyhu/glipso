@@ -98,9 +98,24 @@ func (r REF) String() string {
 }
 func (r REF) Evaluate(sco interfaces.Scope) interfaces.Type {
 	if resolved, ok := sco.ResolveRef(r); ok {
+		if evaluatable, ok := resolved.(EXP); ok {
+			return evaluatable //.Evaluate(sco)
+		}
 		return resolved
 	}
 	panic(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
+}
+func (r REF) EvaluateToRef(sco interfaces.Scope) REF {
+	resolved, ok := sco.ResolveRef(r)
+	if ok {
+		if resolvedRef, ok := resolved.(REF); ok {
+			return resolvedRef.EvaluateToRef(sco)
+		} else {
+			return r
+		}
+	} else {
+		return r
+	}
 }
 
 // LAZYP (Lazily evaluated Pair)
@@ -170,5 +185,5 @@ func (f FN) IsType() {}
 
 // String output for FN
 func (f FN) String() string {
-	return fmt.Sprintf("FN %v %v", f)
+	return fmt.Sprintf("FN(%v, %v)", f.Arguments, f.Expression)
 }
