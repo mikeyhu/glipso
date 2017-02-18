@@ -19,6 +19,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (do exp...)             run the expressions in order
 (range start end)       creates a lazily evaluated list from start to end (inclusive)
 (fn [args] exp)         creates a function that accepts n arguments are an expression
+(defn name [args] exp)  performs 'def' and 'fn' functions together
 ```
 
 ### Types
@@ -76,3 +77,5 @@ In no particular order:
 * investigate the need for a `nil` datatype (or maybe just empty list?)
 * better parser support so names like `some-function` can be used
 * implement some goroutine support to push expressions onto other threads and receive notifications when complete
+* macro implementation to reduce some special case code
+
