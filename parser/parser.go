@@ -42,8 +42,9 @@ func parseRoot(s scanner.Scanner) (*common.EXP, error) {
 }
 
 func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
-	var tok rune
 	args := []interfaces.Type{}
+	var tok rune
+	var err error
 	for tok != scanner.EOF {
 		tok = s.Scan()
 		token := s.TokenText()
@@ -51,27 +52,10 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 			head := args[0]
 			tail := args[1:]
 			return s, &common.EXP{Function: head, Arguments: tail}, nil
-		} else if token == "(" {
-			ms, arg, err := parseExpression(s)
-			if err != nil {
-				return ms, arg, err
-			}
-			s = ms
-			args = append(args, *arg)
-		} else if token == "[" {
-			ms, vec, err := parseVector(s)
-			if err != nil {
-				return ms, nil, err
-			}
-			s = ms
-			args = append(args, *vec)
-		} else {
-
-			if integer, err := strconv.Atoi(token); err == nil {
-				args = append(args, common.I(integer))
-			} else {
-				args = append(args, common.REF(token))
-			}
+		}
+		s, args, err = addElementToArray(s, token, args)
+		if err != nil {
+			return s, nil, err
 		}
 	}
 	return s, nil, errors.New("Unexpected EOF while parsing EXP")
@@ -80,27 +64,45 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 func parseVector(s scanner.Scanner) (scanner.Scanner, *common.VEC, error) {
 	vec := []interfaces.Type{}
 	var tok rune
-	tok = s.Scan()
+	var err error
 	for tok != scanner.EOF {
+		tok = s.Scan()
 		token := s.TokenText()
 		if token == "]" {
 			return s, &common.VEC{vec}, nil
-		} else if token == "(" {
-			ms, item, err := parseExpression(s)
-			if err != nil {
-				return ms, nil, err
-			}
-			s = ms
-			vec = append(vec, *item)
-		} else {
-
-			if integer, err := strconv.Atoi(token); err == nil {
-				vec = append(vec, common.I(integer))
-			} else {
-				vec = append(vec, common.REF(token))
-			}
 		}
-		tok = s.Scan()
+		s, vec, err = addElementToArray(s, token, vec)
+		if err != nil {
+			return s, nil, err
+		}
 	}
 	return s, nil, errors.New("Unexpected EOF while parsing VEC")
+}
+
+func addElementToArray(s scanner.Scanner, token string, list []interfaces.Type) (scanner.Scanner, []interfaces.Type, error) {
+	var err error
+	if token == "(" {
+		var exp *common.EXP
+		s, exp, err = parseExpression(s)
+		if err != nil {
+			return s, nil, err
+		}
+		list = append(list, *exp)
+	} else if token == "[" {
+		var vec *common.VEC
+		s, vec, err = parseVector(s)
+		if err != nil {
+			return s, nil, err
+		}
+		list = append(list, *vec)
+	} else if len(token) > 0 {
+		if token[0] == '"' {
+			list = append(list, common.S(token[1:len(token)-1]))
+		} else if integer, err := strconv.Atoi(token); err == nil {
+			list = append(list, common.I(integer))
+		} else {
+			list = append(list, common.REF(token))
+		}
+	}
+	return s, list, nil
 }

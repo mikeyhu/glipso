@@ -41,7 +41,7 @@ func TestParserReturnsSymbolsAsScopes(t *testing.T) {
 	assert.Equal(t, args[0].(common.REF).String(), "symbol")
 }
 
-func TestParserReturnsVector(t *testing.T) {
+func TestParserReturnsVectorsContainingIntegers(t *testing.T) {
 	result, err := Parse("(+ [1 2])")
 	assert.NoError(t, err)
 	args := result.Arguments
@@ -49,9 +49,25 @@ func TestParserReturnsVector(t *testing.T) {
 	assert.Equal(t, args[0].(common.VEC).Get(1), common.I(2))
 }
 
+func TestParserReturnsVectorsContainingStrings(t *testing.T) {
+	result, err := Parse(`(+ ["hello" "world"])`)
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0].(common.VEC).Get(0), common.S("hello"))
+	assert.Equal(t, args[0].(common.VEC).Get(1), common.S("world"))
+}
+
 func TestParserReturnsVectorWithSymbolsInside(t *testing.T) {
 	result, err := Parse("(fn [a])")
 	assert.NoError(t, err)
 	args := result.Arguments
 	assert.Equal(t, args[0].(common.VEC).Get(0), common.REF("a"))
+}
+
+func TestParserReturnsQuotedTextAsStrings(t *testing.T) {
+	result, err := Parse(`(+ "hello" "world")`)
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0], common.S("hello"))
+	assert.Equal(t, args[1], common.S("world"))
 }

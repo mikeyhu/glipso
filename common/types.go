@@ -187,3 +187,10 @@ func (f FN) IsType() {}
 func (f FN) String() string {
 	return fmt.Sprintf("FN(%v, %v)", f.Arguments, f.Expression)
 }
+
+type S string
+
+func (s S) IsType() {}
+func (s S) String() string {
+	return string(s)
+}
