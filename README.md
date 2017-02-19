@@ -72,7 +72,7 @@ In no particular order:
 * make list functions work on lazy, non-lazy and vector lists
 * add initial set of functions written in Lisp, i.e. some kind of Prelude
 * support some kind of HashMap datatype
-* support for more datatypes, i.e. String, Decimal
+* support for more datatypes, i.e. Decimal
 * support functions such as `<`, `>` & `%`
 * investigate the need for a `nil` datatype (or maybe just empty list?)
 * better parser support so names like `some-function` can be used
