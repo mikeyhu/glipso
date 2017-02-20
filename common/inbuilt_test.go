@@ -89,3 +89,9 @@ func TestRangeReturnsLazyPair(t *testing.T) {
 		LAZYP{I(1), &EXP{Function: REF("range"), Arguments: []interfaces.Type{I(2), I(10)}}},
 		result)
 }
+
+func TestEvaluateMultiply(t *testing.T) {
+	exp := EXP{Function: REF("*"), Arguments: []interfaces.Type{I(2), I(3)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, I(6), result)
+}

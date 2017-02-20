@@ -27,6 +27,20 @@ func minusAll(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type
 	return all
 }
 
+func multiplyAll(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	var all I
+	head := true
+	for _, v := range arguments {
+		if head {
+			all = v.(I)
+			head = false
+		} else {
+			all *= v.(I)
+		}
+	}
+	return all
+}
+
 func equals(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	switch t := arguments[0].(type) {
 	case B:
@@ -163,6 +177,7 @@ func init() {
 		"=":     {equals, true},
 		"+":     {plusAll, true},
 		"-":     {minusAll, true},
+		"*":     {multiplyAll, true},
 		"apply": {apply, false},
 		"if":    {iff, false},
 		"def":   {def, false},
