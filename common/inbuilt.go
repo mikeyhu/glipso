@@ -41,6 +41,15 @@ func multiplyAll(arguments []interfaces.Type, sco interfaces.Scope) interfaces.T
 	return all
 }
 
+func mod(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	a, aok := arguments[0].(I)
+	b, bok := arguments[1].(I)
+	if aok && bok {
+		return I(a % b)
+	}
+	panic("Mod : unsupported type")
+}
+
 func equals(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	switch t := arguments[0].(type) {
 	case B:
@@ -178,6 +187,7 @@ func init() {
 		"+":     {plusAll, true},
 		"-":     {minusAll, true},
 		"*":     {multiplyAll, true},
+		"%":     {mod, true},
 		"apply": {apply, false},
 		"if":    {iff, false},
 		"def":   {def, false},

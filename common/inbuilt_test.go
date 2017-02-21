@@ -95,3 +95,15 @@ func TestEvaluateMultiply(t *testing.T) {
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(6), result)
 }
+
+func TestEvaluateModEven(t *testing.T) {
+	exp := EXP{Function: REF("%"), Arguments: []interfaces.Type{I(4), I(2)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, I(0), result)
+}
+
+func TestEvaluateModOdd(t *testing.T) {
+	exp := EXP{Function: REF("%"), Arguments: []interfaces.Type{I(5), I(2)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, I(1), result)
+}

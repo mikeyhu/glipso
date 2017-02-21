@@ -74,3 +74,27 @@ func TestAnonymousAdd1Function(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
+
+func TestEvenFunctionEvaluatesEvenNumber(t *testing.T) {
+	code := `
+	(do
+		(def even (fn [a] (= (% a 2) 0)))
+		(even 2)
+	)
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.B(true), result)
+}
+
+func TestEvenFunctionEvaluatesOddNumber(t *testing.T) {
+	code := `
+	(do
+		(def even (fn [a] (= (% a 2) 0)))
+		(even 1)
+	)
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.B(false), result)
+}
