@@ -6,6 +6,7 @@ type Evaluatable interface {
 
 type Type interface {
 	IsType()
+	String() string
 }
 
 type Iterable interface {

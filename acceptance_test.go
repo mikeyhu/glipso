@@ -98,3 +98,15 @@ func TestEvenFunctionEvaluatesOddNumber(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(false), result)
 }
+
+func TestFilterEvenNumbers(t *testing.T) {
+	code := `
+	(do
+		(def even (fn [a] (= (% a 2) 0)))
+		(apply + (filter even (cons 1 (cons 2 (cons 3 (cons 4))))))
+	)
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(6), result)
+}

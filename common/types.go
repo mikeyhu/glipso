@@ -64,7 +64,7 @@ func (p P) IsType() {}
 
 // String representation of P
 func (p P) String() string {
-	return fmt.Sprintf("￿`(%v %v)", p.head, p.tail)
+	return fmt.Sprintf("P(%v %v)", p.head, p.tail)
 }
 
 // Iterate not supported yet
@@ -130,7 +130,7 @@ func (l LAZYP) IsType() {}
 
 // String representation of LAZYP
 func (l LAZYP) String() string {
-	return fmt.Sprintf("￿`(%v %v)", l.head, l.tail)
+	return fmt.Sprintf("LAZYP(%v %v)", l.head, l.tail)
 }
 
 // Iterate will evaluate the tail of the LAZYP

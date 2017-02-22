@@ -163,10 +163,38 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 
 	if arg1, ok := arguments[1].(REF); ok {
 		return FN{argVec, arg1.Evaluate(sco.NewChildScope()).(EXP)}
-	} else {
-
 	}
 	return FN{argVec, arguments[1].(EXP)}
+}
+
+func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	fn, fnok := arguments[0].(FN)
+	pair, pok := arguments[1].(P)
+
+	var flt func(*P) *P
+	flt = func(p *P) *P {
+		head := p.head
+		res := EXP{Function: fn, Arguments: []interfaces.Type{head}}.Evaluate(sco.NewChildScope())
+		if include, iok := res.(B); iok {
+			if bool(include) {
+				if p.tail != nil {
+					return &P{head, flt(p.tail)}
+				} else {
+					return &P{head, nil}
+				}
+			} else if p.tail != nil {
+				return flt(p.tail)
+			} else {
+				return nil
+			}
+		}
+		panic(fmt.Sprintf("filter : expected boolean value, recieved %v", res))
+	}
+
+	if fnok && pok {
+		return flt(&pair)
+	}
+	panic("filter : expected function and list")
 }
 
 type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
@@ -180,19 +208,20 @@ var inbuilt map[string]FunctionInfo
 
 func init() {
 	inbuilt = map[string]FunctionInfo{
-		"cons":  {cons, true},
-		"first": {first, true},
-		"tail":  {tail, true},
-		"=":     {equals, true},
-		"+":     {plusAll, true},
-		"-":     {minusAll, true},
-		"*":     {multiplyAll, true},
-		"%":     {mod, true},
-		"apply": {apply, false},
-		"if":    {iff, false},
-		"def":   {def, false},
-		"do":    {do, false},
-		"range": {rnge, true},
-		"fn":    {fn, false},
+		"cons":   {cons, true},
+		"first":  {first, true},
+		"tail":   {tail, true},
+		"=":      {equals, true},
+		"+":      {plusAll, true},
+		"-":      {minusAll, true},
+		"*":      {multiplyAll, true},
+		"%":      {mod, true},
+		"apply":  {apply, false},
+		"if":     {iff, false},
+		"def":    {def, false},
+		"do":     {do, false},
+		"range":  {rnge, true},
+		"fn":     {fn, false},
+		"filter": {filter, true},
 	}
 }
