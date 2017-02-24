@@ -179,14 +179,12 @@ func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 			if bool(include) {
 				if p.tail != nil {
 					return &P{head, flt(p.tail)}
-				} else {
-					return &P{head, nil}
 				}
+				return &P{head, nil}
 			} else if p.tail != nil {
 				return flt(p.tail)
-			} else {
-				return nil
 			}
+			return nil
 		}
 		panic(fmt.Sprintf("filter : expected boolean value, recieved %v", res))
 	}

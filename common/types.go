@@ -110,12 +110,10 @@ func (r REF) EvaluateToRef(sco interfaces.Scope) REF {
 	if ok {
 		if resolvedRef, ok := resolved.(REF); ok {
 			return resolvedRef.EvaluateToRef(sco)
-		} else {
-			return r
 		}
-	} else {
 		return r
 	}
+	return r
 }
 
 // LAZYP (Lazily evaluated Pair)
@@ -154,8 +152,7 @@ func (l LAZYP) ToSlice(sco interfaces.Scope) []interfaces.Type {
 	}
 }
 
-// VEC
-// is a Vector or array
+// VEC is a Vector or array
 type VEC struct {
 	Vector []interfaces.Type
 }
@@ -173,8 +170,7 @@ func (v VEC) Get(loc int) interfaces.Type {
 	return v.Vector[loc]
 }
 
-// FN
-// acts as storage for a reusable Function by storing a set of arguments to a function and the function expression itself
+// FN acts as storage for a reusable Function by storing a set of arguments to a function and the function expression itself
 type FN struct {
 	Arguments  VEC
 	Expression EXP

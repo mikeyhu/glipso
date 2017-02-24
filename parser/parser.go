@@ -1,5 +1,5 @@
 /*
-The parser package takes a string (either in memony or in a file) representation of some code and parses it into a tree of Expressions
+Package parser takes a string (either in memony or in a file) representation of some code and parses it into a tree of Expressions
 */
 package parser
 
