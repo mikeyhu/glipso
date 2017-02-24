@@ -80,6 +80,7 @@ func first(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	if ok {
 		return pair.head
 	}
+	fmt.Printf("pair? %v : %v\n", arguments[0], pair)
 	panic("Panic - Cannot get head of non Pair type")
 }
 
@@ -190,9 +191,29 @@ func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	}
 
 	if fnok && pok {
-		return flt(&pair)
+		return *flt(&pair)
 	}
 	panic("filter : expected function and list")
+}
+
+func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	fn, fnok := arguments[0].(FN)
+	pair, pok := arguments[1].(P)
+
+	var mp func(*P) *P
+	mp = func(p *P) *P {
+		head := p.head
+		res := EXP{Function: fn, Arguments: []interfaces.Type{head}}.Evaluate(sco.NewChildScope())
+		if p.tail != nil {
+			return &P{res, mp(p.tail)}
+		}
+		return &P{res, nil}
+	}
+
+	if fnok && pok {
+		return *mp(&pair)
+	}
+	panic("map : expected function and list ")
 }
 
 type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
@@ -221,5 +242,6 @@ func init() {
 		"range":  {rnge, true},
 		"fn":     {fn, false},
 		"filter": {filter, true},
+		"map":    {mapp, true},
 	}
 }

@@ -110,3 +110,15 @@ func TestFilterEvenNumbers(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
+
+func TestMapAdd1(t *testing.T) {
+	code := `
+	(do
+		(def add1 (fn [a] (+ a 1)))
+		(first (map add1 (cons 1)))
+	)
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(2), result)
+}

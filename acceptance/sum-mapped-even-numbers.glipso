@@ -1,0 +1,8 @@
+code:
+(do
+    (def even (fn [a] (= (% a 2) 0)))
+    (def add1 (fn [a] (+ a 1)))
+    (apply + (map add1 (filter even (cons 5 (cons 10 (cons 15 (cons 20)))))))
+)
+expect:
+32
