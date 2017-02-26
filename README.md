@@ -11,15 +11,17 @@ Glipso has *very few* features. So far it supports the following functions:
 (+ arg...)              sum all arguments
 (- arg...)              minus all arguments from the first argument
 (apply func list)       apply list of items as arguments to func
-(def var exp)           set a variable in the global environment
-(if test exp1 exp2)     if test is 'true' evaluate exp1, otherwise evaluate exp2
 (cons arg list?)        add arg to beginning of list. If list is not provided then creates a new list
-(first list)            get first element in list
-(tail list)             get tail of the list
-(do exp...)             run the expressions in order
-(range start end)       creates a lazily evaluated list from start to end (inclusive)
-(fn [args] exp)         creates a function that accepts n arguments are an expression
+(def var exp)           set a variable in the global environment
 (defn name [args] exp)  performs 'def' and 'fn' functions together
+(do exp...)             run the expressions in order
+(filter fn list)        filter out items in a list by applying fn to them and dropping false responses
+(first list)            get first element in list
+(fn [args] exp)         creates a function that accepts n arguments are an expression
+(if test exp1 exp2)     if test is 'true' evaluate exp1, otherwise evaluate exp2
+(map fn list)           generate a new list by applying fn to each element in a list
+(range start end)       creates a lazily evaluated list from start to end (inclusive)
+(tail list)             get tail of the list
 ```
 
 ### Types
@@ -32,6 +34,7 @@ P   pair/list
 EXP expression
 REF reference
 VEC Vector
+S   String
 ```
 
 ### Example Code
@@ -67,7 +70,7 @@ echo "(+ 1 2 3)" | ./glipso
 
 In no particular order:
 
-* implement `map` and `filter` functions
+* make `map` and `filter` functions work with lazy lists
 * add function to create a lazy pair
 * make list functions work on lazy, non-lazy and vector lists
 * add initial set of functions written in Lisp, i.e. some kind of Prelude
