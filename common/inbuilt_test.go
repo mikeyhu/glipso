@@ -107,3 +107,75 @@ func TestEvaluateModOdd(t *testing.T) {
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(1), result)
 }
+
+func TestLessThanIntegersFirstIsHigher(t *testing.T) {
+	exp := EXP{Function: REF("<"), Arguments: []interfaces.Type{I(6), I(1)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestLessThanIntegersFirstIsLower(t *testing.T) {
+	exp := EXP{Function: REF("<"), Arguments: []interfaces.Type{I(1), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(true), result)
+}
+
+func TestLessThanIntegersArgumentsAreTheSame(t *testing.T) {
+	exp := EXP{Function: REF("<"), Arguments: []interfaces.Type{I(6), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestGreaterThanIntegersFirstIsHigher(t *testing.T) {
+	exp := EXP{Function: REF(">"), Arguments: []interfaces.Type{I(6), I(1)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(true), result)
+}
+
+func TestGreaterThanIntegersFirstIsLower(t *testing.T) {
+	exp := EXP{Function: REF(">"), Arguments: []interfaces.Type{I(1), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestGreaterThanIntegersArgumentsAreTheSame(t *testing.T) {
+	exp := EXP{Function: REF(">"), Arguments: []interfaces.Type{I(6), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestLessThanEqualIntegersFirstIsHigher(t *testing.T) {
+	exp := EXP{Function: REF("<="), Arguments: []interfaces.Type{I(6), I(1)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestLessThanEqualIntegersFirstIsLower(t *testing.T) {
+	exp := EXP{Function: REF("<="), Arguments: []interfaces.Type{I(1), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(true), result)
+}
+
+func TestLessThanEqualIntegersArgumentsAreTheSame(t *testing.T) {
+	exp := EXP{Function: REF("<="), Arguments: []interfaces.Type{I(6), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(true), result)
+}
+
+func TestGreaterThanEqualIntegersFirstIsHigher(t *testing.T) {
+	exp := EXP{Function: REF(">="), Arguments: []interfaces.Type{I(6), I(1)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(true), result)
+}
+
+func TestGreaterThanEqualIntegersFirstIsLower(t *testing.T) {
+	exp := EXP{Function: REF(">="), Arguments: []interfaces.Type{I(1), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestGreaterThanEqualIntegersArgumentsAreTheSame(t *testing.T) {
+	exp := EXP{Function: REF(">="), Arguments: []interfaces.Type{I(6), I(6)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(true), result)
+}

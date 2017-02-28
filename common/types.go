@@ -22,9 +22,35 @@ func (i I) Int() int {
 }
 
 // Equals checks equality with another item of type Type
-func (i I) Equals(o interfaces.Type) B {
+func (i I) Equals(o interfaces.Equalable) interfaces.Type {
 	if other, ok := o.(I); ok {
 		return B(i.Int() == other.Int())
+	}
+	return B(false)
+}
+
+func (i I) CompareTo(o interfaces.Comparable) int {
+	if other, ok := o.(I); ok {
+		if i.Int() < other.Int() {
+			return -1
+		} else if i.Int() == other.Int() {
+			return 0
+		}
+		return 1
+	}
+	panic(fmt.Sprintf("CompareTo : Cannot compare %v to %v", i, o))
+}
+
+func (i I) LessThan(o interfaces.Comparable) interfaces.Type {
+	if other, ok := o.(I); ok {
+		return B(i.Int() < other.Int())
+	}
+	return B(false)
+}
+
+func (i I) GreaterThan(o interfaces.Comparable) interfaces.Type {
+	if other, ok := o.(I); ok {
+		return B(i.Int() > other.Int())
 	}
 	return B(false)
 }
@@ -46,7 +72,7 @@ func (b B) Bool() bool {
 }
 
 // Equals checks equality with another item of type Type
-func (b B) Equals(o interfaces.Type) B {
+func (b B) Equals(o interfaces.Equalable) interfaces.Type {
 	if other, ok := o.(B); ok {
 		return B(b.Bool() == other.Bool())
 	}

@@ -19,3 +19,11 @@ type Scope interface {
 	CreateRef(ref Type, arg Type) Type
 	NewChildScope() Scope
 }
+
+type Equalable interface {
+	Equals(Equalable) Type
+}
+
+type Comparable interface {
+	CompareTo(Comparable) int
+}

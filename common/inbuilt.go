@@ -51,14 +51,49 @@ func mod(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func equals(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	switch t := arguments[0].(type) {
-	case B:
-		return t.Equals(arguments[1])
-	case I:
-		return t.Equals(arguments[1])
-	default:
-		panic("Equals : unsupported type")
+	first, fok := arguments[0].(interfaces.Equalable)
+	second, sok := arguments[1].(interfaces.Equalable)
+
+	if fok && sok {
+		return first.Equals(second)
 	}
+	panic(fmt.Sprintf("Equals : unsupported type %v  or %v\n", arguments[0], arguments[1]))
+}
+
+func lessThan(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	first, fok := arguments[0].(interfaces.Comparable)
+	second, sok := arguments[1].(interfaces.Comparable)
+	if fok && sok {
+		return B(first.CompareTo(second) < 0)
+	}
+	panic(fmt.Sprintf("LessThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
+}
+
+func lessThanEqual(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	first, fok := arguments[0].(interfaces.Comparable)
+	second, sok := arguments[1].(interfaces.Comparable)
+	if fok && sok {
+		return B(first.CompareTo(second) <= 0)
+	}
+	panic(fmt.Sprintf("LessThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
+}
+
+func greaterThan(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	first, fok := arguments[0].(interfaces.Comparable)
+	second, sok := arguments[1].(interfaces.Comparable)
+	if fok && sok {
+		return B(first.CompareTo(second) > 0)
+	}
+	panic(fmt.Sprintf("GreaterThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
+}
+
+func greaterThanEqual(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	first, fok := arguments[0].(interfaces.Comparable)
+	second, sok := arguments[1].(interfaces.Comparable)
+	if fok && sok {
+		return B(first.CompareTo(second) >= 0)
+	}
+	panic(fmt.Sprintf("GreaterThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
 }
 
 func cons(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
@@ -235,6 +270,10 @@ func init() {
 		"-":      {minusAll, true},
 		"*":      {multiplyAll, true},
 		"%":      {mod, true},
+		"<":      {lessThan, true},
+		">":      {greaterThan, true},
+		"<=":     {lessThanEqual, true},
+		">=":     {greaterThanEqual, true},
 		"apply":  {apply, false},
 		"if":     {iff, false},
 		"def":    {def, false},
