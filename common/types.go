@@ -29,6 +29,7 @@ func (i I) Equals(o interfaces.Equalable) interfaces.Type {
 	return B(false)
 }
 
+// CompareTo compares one I to another I and returns -1, 0 or 1
 func (i I) CompareTo(o interfaces.Comparable) int {
 	if other, ok := o.(I); ok {
 		if i.Int() < other.Int() {
@@ -39,20 +40,6 @@ func (i I) CompareTo(o interfaces.Comparable) int {
 		return 1
 	}
 	panic(fmt.Sprintf("CompareTo : Cannot compare %v to %v", i, o))
-}
-
-func (i I) LessThan(o interfaces.Comparable) interfaces.Type {
-	if other, ok := o.(I); ok {
-		return B(i.Int() < other.Int())
-	}
-	return B(false)
-}
-
-func (i I) GreaterThan(o interfaces.Comparable) interfaces.Type {
-	if other, ok := o.(I); ok {
-		return B(i.Int() > other.Int())
-	}
-	return B(false)
 }
 
 // B (Boolean)
@@ -122,6 +109,8 @@ func (r REF) IsType() {}
 func (r REF) String() string {
 	return fmt.Sprintf("%v", string(r))
 }
+
+// Evaluate resolves a REF to something in scope
 func (r REF) Evaluate(sco interfaces.Scope) interfaces.Type {
 	if resolved, ok := sco.ResolveRef(r); ok {
 		if evaluatable, ok := resolved.(*EXP); ok {
@@ -131,6 +120,8 @@ func (r REF) Evaluate(sco interfaces.Scope) interfaces.Type {
 	}
 	panic(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
 }
+
+// EvaluateToRef resolves a REF down to another REF
 func (r REF) EvaluateToRef(sco interfaces.Scope) REF {
 	resolved, ok := sco.ResolveRef(r)
 	if ok {
@@ -210,9 +201,13 @@ func (f FN) String() string {
 	return fmt.Sprintf("FN(%v, %v)", f.Arguments, f.Expression)
 }
 
+// S provides a type for string values
 type S string
 
+// IsType for S
 func (s S) IsType() {}
+
+//String output for S
 func (s S) String() string {
 	return string(s)
 }

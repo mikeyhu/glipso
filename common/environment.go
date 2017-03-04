@@ -36,6 +36,7 @@ func (env Environment) NewChildScope() interfaces.Scope {
 	}
 }
 
+// DisplayEnvironment is used to display environment information for internal debugging
 func (env Environment) DisplayEnvironment() {
 	env.displayEnvironment(0)
 }

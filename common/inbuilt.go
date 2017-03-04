@@ -7,6 +7,7 @@ import (
 
 type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
 
+// FunctionInfo provides information about a built in function
 type FunctionInfo struct {
 	function     evaluator
 	evaluateArgs bool
@@ -289,17 +290,12 @@ func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	fmt.Printf("lazypair\n")
-	sco.(Environment).DisplayEnvironment()
 	head := arguments[0]
 	if h, ok := head.(interfaces.Evaluatable); ok {
 		head = h.Evaluate(sco)
 	}
 	if len(arguments) > 1 {
 		if tail, ok := arguments[1].(interfaces.Evaluatable); ok {
-			fmt.Println("Adding Deferred Eval to tail: ", tail)
-			sco.(Environment).DisplayEnvironment()
-
 			return LAZYP{head, BindEvaluation(tail, sco)}
 		}
 		panic(fmt.Sprintf("lazypair : expected EXP got %v", arguments[1]))

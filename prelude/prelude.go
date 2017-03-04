@@ -6,6 +6,7 @@ import (
 	"github.com/mikeyhu/glipso/parser"
 )
 
+// ParsePrelude loads a number of definitions such as functions into global scope
 func ParsePrelude(scope interfaces.Scope) {
 	prelude := `
 	(do
