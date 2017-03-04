@@ -24,6 +24,7 @@ func (exp *EXP) String() string {
 
 // Evaluate evaluates the Function provided with the Arguments and Scope
 func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
+	exp.printStartExpression()
 	env := sco.NewChildScope()
 	var result interfaces.Type
 	function := exp.Function
@@ -44,7 +45,7 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 		result = exp.evaluateFN(toFN, env)
 	}
 
-	exp.printExpression(result)
+	exp.printEndExpression(result)
 	if exp, ok := result.(*EXP); ok {
 		result = exp.Evaluate(env)
 	}
@@ -56,7 +57,11 @@ func (exp *EXP) evaluateFN(fn FN, env interfaces.Scope) interfaces.Type {
 		panic("Invalid number of arguments")
 	}
 	for i, v := range fn.Arguments.Vector {
-		env.CreateRef(v.(REF), exp.Arguments[i])
+		if ev, ok := exp.Arguments[i].(interfaces.Evaluatable); ok {
+			env.CreateRef(v.(REF), ev.Evaluate(env))
+		} else {
+			env.CreateRef(v.(REF), exp.Arguments[i])
+		}
 	}
 	return fn.Expression.Evaluate(env)
 }
@@ -79,7 +84,13 @@ func (exp *EXP) evaluateInbuilt(fi FunctionInfo, env interfaces.Scope) interface
 	return fi.function(evaluatedArgs, env)
 }
 
-func (exp *EXP) printExpression(result interfaces.Type) {
+func (exp *EXP) printStartExpression() {
+	if DEBUG {
+		fmt.Printf("%v = ?\n", exp)
+	}
+}
+
+func (exp *EXP) printEndExpression(result interfaces.Type) {
 	if DEBUG {
 		fmt.Printf("%v = %v\n", exp, result)
 	}

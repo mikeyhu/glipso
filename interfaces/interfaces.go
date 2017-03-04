@@ -13,6 +13,8 @@ type Type interface {
 
 // Iterable interfaces are pairs, lazypairs and anything that can be iterated or converted to a slice
 type Iterable interface {
+	Head() Type
+	HasTail() bool
 	Iterate(Scope) Iterable
 	ToSlice(Scope) []Type
 }
@@ -22,6 +24,7 @@ type Scope interface {
 	ResolveRef(argument Type) (Type, bool)
 	CreateRef(ref Type, arg Type) Type
 	NewChildScope() Scope
+	String() string
 }
 
 // Equalable interfaces are types that can be checked for sameness

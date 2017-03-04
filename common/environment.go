@@ -25,14 +25,21 @@ func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
 
 // CreateRef will create a variable in this scope
 func (env Environment) CreateRef(name interfaces.Type, arg interfaces.Type) interfaces.Type {
+	if DEBUG {
+		fmt.Printf("Adding %v %v to %v\n", name, arg, env)
+	}
 	env.variables[name.(REF).String()] = arg
 	return name
 }
 
 // NewChildScope creates new scope that inherits from this one
 func (env Environment) NewChildScope() interfaces.Scope {
+	id := nextScopeID()
+	if DEBUG {
+		fmt.Printf("New scope %d from %d\n", id, env.id)
+	}
 	return Environment{
-		NextScopeId(),
+		id,
 		map[string]interfaces.Type{},
 		&env,
 	}
@@ -40,7 +47,9 @@ func (env Environment) NewChildScope() interfaces.Scope {
 
 // DisplayEnvironment is used to display environment information for internal debugging
 func (env Environment) DisplayEnvironment() {
-	env.displayEnvironment(0)
+	if DEBUG {
+		env.displayEnvironment(0)
+	}
 }
 
 func (env Environment) displayEnvironment(i int) {
@@ -52,19 +61,23 @@ func (env Environment) displayEnvironment(i int) {
 	}
 }
 
+func (env Environment) String() string {
+	return fmt.Sprintf("ENV{%d}", env.id)
+}
+
 // GlobalEnvironment acts as the global scope for variables
 var GlobalEnvironment Environment
 
 func init() {
 	GlobalEnvironment = Environment{
-		id:        NextScopeId(),
+		id:        nextScopeID(),
 		variables: map[string]interfaces.Type{},
 	}
 }
 
-var scopeId = 0
+var scopeID = 0
 
-func NextScopeId() int {
-	scopeId = scopeId + 1
-	return scopeId
+func nextScopeID() int {
+	scopeID = scopeID + 1
+	return scopeID
 }

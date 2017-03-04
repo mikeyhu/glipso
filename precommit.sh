@@ -20,7 +20,7 @@ echo "
 Running Acceptance Tests:
 "
 ERR=0
-FILES=acceptance/*
+FILES=acceptance/*.glipso
 for f in $FILES
 do
   CODE=$(awk '/expect:/{found=0} {if(found) print} /code:/{found=1}' $f)

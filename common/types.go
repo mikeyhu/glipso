@@ -80,6 +80,16 @@ func (p P) String() string {
 	return fmt.Sprintf("P(%v %v)", p.head, p.tail)
 }
 
+// Head returns the Head or the P
+func (p P) Head() interfaces.Type {
+	return p.head
+}
+
+// HasTail returns bool showing whether the P has a tail
+func (p P) HasTail() bool {
+	return p.tail != nil
+}
+
 // Iterate not supported yet
 func (p P) Iterate(sco interfaces.Scope) interfaces.Iterable {
 	panic("Iterate called on PAIR")
@@ -112,6 +122,10 @@ func (r REF) String() string {
 
 // Evaluate resolves a REF to something in scope
 func (r REF) Evaluate(sco interfaces.Scope) interfaces.Type {
+	if DEBUG {
+		fmt.Printf("%v being looked up in:\n", r)
+	}
+	sco.(Environment).DisplayEnvironment()
 	if resolved, ok := sco.ResolveRef(r); ok {
 		if evaluatable, ok := resolved.(*EXP); ok {
 			return evaluatable //.Evaluate(sco)
@@ -148,9 +162,19 @@ func (l LAZYP) String() string {
 	return fmt.Sprintf("LAZYP(%v %v)", l.head, l.tail)
 }
 
+// Head returns the Head of the LAZYP
+func (l LAZYP) Head() interfaces.Type {
+	return l.head
+}
+
+// HasTail returns true if the LAZYP has an evaluatable tail
+func (l LAZYP) HasTail() bool {
+	return l.tail != nil
+}
+
 // Iterate will evaluate the tail of the LAZYP
 func (l LAZYP) Iterate(sco interfaces.Scope) interfaces.Iterable {
-	if nextIter, ok := l.tail.Evaluate(sco).(LAZYP); ok {
+	if nextIter, ok := l.tail.Evaluate(sco).(interfaces.Iterable); ok {
 		return nextIter
 	}
 	panic(fmt.Sprintf("Iterate : expected an LAZYP, got %v", l))
@@ -159,13 +183,14 @@ func (l LAZYP) Iterate(sco interfaces.Scope) interfaces.Iterable {
 // ToSlice converts a LAZYP to a slice by iterating through it
 func (l LAZYP) ToSlice(sco interfaces.Scope) []interfaces.Type {
 	slice := []interfaces.Type{}
-	next := l
+	var next interfaces.Iterable = l
 	for {
-		slice = append(slice, next.head)
-		if next.tail == nil {
+		slice = append(slice, next.Head())
+
+		if !next.HasTail() {
 			return slice
 		}
-		next = next.Iterate(sco.NewChildScope()).(LAZYP)
+		next = next.Iterate(sco.NewChildScope()).(interfaces.Iterable)
 	}
 }
 
