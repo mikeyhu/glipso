@@ -87,7 +87,7 @@ func addElementToArray(s scanner.Scanner, list []interfaces.Type, token string) 
 		if err != nil {
 			return s, nil, err
 		}
-		return s, append(list, *exp), nil
+		return s, append(list, exp), nil
 	}
 	if token == "[" {
 		var vec *common.VEC

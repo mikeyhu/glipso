@@ -134,14 +134,14 @@ func apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	s, okRef := arguments[0].(REF)
 	p, okPair := arguments[1].(interfaces.Iterable)
 	if okRef && okPair {
-		return EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}
+		return &EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}
 	}
 	panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 }
 
 func iff(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	var test interfaces.Type
-	if exp, ok := arguments[0].(EXP); ok {
+	if exp, ok := arguments[0].(*EXP); ok {
 		test = exp.Evaluate(sco)
 	} else {
 		test = arguments[0]
@@ -198,9 +198,9 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	}
 
 	if arg1, ok := arguments[1].(REF); ok {
-		return FN{argVec, arg1.Evaluate(sco.NewChildScope()).(EXP)}
+		return FN{argVec, arg1.Evaluate(sco.NewChildScope()).(*EXP)}
 	}
-	return FN{argVec, arguments[1].(EXP)}
+	return FN{argVec, arguments[1].(*EXP)}
 }
 
 func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
@@ -210,7 +210,7 @@ func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	var flt func(*P) *P
 	flt = func(p *P) *P {
 		head := p.head
-		res := EXP{Function: fn, Arguments: []interfaces.Type{head}}.Evaluate(sco.NewChildScope())
+		res := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
 		if include, iok := res.(B); iok {
 			if bool(include) {
 				if p.tail != nil {
@@ -238,7 +238,7 @@ func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	var mp func(*P) *P
 	mp = func(p *P) *P {
 		head := p.head
-		res := EXP{Function: fn, Arguments: []interfaces.Type{head}}.Evaluate(sco.NewChildScope())
+		res := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
 		if p.tail != nil {
 			return &P{res, mp(p.tail)}
 		}

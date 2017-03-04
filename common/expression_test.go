@@ -25,9 +25,9 @@ func TestEvaluateMinusWith2Arguments(t *testing.T) {
 }
 
 func TestEvaluateNestedFunction(t *testing.T) {
-	exp := EXP{Function: REF("+"), Arguments: []interfaces.Type{
+	exp := &EXP{Function: REF("+"), Arguments: []interfaces.Type{
 		I(1),
-		EXP{Function: REF("-"), Arguments: []interfaces.Type{I(2), I(1)}}}}
+		&EXP{Function: REF("-"), Arguments: []interfaces.Type{I(2), I(1)}}}}
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(2), result)
 }
@@ -35,7 +35,7 @@ func TestEvaluateNestedFunction(t *testing.T) {
 func TestEvaluateFN(t *testing.T) {
 	exp := EXP{Function: FN{
 		VEC{[]interfaces.Type{REF("a")}},
-		EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
+		&EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
 		Arguments: []interfaces.Type{I(2)}}
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(3), result)
@@ -44,7 +44,7 @@ func TestEvaluateFN(t *testing.T) {
 func TestEvaluateFNHasMoreArgumentsThanProvided(t *testing.T) {
 	exp := EXP{Function: FN{
 		VEC{[]interfaces.Type{REF("a"), REF("b")}},
-		EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
+		&EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
 		Arguments: []interfaces.Type{I(2)}}
 
 	assert.Panics(t, func() {
@@ -55,7 +55,7 @@ func TestEvaluateFNHasMoreArgumentsThanProvided(t *testing.T) {
 func TestEvaluateFNHasLessArgumentsThanProvided(t *testing.T) {
 	exp := EXP{Function: FN{
 		VEC{[]interfaces.Type{REF("a")}},
-		EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
+		&EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
 		Arguments: []interfaces.Type{I(2), I(3)}}
 
 	assert.Panics(t, func() {
