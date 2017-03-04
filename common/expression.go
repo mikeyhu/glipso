@@ -80,3 +80,20 @@ func (exp *EXP) printExpression(result interfaces.Type) {
 		fmt.Printf("%v = %v\n", exp, result)
 	}
 }
+
+type BOUNDEXP struct {
+	Evaluatable interfaces.Evaluatable
+	Scope       interfaces.Scope
+}
+
+func (bexp *BOUNDEXP) Evaluate(sco interfaces.Scope) interfaces.Type {
+	return bexp.Evaluatable.Evaluate(bexp.Scope)
+}
+
+func (bexp *BOUNDEXP) String() string {
+	return fmt.Sprintf("BEXP(%v %v)", bexp.Evaluatable, bexp.Scope)
+}
+
+func BindEvaluation(ev interfaces.Evaluatable, sco interfaces.Scope) interfaces.Evaluatable {
+	return &BOUNDEXP{ev, sco}
+}

@@ -146,7 +146,7 @@ func (r REF) EvaluateToRef(sco interfaces.Scope) REF {
 // head operates like Pair, tail should be an expression that returns another LAZYP
 type LAZYP struct {
 	head interfaces.Type
-	tail *EXP
+	tail interfaces.Evaluatable
 }
 
 // IsType for LAZYP

@@ -122,3 +122,15 @@ func TestMapAdd1(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(2), result)
 }
+
+func TestLazyPairHasAccessToClosure(t *testing.T) {
+	code := `
+	(do
+		(def hasclosure (fn [a b] (lazypair a (lazypair b))))
+		(apply + (hasclosure 1 10))
+	)
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(11), result)
+}

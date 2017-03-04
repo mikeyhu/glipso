@@ -133,10 +133,12 @@ func apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	}
 	s, okRef := arguments[0].(REF)
 	p, okPair := arguments[1].(interfaces.Iterable)
-	if okRef && okPair {
-		return &EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}
+	if !okRef {
+		panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
+	} else if !okPair {
+		panic(fmt.Sprintf("Panic - expected pair, found %v", arguments[1]))
 	}
-	panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
+	return &EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}
 }
 
 func iff(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
@@ -251,6 +253,25 @@ func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	panic("map : expected function and list ")
 }
 
+func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	fmt.Printf("lazypair\n")
+	sco.(Environment).DisplayEnvironment()
+	head := arguments[0]
+	if h, ok := head.(interfaces.Evaluatable); ok {
+		head = h.Evaluate(sco)
+	}
+	if len(arguments) > 1 {
+		if tail, ok := arguments[1].(interfaces.Evaluatable); ok {
+			fmt.Println("Adding Deferred Eval to tail: ", tail)
+			sco.(Environment).DisplayEnvironment()
+
+			return LAZYP{head, BindEvaluation(tail, sco)}
+		}
+		panic(fmt.Sprintf("lazypair : expected EXP got %v", arguments[1]))
+	}
+	return LAZYP{head, nil}
+}
+
 type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
 
 type FunctionInfo struct {
@@ -262,25 +283,26 @@ var inbuilt map[string]FunctionInfo
 
 func init() {
 	inbuilt = map[string]FunctionInfo{
-		"cons":   {cons, true},
-		"first":  {first, true},
-		"tail":   {tail, true},
-		"=":      {equals, true},
-		"+":      {plusAll, true},
-		"-":      {minusAll, true},
-		"*":      {multiplyAll, true},
-		"%":      {mod, true},
-		"<":      {lessThan, true},
-		">":      {greaterThan, true},
-		"<=":     {lessThanEqual, true},
-		">=":     {greaterThanEqual, true},
-		"apply":  {apply, false},
-		"if":     {iff, false},
-		"def":    {def, false},
-		"do":     {do, false},
-		"range":  {rnge, true},
-		"fn":     {fn, false},
-		"filter": {filter, true},
-		"map":    {mapp, true},
+		"cons":     {cons, true},
+		"first":    {first, true},
+		"tail":     {tail, true},
+		"=":        {equals, true},
+		"+":        {plusAll, true},
+		"-":        {minusAll, true},
+		"*":        {multiplyAll, true},
+		"%":        {mod, true},
+		"<":        {lessThan, true},
+		">":        {greaterThan, true},
+		"<=":       {lessThanEqual, true},
+		">=":       {greaterThanEqual, true},
+		"apply":    {apply, false},
+		"if":       {iff, false},
+		"def":      {def, false},
+		"do":       {do, false},
+		"range":    {rnge, true},
+		"fn":       {fn, false},
+		"filter":   {filter, true},
+		"map":      {mapp, true},
+		"lazypair": {lazypair, false},
 	}
 }
