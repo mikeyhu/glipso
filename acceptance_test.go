@@ -135,7 +135,7 @@ func TestLazyPairHasAccessToClosure(t *testing.T) {
 	assert.Equal(t, common.I(11), result)
 }
 
-func TestLazyPairCanBeUsedToCreateRangw(t *testing.T) {
+func TestLazyPairCanBeUsedToCreateRange(t *testing.T) {
 	code := `
 	(do
 		(def rangefn
@@ -146,10 +146,13 @@ func TestLazyPairCanBeUsedToCreateRangw(t *testing.T) {
 				)
 			)
 		)
-		(apply + (rangefn 1 5))
+		(=
+			(apply + (rangefn 1 5))
+			(apply + (range 1 5))
+		)
 	)
 	`
 	exp, _ := parser.Parse(code)
 	result := exp.Evaluate(common.GlobalEnvironment)
-	assert.Equal(t, common.I(15), result)
+	assert.Equal(t, common.B(true), result)
 }
