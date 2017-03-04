@@ -5,6 +5,41 @@ import (
 	"github.com/mikeyhu/glipso/interfaces"
 )
 
+type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
+
+type FunctionInfo struct {
+	function     evaluator
+	evaluateArgs bool
+}
+
+var inbuilt map[string]FunctionInfo
+
+func init() {
+	inbuilt = map[string]FunctionInfo{
+		"=":        {equals, true},
+		"+":        {plusAll, true},
+		"-":        {minusAll, true},
+		"*":        {multiplyAll, true},
+		"%":        {mod, true},
+		"<":        {lessThan, true},
+		">":        {greaterThan, true},
+		"<=":       {lessThanEqual, true},
+		">=":       {greaterThanEqual, true},
+		"apply":    {apply, false},
+		"cons":     {cons, true},
+		"def":      {def, false},
+		"do":       {do, false},
+		"if":       {iff, false},
+		"filter":   {filter, true},
+		"first":    {first, true},
+		"fn":       {fn, false},
+		"lazypair": {lazypair, false},
+		"map":      {mapp, true},
+		"range":    {rnge, true},
+		"tail":     {tail, true},
+	}
+}
+
 func plusAll(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	all := I(0)
 	for _, v := range arguments {
@@ -270,39 +305,4 @@ func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type
 		panic(fmt.Sprintf("lazypair : expected EXP got %v", arguments[1]))
 	}
 	return LAZYP{head, nil}
-}
-
-type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
-
-type FunctionInfo struct {
-	function     evaluator
-	evaluateArgs bool
-}
-
-var inbuilt map[string]FunctionInfo
-
-func init() {
-	inbuilt = map[string]FunctionInfo{
-		"cons":     {cons, true},
-		"first":    {first, true},
-		"tail":     {tail, true},
-		"=":        {equals, true},
-		"+":        {plusAll, true},
-		"-":        {minusAll, true},
-		"*":        {multiplyAll, true},
-		"%":        {mod, true},
-		"<":        {lessThan, true},
-		">":        {greaterThan, true},
-		"<=":       {lessThanEqual, true},
-		">=":       {greaterThanEqual, true},
-		"apply":    {apply, false},
-		"if":       {iff, false},
-		"def":      {def, false},
-		"do":       {do, false},
-		"range":    {rnge, true},
-		"fn":       {fn, false},
-		"filter":   {filter, true},
-		"map":      {mapp, true},
-		"lazypair": {lazypair, false},
-	}
 }
