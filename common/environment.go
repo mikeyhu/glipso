@@ -7,6 +7,7 @@ import (
 
 // Environment Provides a mechanism for creating and resolving variables
 type Environment struct {
+	id        int
 	variables map[string]interfaces.Type
 	parent    *Environment
 }
@@ -31,6 +32,7 @@ func (env Environment) CreateRef(name interfaces.Type, arg interfaces.Type) inte
 // NewChildScope creates new scope that inherits from this one
 func (env Environment) NewChildScope() interfaces.Scope {
 	return Environment{
+		NextScopeId(),
 		map[string]interfaces.Type{},
 		&env,
 	}
@@ -43,7 +45,7 @@ func (env Environment) DisplayEnvironment() {
 
 func (env Environment) displayEnvironment(i int) {
 	for k := range env.variables {
-		fmt.Printf("Scope[%d] %v := %v\n", i, k, env.variables[k])
+		fmt.Printf("Scope[%d %d] %v := %v\n", env.id, i, k, env.variables[k])
 	}
 	if env.parent != nil {
 		env.parent.displayEnvironment(i + 1)
@@ -55,6 +57,14 @@ var GlobalEnvironment Environment
 
 func init() {
 	GlobalEnvironment = Environment{
+		id:        NextScopeId(),
 		variables: map[string]interfaces.Type{},
 	}
+}
+
+var scopeId = 0
+
+func NextScopeId() int {
+	scopeId = scopeId + 1
+	return scopeId
 }
