@@ -10,7 +10,8 @@ import (
 func ParsePrelude(scope interfaces.Scope) {
 	prelude := `
 	(do
-		(def defn (fn [n a e] (def n (fn a e))))
+		(def defmacro (macro [n a e] (def n (macro a e))))
+		(defmacro defn [nn aa ee] (def nn (fn aa ee)))
 	)
 	`
 	exp, err := parser.Parse(prelude)

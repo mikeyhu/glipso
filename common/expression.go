@@ -29,10 +29,6 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 	var result interfaces.Type
 	function := exp.Function
 
-	if toEval, ok := function.(*EXP); ok {
-		function = toEval.Evaluate(env)
-	}
-
 	if toREF, ok := function.(REF); ok {
 		if fn, ok := env.ResolveRef(toREF); ok {
 			function = fn
@@ -41,8 +37,15 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 		}
 	}
 
-	if toFN, ok := function.(FN); ok {
-		result = exp.evaluateFN(toFN, env)
+	if toMacro, ok := function.(interfaces.Expandable); ok {
+		result = toMacro.Expand(exp.Arguments)
+	} else {
+		if toEval, ok := function.(*EXP); ok {
+			function = toEval.Evaluate(env)
+		}
+		if toFN, ok := function.(FN); ok {
+			result = exp.evaluateFN(toFN, env)
+		}
 	}
 
 	exp.printEndExpression(result)

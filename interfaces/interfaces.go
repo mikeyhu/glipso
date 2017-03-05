@@ -36,3 +36,8 @@ type Equalable interface {
 type Comparable interface {
 	CompareTo(Comparable) int
 }
+
+// Expandable interfaces are types that will be expanded prior to evaluation
+type Expandable interface {
+	Expand([]Type) Type
+}

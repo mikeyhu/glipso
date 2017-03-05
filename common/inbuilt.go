@@ -35,6 +35,7 @@ func init() {
 		"first":    {first, true},
 		"fn":       {fn, false},
 		"lazypair": {lazypair, false},
+		"macro":    {macro, false},
 		"map":      {mapp, true},
 		"range":    {rnge, true},
 		"tail":     {tail, true},
@@ -301,4 +302,8 @@ func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type
 		panic(fmt.Sprintf("lazypair : expected EXP got %v", arguments[1]))
 	}
 	return LAZYP{head, nil}
+}
+
+func macro(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	return MAC{arguments[0].(VEC), arguments[1].(*EXP)}
 }
