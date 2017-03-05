@@ -7,21 +7,24 @@ A basic Lisp written using Go to help me learn both Go and Lisp.
 Glipso has *very few* features. So far it supports the following functions:
 
 ```
-(= arg...)              return true if all arguments are equal, otherwise false
-(+ arg...)              sum all arguments
-(- arg...)              minus all arguments from the first argument
-(apply func list)       apply list of items as arguments to func
-(cons arg list?)        add arg to beginning of list. If list is not provided then creates a new list
-(def var exp)           set a variable in the global environment
-(defn name [args] exp)  performs 'def' and 'fn' functions together
-(do exp...)             run the expressions in order
-(filter fn list)        filter out items in a list by applying fn to them and dropping false responses
-(first list)            get first element in list
-(fn [args] exp)         creates a function that accepts n arguments are an expression
-(if test exp1 exp2)     if test is 'true' evaluate exp1, otherwise evaluate exp2
-(map fn list)           generate a new list by applying fn to each element in a list
-(range start end)       creates a lazily evaluated list from start to end (inclusive)
-(tail list)             get tail of the list
+(= arg...)                  return true if all arguments are equal, otherwise false
+(+ arg...)                  sum all arguments
+(- arg...)                  minus all arguments from the first argument
+(apply func list)           apply list of items as arguments to func
+(cons arg list?)            add arg to beginning of list. If list is not provided then creates a new list
+(def var exp)               set a variable in the global environment
+(defn name [args] exp)      performs 'def' and 'fn' functions together
+(defmacro name [args] exp)  performs 'def' and 'macro' functions together
+(do exp...)                 run the expressions in order
+(filter fn list)            filter out items in a list by applying fn to them and dropping false responses
+(first list)                get first element in list
+(fn [args] exp)             creates a function that accepts n arguments are an expression
+(if test exp1 exp2)         if test is 'true' evaluate exp1, otherwise evaluate exp2
+(lazypair a b)              returns a pair with head 'a' that will evaluate 'b' lazily to generate a tail
+(macro [args] exp)          creates a macro that will replace args in the exp with arguments provided for evaluation
+(map fn list)               generate a new list by applying fn to each element in a list
+(range start end)           creates a lazily evaluated list from start to end (inclusive)
+(tail list)                 get tail of the list
 ```
 
 ### Types
