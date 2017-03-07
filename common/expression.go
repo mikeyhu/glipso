@@ -59,14 +59,15 @@ func (exp *EXP) evaluateFN(fn FN, env interfaces.Scope) interfaces.Type {
 	if len(fn.Arguments.Vector) != len(exp.Arguments) {
 		panic("Invalid number of arguments")
 	}
+	fnenv := env.NewChildScope()
 	for i, v := range fn.Arguments.Vector {
 		if ev, ok := exp.Arguments[i].(interfaces.Evaluatable); ok {
-			env.CreateRef(v.(REF), ev.Evaluate(env))
+			fnenv.CreateRef(v.(REF), ev.Evaluate(env))
 		} else {
-			env.CreateRef(v.(REF), exp.Arguments[i])
+			fnenv.CreateRef(v.(REF), exp.Arguments[i])
 		}
 	}
-	return fn.Expression.Evaluate(env)
+	return fn.Expression.Evaluate(fnenv)
 }
 
 func (exp *EXP) evaluateInbuilt(fi FunctionInfo, env interfaces.Scope) interfaces.Type {
