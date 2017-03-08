@@ -1,0 +1,15 @@
+	(do
+	    (defn fibo [n a b]
+	        (if (< n 2)
+	            (+ a b)
+	            (fibo (- n 1) b (+ a b))
+	        )
+	    )
+		(defn fib [n]
+		    (if (< n 3)
+		        1
+		        (fibo (- n 2) 1 1)
+		    )
+        )
+		(fib 10)
+	)

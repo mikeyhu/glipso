@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/mikeyhu/glipso/common"
 	"github.com/mikeyhu/glipso/parser"
@@ -9,9 +10,14 @@ import (
 )
 
 func main() {
+	debug := flag.Bool("debug", false, "Enable debug output")
+	flag.Parse()
+
+	common.DEBUG = *debug
+	args := flag.Args()
+
 	env := common.GlobalEnvironment
 	prelude.ParsePrelude(env)
-	args := os.Args[1:]
 	var exp *common.EXP
 	if len(args) > 0 {
 		file, _ := os.Open(args[0])
