@@ -1,0 +1,15 @@
+code:
+(do
+		(def rangefn
+			(fn [s e]
+				(if (< s e)
+					(lazypair s (rangefn (+ s 1) e))
+					(cons s)
+				)
+			)
+		)
+		(apply + (range 1 15))
+	)
+
+expect:
+120

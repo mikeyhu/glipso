@@ -14,8 +14,10 @@ type Environment struct {
 
 // ResolveRef will try to resolve a provided reference to a value in this or parent scope
 func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
-	if result, ok := env.variables[ref.(REF).String()]; ok {
-		return result, true
+	if env.variables != nil {
+		if result, ok := env.variables[ref.(REF).String()]; ok {
+			return result, true
+		}
 	}
 	if env.parent != nil {
 		return env.parent.ResolveRef(ref)
@@ -24,9 +26,12 @@ func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
 }
 
 // CreateRef will create a variable in this scope
-func (env Environment) CreateRef(name interfaces.Type, arg interfaces.Type) interfaces.Type {
+func (env *Environment) CreateRef(name interfaces.Type, arg interfaces.Type) interfaces.Type {
 	if DEBUG {
 		fmt.Printf("Adding %v %v to %v\n", name, arg, env)
+	}
+	if env.variables == nil {
+		env.variables = map[string]interfaces.Type{}
 	}
 	env.variables[name.(REF).String()] = arg
 	return name
@@ -38,10 +43,9 @@ func (env Environment) NewChildScope() interfaces.Scope {
 	if DEBUG {
 		fmt.Printf("New scope %d from %d\n", id, env.id)
 	}
-	return Environment{
-		id,
-		map[string]interfaces.Type{},
-		&env,
+	return &Environment{
+		id:     id,
+		parent: &env,
 	}
 }
 
@@ -66,10 +70,10 @@ func (env Environment) String() string {
 }
 
 // GlobalEnvironment acts as the global scope for variables
-var GlobalEnvironment Environment
+var GlobalEnvironment *Environment
 
 func init() {
-	GlobalEnvironment = Environment{
+	GlobalEnvironment = &Environment{
 		id:        nextScopeID(),
 		variables: map[string]interfaces.Type{},
 	}
@@ -80,4 +84,11 @@ var scopeID = 0
 func nextScopeID() int {
 	scopeID = scopeID + 1
 	return scopeID
+}
+
+// DisplayDiagnostics outputs Information about the Scopes
+func (env Environment) DisplayDiagnostics() {
+	if DEBUG {
+		fmt.Printf("Total number of scopes created: %v", scopeID)
+	}
 }

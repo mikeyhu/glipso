@@ -25,15 +25,14 @@ func (exp *EXP) String() string {
 // Evaluate evaluates the Function provided with the Arguments and Scope
 func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 	exp.printStartExpression()
-	env := sco.NewChildScope()
 	var result interfaces.Type
 	function := exp.Function
 
 	if toREF, ok := function.(REF); ok {
-		if fn, ok := env.ResolveRef(toREF); ok {
+		if fn, ok := sco.ResolveRef(toREF); ok {
 			function = fn
 		} else if fi, ok := inbuilt[toREF.String()]; ok {
-			result = exp.evaluateInbuilt(fi, env)
+			result = exp.evaluateInbuilt(fi, sco.NewChildScope())
 		}
 	}
 
@@ -41,16 +40,16 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 		result = toMacro.Expand(exp.Arguments)
 	} else {
 		if toEval, ok := function.(*EXP); ok {
-			function = toEval.Evaluate(env)
+			function = toEval.Evaluate(sco)
 		}
 		if toFN, ok := function.(FN); ok {
-			result = exp.evaluateFN(toFN, env)
+			result = exp.evaluateFN(toFN, sco)
 		}
 	}
 
 	exp.printEndExpression(result)
 	if exp, ok := result.(*EXP); ok {
-		result = exp.Evaluate(env)
+		result = exp.Evaluate(sco)
 	}
 	return result
 }
@@ -78,7 +77,7 @@ func (exp *EXP) evaluateInbuilt(fi FunctionInfo, env interfaces.Scope) interface
 				arg = r.Evaluate(env)
 			}
 			if e, ok := arg.(interfaces.Evaluatable); ok {
-				arg = e.Evaluate(env.NewChildScope())
+				arg = e.Evaluate(env)
 			}
 			evaluatedArgs[p] = arg
 		}

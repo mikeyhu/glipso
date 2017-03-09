@@ -125,7 +125,7 @@ func (r REF) Evaluate(sco interfaces.Scope) interfaces.Type {
 	if DEBUG {
 		fmt.Printf("%v being looked up in:\n", r)
 	}
-	sco.(Environment).DisplayEnvironment()
+	sco.(*Environment).DisplayEnvironment()
 	if resolved, ok := sco.ResolveRef(r); ok {
 		if evaluatable, ok := resolved.(*EXP); ok {
 			return evaluatable //.Evaluate(sco)
