@@ -58,6 +58,9 @@ go build
 
 #test, build & run all acceptance tests
 ./precommit.sh
+
+#benchmark acceptance tests
+go test -bench=.
 ```
 
 ### Running

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/mikeyhu/glipso/common"
 	"github.com/mikeyhu/glipso/parser"
+	"github.com/mikeyhu/glipso/prelude"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -155,4 +156,43 @@ func TestLazyPairCanBeUsedToCreateRange(t *testing.T) {
 	exp, _ := parser.Parse(code)
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(true), result)
+}
+
+func BenchmarkSumRange(b *testing.B) {
+	code := "(apply + (range 1 15))"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		exp, _ := parser.Parse(code)
+		result := exp.Evaluate(common.GlobalEnvironment)
+		assert.Equal(b, common.I(120), result)
+	}
+}
+
+func BenchmarkSumRangefn(b *testing.B) {
+	prelude.ParsePrelude(common.GlobalEnvironment)
+
+	fn := `
+	(do
+		(def rangefn
+			(fn [s e]
+				(if (< s e)
+					(lazypair s (rangefn (+ s 1) e))
+					(cons s)
+				)
+			)
+		)
+	)`
+
+	exp, _ := parser.Parse(fn)
+	exp.Evaluate(common.GlobalEnvironment)
+
+	code := "(apply + (rangefn 1 15))"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		exp, _ := parser.Parse(code)
+		result := exp.Evaluate(common.GlobalEnvironment)
+		assert.Equal(b, common.I(120), result)
+	}
 }
