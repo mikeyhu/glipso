@@ -92,7 +92,10 @@ func (p P) HasTail() bool {
 
 // Iterate not supported yet
 func (p P) Iterate(sco interfaces.Scope) interfaces.Iterable {
-	panic("Iterate called on PAIR")
+	if p.HasTail() {
+		return p.tail
+	}
+	panic("Pair : Iterate called on p without tail")
 }
 
 // ToSlice returns an array from a P
@@ -226,6 +229,21 @@ func (f FN) String() string {
 	return fmt.Sprintf("FN(%v, %v)", f.Arguments, f.Expression)
 }
 
+func (f FN) Apply(arguments []interfaces.Type, env interfaces.Scope) interfaces.Type {
+	if len(f.Arguments.Vector) != len(arguments) {
+		panic("Invalid number of arguments")
+	}
+	fnenv := env.NewChildScope()
+	for i, v := range f.Arguments.Vector {
+		if ev, ok := arguments[i].(interfaces.Evaluatable); ok {
+			fnenv.CreateRef(v.(REF), ev.Evaluate(env))
+		} else {
+			fnenv.CreateRef(v.(REF), arguments[i])
+		}
+	}
+	return f.Expression.Evaluate(fnenv)
+}
+
 // S provides a type for string values
 type S string
 
@@ -236,3 +254,16 @@ func (s S) IsType() {}
 func (s S) String() string {
 	return string(s)
 }
+
+// NIL generally acts as a return type when a function performs a side effect
+type NIL struct{}
+
+// IsType for NIL
+func (n NIL) IsType() {}
+
+// String output for NIL
+func (n NIL) String() string {
+	return "<NIL>"
+}
+
+var NILL = NIL{}

@@ -9,36 +9,63 @@ type evaluator func([]interfaces.Type, interfaces.Scope) interfaces.Type
 
 // FunctionInfo provides information about a built in function
 type FunctionInfo struct {
+	name         string
 	function     evaluator
 	evaluateArgs bool
+}
+
+// IsType for FunctionInfo
+func (fi FunctionInfo) IsType() {}
+
+// String for FunctionInfo
+func (fi FunctionInfo) String() string {
+	return fmt.Sprintf("FI(%s)", fi.name)
+}
+func (fi FunctionInfo) Apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	evaluatedArgs := make([]interfaces.Type, len(arguments))
+	if fi.evaluateArgs {
+		for p, arg := range arguments {
+			if r, ok := arg.(REF); ok {
+				arg = r.Evaluate(sco)
+			}
+			if e, ok := arg.(interfaces.Evaluatable); ok {
+				arg = e.Evaluate(sco)
+			}
+			evaluatedArgs[p] = arg
+		}
+	} else {
+		copy(evaluatedArgs, arguments)
+	}
+	return fi.function(evaluatedArgs, sco)
 }
 
 var inbuilt map[string]FunctionInfo
 
 func init() {
 	inbuilt = map[string]FunctionInfo{
-		"=":        {equals, true},
-		"+":        {plusAll, true},
-		"-":        {minusAll, true},
-		"*":        {multiplyAll, true},
-		"%":        {mod, true},
-		"<":        {lessThan, true},
-		">":        {greaterThan, true},
-		"<=":       {lessThanEqual, true},
-		">=":       {greaterThanEqual, true},
-		"apply":    {apply, false},
-		"cons":     {cons, true},
-		"def":      {def, false},
-		"do":       {do, false},
-		"if":       {iff, false},
-		"filter":   {filter, true},
-		"first":    {first, true},
-		"fn":       {fn, false},
-		"lazypair": {lazypair, false},
-		"macro":    {macro, false},
-		"map":      {mapp, true},
-		"range":    {rnge, true},
-		"tail":     {tail, true},
+		"=":        {"=", equals, true},
+		"+":        {"+", plusAll, true},
+		"-":        {"-", minusAll, true},
+		"*":        {"*", multiplyAll, true},
+		"%":        {"%", mod, true},
+		"<":        {"<", lessThan, true},
+		">":        {">", greaterThan, true},
+		"<=":       {"<=", lessThanEqual, true},
+		">=":       {">=", greaterThanEqual, true},
+		"apply":    {"apply", apply, false},
+		"cons":     {"cons", cons, true},
+		"def":      {"def", def, false},
+		"do":       {"do", do, false},
+		"if":       {"if", iff, false},
+		"filter":   {"filter", filter, true},
+		"first":    {"first", first, true},
+		"fn":       {"fn", fn, false},
+		"lazypair": {"lazypair", lazypair, false},
+		"macro":    {"macro", macro, false},
+		"map":      {"map", mapp, false},
+		"print":    {"print", printt, true},
+		"range":    {"range", rnge, true},
+		"tail":     {"tail", tail, true},
 	}
 }
 
@@ -271,23 +298,27 @@ func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	fn, fnok := arguments[0].(FN)
-	pair, pok := arguments[1].(P)
 
-	var mp func(*P) *P
-	mp = func(p *P) *P {
-		head := p.head
+	var mp func(interfaces.Type, interfaces.Iterable) *P
+	mp = func(fn interfaces.Type, iterable interfaces.Iterable) *P {
+		head := iterable.Head()
 		res := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
-		if p.tail != nil {
-			return &P{res, mp(p.tail)}
+		if iterable.HasTail() {
+			return &P{res, mp(fn, iterable.Iterate(sco))}
 		}
 		return &P{res, nil}
 	}
 
-	if fnok && pok {
-		return *mp(&pair)
+	list := arguments[1]
+	if eval, ok := list.(interfaces.Evaluatable); ok {
+		list = eval.Evaluate(sco)
 	}
-	panic("map : expected function and list ")
+
+	if pair, pok := list.(interfaces.Iterable); pok {
+		return *mp(arguments[0], pair)
+	}
+
+	panic(fmt.Sprintf("map : expected function and list, recieved %v %v", arguments[0], arguments[1]))
 }
 
 func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
@@ -306,4 +337,11 @@ func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type
 
 func macro(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	return MAC{arguments[0].(VEC), arguments[1].(*EXP)}
+}
+
+func printt(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	for _, arg := range arguments {
+		fmt.Printf("%v\n", arg)
+	}
+	return NILL
 }

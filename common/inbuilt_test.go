@@ -179,3 +179,9 @@ func TestGreaterThanEqualIntegersArgumentsAreTheSame(t *testing.T) {
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, B(true), result)
 }
+
+func TestPrintReturnsNILL(t *testing.T) {
+	exp := EXP{Function: REF("print"), Arguments: []interfaces.Type{I(1)}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, NILL, result)
+}

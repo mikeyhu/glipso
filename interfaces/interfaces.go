@@ -41,3 +41,10 @@ type Comparable interface {
 type Expandable interface {
 	Expand([]Type) Type
 }
+
+//
+type Function interface {
+	IsType()
+	String() string
+	Apply([]Type, Scope) Type
+}

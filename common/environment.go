@@ -22,6 +22,9 @@ func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
 	if env.parent != nil {
 		return env.parent.ResolveRef(ref)
 	}
+	if fi, ok := inbuilt[ref.(REF).String()]; ok {
+		return fi, true
+	}
 	return nil, false
 }
 

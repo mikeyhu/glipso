@@ -31,8 +31,6 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 	if toREF, ok := function.(REF); ok {
 		if fn, ok := sco.ResolveRef(toREF); ok {
 			function = fn
-		} else if fi, ok := inbuilt[toREF.String()]; ok {
-			result = exp.evaluateInbuilt(fi, sco.NewChildScope())
 		}
 	}
 
@@ -42,8 +40,8 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 		if toEval, ok := function.(*EXP); ok {
 			function = toEval.Evaluate(sco)
 		}
-		if toFN, ok := function.(FN); ok {
-			result = exp.evaluateFN(toFN, sco)
+		if toFN, ok := function.(interfaces.Function); ok {
+			result = toFN.Apply(exp.Arguments, sco)
 		}
 	}
 
@@ -52,39 +50,6 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 		result = exp.Evaluate(sco)
 	}
 	return result
-}
-
-func (exp *EXP) evaluateFN(fn FN, env interfaces.Scope) interfaces.Type {
-	if len(fn.Arguments.Vector) != len(exp.Arguments) {
-		panic("Invalid number of arguments")
-	}
-	fnenv := env.NewChildScope()
-	for i, v := range fn.Arguments.Vector {
-		if ev, ok := exp.Arguments[i].(interfaces.Evaluatable); ok {
-			fnenv.CreateRef(v.(REF), ev.Evaluate(env))
-		} else {
-			fnenv.CreateRef(v.(REF), exp.Arguments[i])
-		}
-	}
-	return fn.Expression.Evaluate(fnenv)
-}
-
-func (exp *EXP) evaluateInbuilt(fi FunctionInfo, env interfaces.Scope) interfaces.Type {
-	evaluatedArgs := make([]interfaces.Type, len(exp.Arguments))
-	if fi.evaluateArgs {
-		for p, arg := range exp.Arguments {
-			if r, ok := arg.(REF); ok {
-				arg = r.Evaluate(env)
-			}
-			if e, ok := arg.(interfaces.Evaluatable); ok {
-				arg = e.Evaluate(env)
-			}
-			evaluatedArgs[p] = arg
-		}
-	} else {
-		copy(evaluatedArgs, exp.Arguments)
-	}
-	return fi.function(evaluatedArgs, env)
 }
 
 func (exp *EXP) printStartExpression() {
