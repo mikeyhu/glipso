@@ -7,11 +7,16 @@ import (
 	"github.com/mikeyhu/glipso/parser"
 	"github.com/mikeyhu/glipso/prelude"
 	"os"
+	"github.com/pkg/profile"
 )
 
 func main() {
 	debug := flag.Bool("debug", false, "Enable debug output")
+	prof := flag.Bool("profile", false, "Enable profiling")
 	flag.Parse()
+	if *prof {
+		defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+	}
 
 	common.DEBUG = *debug
 	args := flag.Args()
