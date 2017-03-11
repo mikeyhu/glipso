@@ -120,7 +120,7 @@ func (r REF) IsType() {}
 
 // String representation of a REF
 func (r REF) String() string {
-	return fmt.Sprintf("%v", string(r))
+	return string(r)
 }
 
 // Evaluate resolves a REF to something in scope

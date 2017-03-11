@@ -39,33 +39,33 @@ func (fi FunctionInfo) Apply(arguments []interfaces.Type, sco interfaces.Scope) 
 	return fi.function(evaluatedArgs, sco)
 }
 
-var inbuilt map[string]FunctionInfo
+var inbuilt map[REF]FunctionInfo
 
 func init() {
-	inbuilt = map[string]FunctionInfo{
-		"=":        {"=", equals, true},
-		"+":        {"+", plusAll, true},
-		"-":        {"-", minusAll, true},
-		"*":        {"*", multiplyAll, true},
-		"%":        {"%", mod, true},
-		"<":        {"<", lessThan, true},
-		">":        {">", greaterThan, true},
-		"<=":       {"<=", lessThanEqual, true},
-		">=":       {">=", greaterThanEqual, true},
-		"apply":    {"apply", apply, false},
-		"cons":     {"cons", cons, true},
-		"def":      {"def", def, false},
-		"do":       {"do", do, false},
-		"if":       {"if", iff, false},
-		"filter":   {"filter", filter, true},
-		"first":    {"first", first, true},
-		"fn":       {"fn", fn, false},
-		"lazypair": {"lazypair", lazypair, false},
-		"macro":    {"macro", macro, false},
-		"map":      {"map", mapp, false},
-		"print":    {"print", printt, true},
-		"range":    {"range", rnge, true},
-		"tail":     {"tail", tail, true},
+	inbuilt = map[REF]FunctionInfo{
+		REF("="):        {"=", equals, true},
+		REF("+"):        {"+", plusAll, true},
+		REF("-"):        {"-", minusAll, true},
+		REF("*"):        {"*", multiplyAll, true},
+		REF("%"):        {"%", mod, true},
+		REF("<"):        {"<", lessThan, true},
+		REF(">"):        {">", greaterThan, true},
+		REF("<="):       {"<=", lessThanEqual, true},
+		REF(">="):       {">=", greaterThanEqual, true},
+		REF("apply"):    {"apply", apply, false},
+		REF("cons"):     {"cons", cons, true},
+		REF("def"):      {"def", def, false},
+		REF("do"):       {"do", do, false},
+		REF("if"):       {"if", iff, false},
+		REF("filter"):   {"filter", filter, true},
+		REF("first"):    {"first", first, true},
+		REF("fn"):       {"fn", fn, false},
+		REF("lazypair"): {"lazypair", lazypair, false},
+		REF("macro"):    {"macro", macro, false},
+		REF("map"):      {"map", mapp, false},
+		REF("print"):    {"print", printt, true},
+		REF("range"):    {"range", rnge, true},
+		REF("tail"):     {"tail", tail, true},
 	}
 }
 

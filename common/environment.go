@@ -8,21 +8,21 @@ import (
 // Environment Provides a mechanism for creating and resolving variables
 type Environment struct {
 	id        int
-	variables map[string]interfaces.Type
+	variables map[REF]interfaces.Type
 	parent    *Environment
 }
 
 // ResolveRef will try to resolve a provided reference to a value in this or parent scope
 func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
 	if env.variables != nil {
-		if result, ok := env.variables[ref.(REF).String()]; ok {
+		if result, ok := env.variables[ref.(REF)]; ok {
 			return result, true
 		}
 	}
 	if env.parent != nil {
 		return env.parent.ResolveRef(ref)
 	}
-	if fi, ok := inbuilt[ref.(REF).String()]; ok {
+	if fi, ok := inbuilt[ref.(REF)]; ok {
 		return fi, true
 	}
 	return nil, false
@@ -34,9 +34,9 @@ func (env *Environment) CreateRef(name interfaces.Type, arg interfaces.Type) int
 		fmt.Printf("Adding %v %v to %v\n", name, arg, env)
 	}
 	if env.variables == nil {
-		env.variables = map[string]interfaces.Type{}
+		env.variables = map[REF]interfaces.Type{}
 	}
-	env.variables[name.(REF).String()] = arg
+	env.variables[name.(REF)] = arg
 	return name
 }
 
@@ -78,7 +78,7 @@ var GlobalEnvironment *Environment
 func init() {
 	GlobalEnvironment = &Environment{
 		id:        nextScopeID(),
-		variables: map[string]interfaces.Type{},
+		variables: map[REF]interfaces.Type{},
 	}
 }
 
