@@ -56,6 +56,7 @@ func init() {
 		REF("cons"):     {"cons", cons, true},
 		REF("def"):      {"def", def, false},
 		REF("do"):       {"do", do, false},
+		REF("empty"):    {"empty", empty, true},
 		REF("if"):       {"if", iff, false},
 		REF("filter"):   {"filter", filter, true},
 		REF("first"):    {"first", first, true},
@@ -164,11 +165,11 @@ func cons(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	if len(arguments) == 0 {
 		return P{}
 	} else if len(arguments) == 1 {
-		return P{arguments[0], nil}
+		return P{arguments[0], ENDED}
 	} else if len(arguments) == 2 {
 		tail, ok := arguments[1].(P)
 		if ok {
-			return P{arguments[0], &tail}
+			return P{arguments[0], tail}
 		}
 	}
 	return P{}
@@ -186,7 +187,10 @@ func first(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 func tail(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	pair, ok := arguments[0].(P)
 	if ok {
-		return *pair.tail
+		if pair.HasTail() {
+			return pair.tail
+		}
+		return ENDED
 	}
 	panic("Panic - Cannot get tail of non Pair type")
 }
@@ -271,30 +275,36 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 
 func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	fn, fnok := arguments[0].(FN)
-	pair, pok := arguments[1].(P)
+	var list interfaces.Type = arguments[1]
 
-	var flt func(*P) *P
-	flt = func(p *P) *P {
-		head := p.head
+	if exp, eok := list.(interfaces.Evaluatable); eok {
+		list = exp.Evaluate(sco)
+	}
+
+	iter, iok := list.(interfaces.Iterable)
+
+	var flt func(interfaces.Iterable) interfaces.Iterable
+	flt = func(it interfaces.Iterable) interfaces.Iterable {
+		head := it.Head()
 		res := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
 		if include, iok := res.(B); iok {
 			if bool(include) {
-				if p.tail != nil {
-					return &P{head, flt(p.tail)}
+				if it.HasTail() {
+					return &P{head, flt(it.Iterate(sco))}
 				}
-				return &P{head, nil}
-			} else if p.tail != nil {
-				return flt(p.tail)
+				return &P{head, ENDED}
+			} else if it.HasTail() {
+				return flt(it.Iterate(sco))
 			}
-			return nil
+			return ENDED
 		}
 		panic(fmt.Sprintf("filter : expected boolean value, recieved %v", res))
 	}
 
-	if fnok && pok {
-		return *flt(&pair)
+	if fnok && iok {
+		return flt(iter)
 	}
-	panic("filter : expected function and list")
+	panic(fmt.Sprintf("filter : expected function and list. Recieved %v, %v\n", arguments[0], arguments[1]))
 }
 
 func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
@@ -306,7 +316,7 @@ func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 		if iterable.HasTail() {
 			return &P{res, mp(fn, iterable.Iterate(sco))}
 		}
-		return &P{res, nil}
+		return &P{res, ENDED}
 	}
 
 	list := arguments[1]
@@ -344,4 +354,16 @@ func printt(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 		fmt.Printf("%v\n", arg)
 	}
 	return NILL
+}
+
+func empty(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	var arg interfaces.Type = arguments[0]
+	if arg == nil {
+		return B(true)
+	}
+	list := arg.(interfaces.Iterable)
+	if list.HasTail() {
+		return B(false)
+	}
+	return B(true)
 }

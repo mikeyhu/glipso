@@ -13,7 +13,7 @@ func TestPanicsWhenEvaluatingUnresolvedREF(t *testing.T) {
 }
 
 func TestPairCanIterateToTail(t *testing.T) {
-	pair := P{I(1), &P{I(2), nil}}
+	pair := P{I(1), &P{I(2), ENDED}}
 
 	assert.Equal(t, I(1), pair.Head())
 	assert.True(t, pair.HasTail())

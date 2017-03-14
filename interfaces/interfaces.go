@@ -13,6 +13,8 @@ type Type interface {
 
 // Iterable interfaces are pairs, lazypairs and anything that can be iterated or converted to a slice
 type Iterable interface {
+	IsType()
+	String() string
 	Head() Type
 	HasTail() bool
 	Iterate(Scope) Iterable

@@ -158,6 +158,22 @@ func TestLazyPairCanBeUsedToCreateRange(t *testing.T) {
 	assert.Equal(t, common.B(true), result)
 }
 
+func TestEmptyReturnsFalseWhenGivenAListWithContents(t *testing.T) {
+	code := `(empty (range 1 5))`
+
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.B(false), result)
+}
+
+func TestEmptyReturnsTrueWhenGivenAListWithNoContents(t *testing.T) {
+	code := `(empty (filter (fn [num] (> num 10)) (range 1 5)))`
+
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.B(true), result)
+}
+
 func BenchmarkSumRange(b *testing.B) {
 	code := "(apply + (range 1 15))"
 

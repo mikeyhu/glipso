@@ -69,7 +69,7 @@ func (b B) Equals(o interfaces.Equalable) interfaces.Type {
 // P (PAIR)
 type P struct {
 	head interfaces.Type
-	tail *P
+	tail interfaces.Iterable
 }
 
 // IsType for P
@@ -87,7 +87,7 @@ func (p P) Head() interfaces.Type {
 
 // HasTail returns bool showing whether the P has a tail
 func (p P) HasTail() bool {
-	return p.tail != nil
+	return p.tail != ENDED
 }
 
 // Iterate not supported yet
@@ -95,20 +95,23 @@ func (p P) Iterate(sco interfaces.Scope) interfaces.Iterable {
 	if p.HasTail() {
 		return p.tail
 	}
-	panic("Pair : Iterate called on p without tail")
+	return ENDED
 }
 
 // ToSlice returns an array from a P
 func (p P) ToSlice(sco interfaces.Scope) []interfaces.Type {
-	slice := []interfaces.Type{p.head}
-	tail := p.tail
+	slice := []interfaces.Type{}
+	var tail interfaces.Iterable = p
 	for {
-		if tail == nil {
-			return slice
+		if tail != ENDED {
+			slice = append(slice, tail.Head())
+			if !tail.HasTail() {
+				return slice
+			}
+			tail = tail.Iterate(sco)
 		}
-		slice = append(slice, tail.head)
-		tail = tail.tail
 	}
+	return slice
 }
 
 // REF (Reference)
@@ -267,3 +270,26 @@ func (n NIL) String() string {
 }
 
 var NILL = NIL{}
+
+// END acts as the end of a list
+type END struct{}
+
+func (e END) IsType() {}
+
+func (e END) String() string {
+	return "<END>"
+}
+func (e END) Head() interfaces.Type {
+	return NILL
+}
+func (e END) HasTail() bool {
+	return false
+}
+func (e END) Iterate(interfaces.Scope) interfaces.Iterable {
+	panic("END : Iterate called on END")
+}
+func (e END) ToSlice(interfaces.Scope) []interfaces.Type {
+	return []interfaces.Type{}
+}
+
+var ENDED = END{}

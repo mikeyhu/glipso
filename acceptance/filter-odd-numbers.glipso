@@ -4,4 +4,4 @@ code:
 		(filter odd (cons 1 (cons 2 (cons 3 (cons 4)))))
 	)
 expect:
-P(1 P(3 <nil>))
+P(1 P(3 <END>))

@@ -28,31 +28,37 @@ func TestEqualityPanicsIfTypesNotValid(t *testing.T) {
 func TestConsCreatesPairWithNil(t *testing.T) {
 	exp := EXP{Function: REF("cons"), Arguments: []interfaces.Type{I(1)}}
 	result := exp.Evaluate(GlobalEnvironment)
-	assert.Equal(t, P{I(1), nil}, result)
+	assert.Equal(t, P{I(1), ENDED}, result)
 }
 
 func TestConsCreatesPairWithTailPair(t *testing.T) {
-	exp := EXP{Function: REF("cons"), Arguments: []interfaces.Type{I(1), P{I(2), nil}}}
+	exp := EXP{Function: REF("cons"), Arguments: []interfaces.Type{I(1), P{I(2), ENDED}}}
 	result := exp.Evaluate(GlobalEnvironment).(P)
 	assert.Equal(t, I(1), result.head)
-	assert.Equal(t, I(2), result.tail.head)
-	assert.Nil(t, result.tail.tail)
+	assert.Equal(t, I(2), result.tail.Head())
+	assert.False(t, result.tail.HasTail())
 }
 
 func TestFirstRetrievesHeadOfPair(t *testing.T) {
-	exp := EXP{Function: REF("first"), Arguments: []interfaces.Type{P{I(3), nil}}}
+	exp := EXP{Function: REF("first"), Arguments: []interfaces.Type{P{I(3), ENDED}}}
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(3), result)
 }
 
-func TestConsRetrievesTailOfPair(t *testing.T) {
-	exp := EXP{Function: REF("tail"), Arguments: []interfaces.Type{P{I(5), &P{I(6), nil}}}}
-	result := exp.Evaluate(GlobalEnvironment).(P)
+func TestTailRetrievesTailOfPair(t *testing.T) {
+	exp := EXP{Function: REF("tail"), Arguments: []interfaces.Type{P{I(5), &P{I(6), ENDED}}}}
+	result := exp.Evaluate(GlobalEnvironment).(*P)
 	assert.Equal(t, I(6), result.head)
 }
 
+func TestTailOfListWithoutTailRetrievesEND(t *testing.T) {
+	exp := EXP{Function: REF("tail"), Arguments: []interfaces.Type{P{I(5), ENDED}}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, ENDED, result)
+}
+
 func TestApplySendsListToFunction(t *testing.T) {
-	exp := EXP{Function: REF("apply"), Arguments: []interfaces.Type{REF("+"), P{I(2), &P{I(10), nil}}}}
+	exp := EXP{Function: REF("apply"), Arguments: []interfaces.Type{REF("+"), P{I(2), &P{I(10), ENDED}}}}
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(12), result)
 }
