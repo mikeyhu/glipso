@@ -191,3 +191,32 @@ func TestPrintReturnsNILL(t *testing.T) {
 	result := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, NILL, result)
 }
+
+func TestEmptyReturnsFalseOnLongList(t *testing.T) {
+	exp := EXP{Function: REF("empty"), Arguments: []interfaces.Type{P{I(1), P{I(2), ENDED}}}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestEmptyReturnsFalseOnNonEmptyList(t *testing.T) {
+	exp := EXP{Function: REF("empty"), Arguments: []interfaces.Type{P{I(1), ENDED}}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(false), result)
+}
+
+func TestEmptyReturnsTrueOnEmptyList(t *testing.T) {
+	exp := EXP{Function: REF("empty"), Arguments: []interfaces.Type{ENDED}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, B(true), result)
+}
+
+func TestTakeNumberReturnsLazyPairWhenGivenRange(t *testing.T) {
+	exp := EXP{Function: REF("take"), Arguments: []interfaces.Type{
+		I(3),
+		&EXP{Function: REF("range"), Arguments: []interfaces.Type{I(1), I(5)}}},
+	}
+	result := exp.Evaluate(GlobalEnvironment)
+	lazyp, ok := result.(LAZYP)
+	assert.True(t, ok)
+	assert.Equal(t, I(1), lazyp.Head())
+}

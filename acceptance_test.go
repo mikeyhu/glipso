@@ -212,3 +212,21 @@ func BenchmarkSumRangefn(b *testing.B) {
 		assert.Equal(b, common.I(120), result)
 	}
 }
+
+func TestTakeReturnsFullListWhenSmallerThanTakeArgument(t *testing.T) {
+	prelude.ParsePrelude(common.GlobalEnvironment)
+	code := `(last (take 5 (range 1 3)))`
+
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(3), result)
+}
+
+func TestTakeReturnsPartialList(t *testing.T) {
+	prelude.ParsePrelude(common.GlobalEnvironment)
+	code := `(last (take 3 (range 1 5)))`
+
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(3), result)
+}

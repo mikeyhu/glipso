@@ -67,6 +67,7 @@ func init() {
 		REF("print"):    {"print", printt, true},
 		REF("range"):    {"range", rnge, true},
 		REF("tail"):     {"tail", tail, true},
+		REF("take"):     {"take", take, true},
 	}
 }
 
@@ -176,19 +177,19 @@ func cons(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func first(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	pair, ok := arguments[0].(P)
+	pair, ok := arguments[0].(interfaces.Iterable)
 	if ok {
-		return pair.head
+		return pair.Head()
 	}
 	fmt.Printf("pair? %v : %v\n", arguments[0], pair)
-	panic("Panic - Cannot get head of non Pair type")
+	panic("Panic - Cannot get head of non Iterable type")
 }
 
 func tail(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	pair, ok := arguments[0].(P)
+	pair, ok := arguments[0].(interfaces.Iterable)
 	if ok {
 		if pair.HasTail() {
-			return pair.tail
+			return pair.Iterate(sco)
 		}
 		return ENDED
 	}
@@ -255,7 +256,7 @@ func rnge(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 				end,
 			}}}
 	}
-	return LAZYP{end, nil}
+	return P{end, ENDED}
 
 }
 
@@ -362,8 +363,31 @@ func empty(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 		return B(true)
 	}
 	list := arg.(interfaces.Iterable)
-	if list.HasTail() {
+	if list != ENDED {
 		return B(false)
 	}
 	return B(true)
+}
+
+func take(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	num, nok := arguments[0].(I)
+	list, lok := arguments[1].(interfaces.Iterable)
+
+	if nok && lok {
+		if num > 1 && list.HasTail() {
+			return LAZYP{
+				list.Head(),
+				&EXP{
+					Function: REF("take"),
+					Arguments: []interfaces.Type{
+						I(num - 1),
+						list.Iterate(sco),
+					},
+				},
+			}
+		}
+		return P{list.Head(), ENDED}
+
+	}
+	panic("take : expected number and list")
 }

@@ -30,3 +30,14 @@ func TestPreludeDefines_defmacro(t *testing.T) {
 	_, mok := result.(common.MAC)
 	assert.True(t, mok)
 }
+
+func TestLastReturnsLastNumberInList(t *testing.T) {
+	ParsePrelude(common.GlobalEnvironment)
+	code := `
+	(last (range 1 5))
+	`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(5), result)
+}

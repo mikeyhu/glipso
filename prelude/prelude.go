@@ -12,6 +12,14 @@ func ParsePrelude(scope interfaces.Scope) {
 	(do
 		(def defmacro (macro [n a e] (def n (macro a e))))
 		(defmacro defn [nn aa ee] (def nn (fn aa ee)))
+
+		(defn last [list]
+			(if
+				(empty (tail list))
+				(first list)
+				(last (tail list))
+			)
+		)
 	)
 	`
 	exp, err := parser.Parse(prelude)
