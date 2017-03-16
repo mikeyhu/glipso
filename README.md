@@ -16,15 +16,18 @@ Glipso has *very few* features. So far it supports the following functions:
 (defn name [args] exp)      performs 'def' and 'fn' functions together
 (defmacro name [args] exp)  performs 'def' and 'macro' functions together
 (do exp...)                 run the expressions in order
+(empty list)                returns true if a list is empty
 (filter fn list)            filter out items in a list by applying fn to them and dropping false responses
 (first list)                get first element in list
 (fn [args] exp)             creates a function that accepts n arguments are an expression
 (if test exp1 exp2)         if test is 'true' evaluate exp1, otherwise evaluate exp2
+(last list)                 returns the last value in list
 (lazypair a b)              returns a pair with head 'a' that will evaluate 'b' lazily to generate a tail
 (macro [args] exp)          creates a macro that will replace args in the exp with arguments provided for evaluation
 (map fn list)               generate a new list by applying fn to each element in a list
 (range start end)           creates a lazily evaluated list from start to end (inclusive)
 (tail list)                 get tail of the list
+(take num list)             returns a lazily evaluated list that is the first 'num' elements in 'list'
 ```
 
 ### Types
@@ -77,14 +80,10 @@ echo "(+ 1 2 3)" | ./glipso
 In no particular order:
 
 * make `map` and `filter` functions work with lazy lists
-* add function to create a lazy pair
 * make list functions work on lazy, non-lazy and vector lists
-* add initial set of functions written in Lisp, i.e. some kind of Prelude
 * support some kind of HashMap datatype
 * support for more datatypes, i.e. Decimal
-* support functions such as `<`, `>` & `%`
-* investigate the need for a `nil` datatype (or maybe just empty list?)
 * better parser support so names like `some-function` can be used
 * implement some goroutine support to push expressions onto other threads and receive notifications when complete
-* macro implementation to reduce some special case code
+* improve macro implementation with better substitution options
 
