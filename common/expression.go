@@ -31,6 +31,8 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 	if toREF, ok := function.(REF); ok {
 		if fn, ok := sco.ResolveRef(toREF); ok {
 			function = fn
+		} else {
+			panic(fmt.Sprintf("evaluate : function %v not found", toREF))
 		}
 	}
 

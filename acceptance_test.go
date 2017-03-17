@@ -230,3 +230,11 @@ func TestTakeReturnsPartialList(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(3), result)
 }
+
+func TestPanicsWhenFunctionNotFound(t *testing.T) {
+	code := `(notafunction 1)`
+	exp, _ := parser.Parse(code)
+	assert.Panics(t, func() {
+		exp.Evaluate(common.GlobalEnvironment)
+	})
+}

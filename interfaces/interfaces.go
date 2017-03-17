@@ -44,7 +44,7 @@ type Expandable interface {
 	Expand([]Type) Type
 }
 
-//
+// Function interfaces can be applied to expressions
 type Function interface {
 	IsType()
 	String() string
