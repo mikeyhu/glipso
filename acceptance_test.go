@@ -238,3 +238,17 @@ func TestPanicsWhenFunctionNotFound(t *testing.T) {
 		exp.Evaluate(common.GlobalEnvironment)
 	})
 }
+
+func TestReturningRefReturnsCorrectlyScopedValue(t *testing.T) {
+	prelude.ParsePrelude(common.GlobalEnvironment)
+	code := `
+	(do
+		(defn returnsA [A B] A)
+		(defn hasA [A B] (returnsA B A))
+		(hasA 1 2)
+	)
+	`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(2), result)
+}

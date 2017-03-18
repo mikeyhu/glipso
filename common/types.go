@@ -129,9 +129,10 @@ func (r REF) String() string {
 // Evaluate resolves a REF to something in scope
 func (r REF) Evaluate(sco interfaces.Scope) interfaces.Type {
 	if DEBUG {
-		fmt.Printf("%v being looked up in:\n", r)
+		env := sco.(*Environment)
+		fmt.Printf("%v being looked up in scope %v:\n", r, env.id)
+		env.DisplayEnvironment()
 	}
-	sco.(*Environment).DisplayEnvironment()
 	if resolved, ok := sco.ResolveRef(r); ok {
 		if evaluatable, ok := resolved.(*EXP); ok {
 			return evaluatable //.Evaluate(sco)
@@ -221,7 +222,7 @@ func (v VEC) Get(loc int) interfaces.Type {
 // FN acts as storage for a reusable Function by storing a set of arguments to a function and the function expression itself
 type FN struct {
 	Arguments  VEC
-	Expression *EXP
+	Expression interfaces.Evaluatable
 }
 
 // IsType for FN

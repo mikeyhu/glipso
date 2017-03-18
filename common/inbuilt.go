@@ -268,10 +268,7 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 		argVec = arguments[0].(VEC)
 	}
 
-	if arg1, ok := arguments[1].(REF); ok {
-		return FN{argVec, arg1.Evaluate(sco.NewChildScope()).(*EXP)}
-	}
-	return FN{argVec, arguments[1].(*EXP)}
+	return FN{argVec, arguments[1].(interfaces.Evaluatable)}
 }
 
 func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
