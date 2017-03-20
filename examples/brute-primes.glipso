@@ -1,0 +1,20 @@
+(do
+    (defn notdivbyany [num listofdivs]
+        (empty
+            (filter
+                (fn [z] (= 0 z))
+                (map (fn [head] (% num head)) listofdivs)
+            )
+        )
+    )
+
+    (defn getprimes [num listofprimes]
+        (if
+            (notdivbyany num listofprimes)
+            (lazypair num (getprimes (+ num 1) (cons num listofprimes)))
+            (getprimes (+ num 1) listofprimes)
+        )
+    )
+
+    (map print (take 100 (getprimes 3 (cons 2))))
+)
