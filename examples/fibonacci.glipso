@@ -1,8 +1,10 @@
 	(do
 	    (defn fibo [n a b]
-	        (if (< n 2)
-	            (+ a b)
-	            (fibo (- n 1) b (+ a b))
+	        (let [next (+ a b)]
+                (if (< n 2)
+                    next
+                    (fibo (- n 1) b next)
+                )
 	        )
 	    )
 		(defn fib [n]

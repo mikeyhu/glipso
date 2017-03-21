@@ -75,6 +75,13 @@ func TestIfFalseReturnsThirdArgument(t *testing.T) {
 	assert.Equal(t, I(2), result)
 }
 
+func TestIfTrueEvaluatesRefRatherThanReturning(t *testing.T) {
+	GlobalEnvironment.CreateRef(REF("a"), I(3))
+	exp := EXP{Function: REF("if"), Arguments: []interfaces.Type{B(true), REF("a"), REF("b")}}
+	result := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, I(3), result)
+}
+
 func TestDefRecordsReferences(t *testing.T) {
 	exp := EXP{Function: REF("def"), Arguments: []interfaces.Type{REF("one"), I(1)}}
 	exp.Evaluate(GlobalEnvironment)

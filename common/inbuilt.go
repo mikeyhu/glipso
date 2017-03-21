@@ -72,6 +72,15 @@ func init() {
 	}
 }
 
+func evaluateToResult(value interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	switch v := value.(type) {
+	case interfaces.Evaluatable:
+		return evaluateToResult(v.Evaluate(sco), sco)
+	default:
+		return v
+	}
+}
+
 func plusAll(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	all := I(0)
 	for _, v := range arguments {
@@ -198,50 +207,34 @@ func tail(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	if ap, okEval := arguments[1].(interfaces.Evaluatable); okEval {
-		arguments[1] = ap.Evaluate(sco)
-	}
+	list := evaluateToResult(arguments[1], sco)
 	s, okRef := arguments[0].(REF)
-	p, okPair := arguments[1].(interfaces.Iterable)
+	p, okPair := list.(interfaces.Iterable)
 	if !okRef {
 		panic(fmt.Sprintf("Panic - expected function, found %v", arguments[0]))
 	} else if !okPair {
-		panic(fmt.Sprintf("Panic - expected pair, found %v", arguments[1]))
+		panic(fmt.Sprintf("Panic - expected pair, found %v", list))
 	}
 	return &EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}
 }
 
 func iff(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	var test interfaces.Type
-	if exp, ok := arguments[0].(*EXP); ok {
-		test = exp.Evaluate(sco)
-	} else {
-		test = arguments[0]
-	}
+	test := evaluateToResult(arguments[0], sco)
 	if test.(B).Bool() {
-		return arguments[1]
+		return evaluateToResult(arguments[1], sco)
 	}
-	return arguments[2]
+	return evaluateToResult(arguments[2], sco)
 }
 
 func def(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	var value interfaces.Type
-	if eval, ok := arguments[1].(interfaces.Evaluatable); ok {
-		value = eval.Evaluate(sco.NewChildScope())
-	} else {
-		value = arguments[1]
-	}
+	value := evaluateToResult(arguments[1], sco)
 	return GlobalEnvironment.CreateRef(arguments[0].(REF).EvaluateToRef(sco.NewChildScope()), value)
 }
 
 func do(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	var result interfaces.Type
 	for _, a := range arguments {
-		if e, ok := a.(interfaces.Evaluatable); ok {
-			result = e.Evaluate(sco.NewChildScope())
-		} else {
-			result = a
-		}
+		result = evaluateToResult(a, sco.NewChildScope())
 	}
 	return result
 }
@@ -274,11 +267,7 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 
 func filter(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 	fn, fnok := arguments[0].(FN)
-	var list interfaces.Type = arguments[1]
-
-	if exp, eok := list.(interfaces.Evaluatable); eok {
-		list = exp.Evaluate(sco)
-	}
+	list := evaluateToResult(arguments[1], sco)
 
 	iter, iok := list.(interfaces.Iterable)
 
@@ -318,10 +307,7 @@ func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 		return &P{res, ENDED}
 	}
 
-	list := arguments[1]
-	if eval, ok := list.(interfaces.Evaluatable); ok {
-		list = eval.Evaluate(sco)
-	}
+	list := evaluateToResult(arguments[1], sco)
 
 	if pair, pok := list.(interfaces.Iterable); pok {
 		return *mp(arguments[0], pair)
@@ -331,10 +317,7 @@ func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 }
 
 func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
-	head := arguments[0]
-	if h, ok := head.(interfaces.Evaluatable); ok {
-		head = h.Evaluate(sco)
-	}
+	head := evaluateToResult(arguments[0], sco)
 	if len(arguments) > 1 {
 		if tail, ok := arguments[1].(interfaces.Evaluatable); ok {
 			return LAZYP{head, BindEvaluation(tail, sco)}
@@ -402,11 +385,7 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 			panic(fmt.Sprintf("let : expected an even number of items in vector, recieved %v", count))
 		}
 		for i := 0; i < count/2; i++ {
-			if arg, aok := vectors.Get(i + 1).(interfaces.Evaluatable); aok {
-				childScope.CreateRef(vectors.Get(i), arg.Evaluate(sco))
-			} else {
-				childScope.CreateRef(vectors.Get(i), vectors.Get(i+1))
-			}
+			childScope.CreateRef(vectors.Get(i), evaluateToResult(vectors.Get(i+1), sco))
 		}
 		return exp.Evaluate(childScope)
 	}
