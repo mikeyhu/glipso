@@ -62,6 +62,7 @@ func init() {
 		REF("first"):    {"first", first, true},
 		REF("fn"):       {"fn", fn, false},
 		REF("lazypair"): {"lazypair", lazypair, false},
+		REF("let"):      {"let", let, false},
 		REF("macro"):    {"macro", macro, false},
 		REF("map"):      {"map", mapp, false},
 		REF("print"):    {"print", printt, true},
@@ -387,4 +388,27 @@ func take(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
 
 	}
 	panic("take : expected number and list")
+}
+
+func let(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Type {
+	vectors, vok := arguments[0].(VEC)
+	exp, eok := arguments[1].(interfaces.Evaluatable)
+
+	childScope := sco.NewChildScope()
+
+	if vok && eok {
+		count := vectors.Count()
+		if count%2 > 0 {
+			panic(fmt.Sprintf("let : expected an even number of items in vector, recieved %v", count))
+		}
+		for i := 0; i < count/2; i++ {
+			if arg, aok := vectors.Get(i + 1).(interfaces.Evaluatable); aok {
+				childScope.CreateRef(vectors.Get(i), arg.Evaluate(sco))
+			} else {
+				childScope.CreateRef(vectors.Get(i), vectors.Get(i+1))
+			}
+		}
+		return exp.Evaluate(childScope)
+	}
+	panic(fmt.Sprintf("let : expected VEC and EXP, received: %v %v", arguments[0], arguments[1]))
 }

@@ -252,3 +252,17 @@ func TestReturningRefReturnsCorrectlyScopedValue(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(2), result)
 }
+
+func TestLetAcceptsExpressionsInVectors(t *testing.T) {
+	code := `(let [a (+ 1 2)] (= 3 a))`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.B(true), result)
+}
+
+func TestLetAcceptsValuesInVectors(t *testing.T) {
+	code := `(let [a 3] (= 3 a))`
+	exp, _ := parser.Parse(code)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.B(true), result)
+}
