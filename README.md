@@ -23,6 +23,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (if test exp1 exp2)         if test is 'true' evaluate exp1, otherwise evaluate exp2
 (last list)                 returns the last value in list
 (lazypair a b)              returns a pair with head 'a' that will evaluate 'b' lazily to generate a tail
+(let [arg pairs] exp)       creates a new scope for exp in which arg pairs have been evaluated and put into scope
 (macro [args] exp)          creates a macro that will replace args in the exp with arguments provided for evaluation
 (map fn list)               generate a new list by applying fn to each element in a list
 (range start end)           creates a lazily evaluated list from start to end (inclusive)
