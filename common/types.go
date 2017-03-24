@@ -9,8 +9,8 @@ import (
 type I int
 
 // IsType for I
-func (i I) IsType()   {}
-func (i I) IsResult() {}
+func (i I) IsType()  {}
+func (i I) IsValue() {}
 
 // String representation of I
 func (i I) String() string {
@@ -47,8 +47,8 @@ func (i I) CompareTo(o interfaces.Comparable) int {
 type B bool
 
 // IsType for B
-func (b B) IsType()   {}
-func (b B) IsResult() {}
+func (b B) IsType()  {}
+func (b B) IsValue() {}
 
 // String for B
 func (b B) String() string {
@@ -75,8 +75,8 @@ type P struct {
 }
 
 // IsType for P
-func (p P) IsType()   {}
-func (p P) IsResult() {}
+func (p P) IsType()  {}
+func (p P) IsValue() {}
 
 // String representation of P
 func (p P) String() string {
@@ -150,8 +150,8 @@ type LAZYP struct {
 }
 
 // IsType for LAZYP
-func (l LAZYP) IsType()   {}
-func (l LAZYP) IsResult() {}
+func (l LAZYP) IsType()  {}
+func (l LAZYP) IsValue() {}
 
 // String representation of LAZYP
 func (l LAZYP) String() string {
@@ -196,8 +196,8 @@ type VEC struct {
 }
 
 // IsType for VEC
-func (v VEC) IsType()   {}
-func (v VEC) IsResult() {}
+func (v VEC) IsType()  {}
+func (v VEC) IsValue() {}
 
 // String output for VEC
 func (v VEC) String() string {
@@ -220,8 +220,8 @@ type FN struct {
 }
 
 // IsType for FN
-func (f FN) IsType()   {}
-func (f FN) IsResult() {}
+func (f FN) IsType()  {}
+func (f FN) IsValue() {}
 
 // String output for FN
 func (f FN) String() string {
@@ -234,7 +234,7 @@ func (f FN) Apply(arguments []interfaces.Type, env interfaces.Scope) interfaces.
 	}
 	fnenv := env.NewChildScope()
 	for i, v := range f.Arguments.Vector {
-		fnenv.CreateRef(v.(REF), evaluateToResult(arguments[i], env))
+		fnenv.CreateRef(v.(REF), evaluateToValue(arguments[i], env))
 	}
 	return f.Expression.Evaluate(fnenv)
 }
@@ -243,8 +243,8 @@ func (f FN) Apply(arguments []interfaces.Type, env interfaces.Scope) interfaces.
 type S string
 
 // IsType for S
-func (s S) IsType()   {}
-func (s S) IsResult() {}
+func (s S) IsType()  {}
+func (s S) IsValue() {}
 
 //String output for S
 func (s S) String() string {
@@ -255,8 +255,8 @@ func (s S) String() string {
 type NIL struct{}
 
 // IsType for NIL
-func (n NIL) IsType()   {}
-func (n NIL) IsResult() {}
+func (n NIL) IsType()  {}
+func (n NIL) IsValue() {}
 
 // String output for NIL
 func (n NIL) String() string {
@@ -268,8 +268,8 @@ var NILL = NIL{}
 // END acts as the end of a list
 type END struct{}
 
-func (e END) IsType()   {}
-func (e END) IsResult() {}
+func (e END) IsType()  {}
+func (e END) IsValue() {}
 
 func (e END) String() string {
 	return "<END>"

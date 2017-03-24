@@ -39,7 +39,7 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 	if toMacro, ok := function.(interfaces.Expandable); ok {
 		result = toMacro.Expand(exp.Arguments).Evaluate(sco)
 	} else {
-		function := evaluateToResult(function, sco)
+		function := evaluateToValue(function, sco)
 		if toFN, ok := function.(interfaces.Function); ok {
 			result = toFN.Apply(exp.Arguments, sco)
 		}

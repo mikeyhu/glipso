@@ -8,26 +8,26 @@ import (
 type evaluator func([]interfaces.Value, interfaces.Scope) interfaces.Value
 type lazyEvaluator func([]interfaces.Type, interfaces.Scope) interfaces.Value
 
-// FunctionInfo provides information about a built in function
-type FunctionInfo struct {
+// FI provides information about a built in function
+type FI struct {
 	name          string
 	evaluator     evaluator
 	lazyEvaluator lazyEvaluator
 }
 
-// IsType for FunctionInfo
-func (fi FunctionInfo) IsType()   {}
-func (fi FunctionInfo) IsResult() {}
+// IsType for FI
+func (fi FI) IsType()  {}
+func (fi FI) IsValue() {}
 
-// String for FunctionInfo
-func (fi FunctionInfo) String() string {
+// String for FI
+func (fi FI) String() string {
 	return fmt.Sprintf("FI(%s)", fi.name)
 }
-func (fi FunctionInfo) Apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
+func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 	if fi.evaluator != nil {
 		evaluatedArgs := make([]interfaces.Value, len(arguments))
 		for p, arg := range arguments {
-			evaluatedArgs[p] = evaluateToResult(arg, sco)
+			evaluatedArgs[p] = evaluateToValue(arg, sco)
 		}
 		return fi.evaluator(evaluatedArgs, sco)
 	} else if fi.lazyEvaluator != nil {
@@ -35,50 +35,53 @@ func (fi FunctionInfo) Apply(arguments []interfaces.Type, sco interfaces.Scope) 
 		copy(unevaluatedArgs, arguments)
 		return fi.lazyEvaluator(unevaluatedArgs, sco)
 	}
-	panic(fmt.Sprintf("FunctionInfo : %v had neither an evaluator or lazy evaluator", fi.name))
+	panic(fmt.Sprintf("FI : %v had neither an evaluator or lazy evaluator", fi.name))
 }
 
-var inbuilt map[REF]FunctionInfo
+var inbuilt map[REF]FI
 
 func init() {
-	inbuilt = map[REF]FunctionInfo{
-		REF("="):        {name: "=", evaluator: equals},
-		REF("+"):        {name: "+", evaluator: plusAll},
-		REF("-"):        {name: "-", evaluator: minusAll},
-		REF("*"):        {name: "*", evaluator: multiplyAll},
-		REF("%"):        {name: "%", evaluator: mod},
-		REF("<"):        {name: "<", evaluator: lessThan},
-		REF(">"):        {name: ">", evaluator: greaterThan},
-		REF("<="):       {name: "<=", evaluator: lessThanEqual},
-		REF(">="):       {name: ">=", evaluator: greaterThanEqual},
-		REF("apply"):    {name: "apply", lazyEvaluator: apply},
-		REF("cons"):     {name: "cons", evaluator: cons},
-		REF("def"):      {name: "def", lazyEvaluator: def},
-		REF("do"):       {name: "do", lazyEvaluator: do},
-		REF("empty"):    {name: "empty", evaluator: empty},
-		REF("if"):       {name: "if", lazyEvaluator: iff},
-		REF("filter"):   {name: "filter", evaluator: filter},
-		REF("first"):    {name: "first", evaluator: first},
-		REF("fn"):       {name: "fn", lazyEvaluator: fn},
-		REF("lazypair"): {name: "lazypair", lazyEvaluator: lazypair},
-		REF("let"):      {name: "let", lazyEvaluator: let},
-		REF("macro"):    {name: "macro", lazyEvaluator: macro},
-		REF("map"):      {name: "map", evaluator: mapp},
-		REF("print"):    {name: "print", evaluator: printt},
-		REF("range"):    {name: "range", evaluator: rnge},
-		REF("tail"):     {name: "tail", evaluator: tail},
-		REF("take"):     {name: "take", evaluator: take},
-	}
+	inbuilt = map[REF]FI{}
+	addInbuilt(FI{name: "=", evaluator: equals})
+	addInbuilt(FI{name: "+", evaluator: plusAll})
+	addInbuilt(FI{name: "-", evaluator: minusAll})
+	addInbuilt(FI{name: "*", evaluator: multiplyAll})
+	addInbuilt(FI{name: "%", evaluator: mod})
+	addInbuilt(FI{name: "<", evaluator: lessThan})
+	addInbuilt(FI{name: ">", evaluator: greaterThan})
+	addInbuilt(FI{name: "<=", evaluator: lessThanEqual})
+	addInbuilt(FI{name: ">=", evaluator: greaterThanEqual})
+	addInbuilt(FI{name: "apply", lazyEvaluator: apply})
+	addInbuilt(FI{name: "cons", evaluator: cons})
+	addInbuilt(FI{name: "def", lazyEvaluator: def})
+	addInbuilt(FI{name: "do", lazyEvaluator: do})
+	addInbuilt(FI{name: "empty", evaluator: empty})
+	addInbuilt(FI{name: "if", lazyEvaluator: iff})
+	addInbuilt(FI{name: "filter", evaluator: filter})
+	addInbuilt(FI{name: "first", evaluator: first})
+	addInbuilt(FI{name: "fn", lazyEvaluator: fn})
+	addInbuilt(FI{name: "lazypair", lazyEvaluator: lazypair})
+	addInbuilt(FI{name: "let", lazyEvaluator: let})
+	addInbuilt(FI{name: "macro", lazyEvaluator: macro})
+	addInbuilt(FI{name: "map", evaluator: mapp})
+	addInbuilt(FI{name: "print", evaluator: printt})
+	addInbuilt(FI{name: "range", evaluator: rnge})
+	addInbuilt(FI{name: "tail", evaluator: tail})
+	addInbuilt(FI{name: "take", evaluator: take})
 }
 
-func evaluateToResult(value interfaces.Type, sco interfaces.Scope) interfaces.Value {
+func addInbuilt(info FI) {
+	inbuilt[REF(info.name)] = info
+}
+
+func evaluateToValue(value interfaces.Type, sco interfaces.Scope) interfaces.Value {
 	switch v := value.(type) {
 	case interfaces.Evaluatable:
 		return v.Evaluate(sco)
 	case interfaces.Value:
 		return v
 	default:
-		panic(fmt.Sprintf("evaluateToResult : value %v of type %v is neither evaluatable or a result", value, v))
+		panic(fmt.Sprintf("evaluateToValue : value %v of type %v is neither evaluatable or a result", value, v))
 	}
 }
 
@@ -208,7 +211,7 @@ func tail(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
 }
 
 func apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
-	list := evaluateToResult(arguments[1], sco)
+	list := evaluateToValue(arguments[1], sco)
 	s, okRef := arguments[0].(REF)
 	p, okPair := list.(interfaces.Iterable)
 	if !okRef {
@@ -216,19 +219,19 @@ func apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 	} else if !okPair {
 		panic(fmt.Sprintf("Panic - expected pair, found %v", list))
 	}
-	return evaluateToResult(&EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}, sco)
+	return evaluateToValue(&EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}, sco)
 }
 
 func iff(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
-	test := evaluateToResult(arguments[0], sco)
+	test := evaluateToValue(arguments[0], sco)
 	if test.(B).Bool() {
-		return evaluateToResult(arguments[1], sco)
+		return evaluateToValue(arguments[1], sco)
 	}
-	return evaluateToResult(arguments[2], sco)
+	return evaluateToValue(arguments[2], sco)
 }
 
 func def(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
-	value := evaluateToResult(arguments[1], sco)
+	value := evaluateToValue(arguments[1], sco)
 	GlobalEnvironment.CreateRef(arguments[0].(REF), value)
 	return NILL
 }
@@ -236,7 +239,7 @@ func def(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 func do(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 	var result interfaces.Value
 	for _, a := range arguments {
-		result = evaluateToResult(a, sco.NewChildScope())
+		result = evaluateToValue(a, sco.NewChildScope())
 	}
 	return result
 }
@@ -269,7 +272,7 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 
 func filter(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
 	fn, fnok := arguments[0].(FN)
-	list := evaluateToResult(arguments[1], sco)
+	list := evaluateToValue(arguments[1], sco)
 
 	iter, iok := list.(interfaces.Iterable)
 
@@ -319,7 +322,7 @@ func mapp(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
 }
 
 func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
-	head := evaluateToResult(arguments[0], sco)
+	head := evaluateToValue(arguments[0], sco)
 	if len(arguments) > 1 {
 		if tail, ok := arguments[1].(interfaces.Evaluatable); ok {
 			return LAZYP{head, BindEvaluation(tail, sco)}
@@ -387,7 +390,7 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 			panic(fmt.Sprintf("let : expected an even number of items in vector, recieved %v", count))
 		}
 		for i := 0; i < count/2; i++ {
-			childScope.CreateRef(vectors.Get(i), evaluateToResult(vectors.Get(i+1), sco))
+			childScope.CreateRef(vectors.Get(i), evaluateToValue(vectors.Get(i+1), sco))
 		}
 		return exp.Evaluate(childScope)
 	}
