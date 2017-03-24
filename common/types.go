@@ -213,7 +213,7 @@ func (v VEC) Count() int {
 	return len(v.Vector)
 }
 
-// FN acts as storage for a reusable Function by storing a set of arguments to a function and the function expression itself
+// FN acts as storage for a reusable Appliable by storing a set of arguments to a function and the function expression itself
 type FN struct {
 	Arguments  VEC
 	Expression interfaces.Evaluatable

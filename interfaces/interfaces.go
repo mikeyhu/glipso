@@ -43,8 +43,8 @@ type Expandable interface {
 	Expand([]Type) Evaluatable
 }
 
-// Function interfaces can be applied by expressions to return Values
-type Function interface {
+// Appliable interfaces can be applied by expressions to return Values
+type Appliable interface {
 	IsType()
 	String() string
 	IsValue()

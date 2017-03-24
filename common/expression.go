@@ -8,7 +8,7 @@ import (
 // DEBUG enable to display debug information for function evaluation
 var DEBUG = false
 
-// EXP is a an Expression that has a Function and Arguments and can be evaluated against a scope
+// EXP is a an Expression that has a Appliable and Arguments and can be evaluated against a scope
 type EXP struct {
 	Function  interfaces.Type
 	Arguments []interfaces.Type
@@ -22,7 +22,7 @@ func (exp *EXP) String() string {
 	return fmt.Sprintf("(%v %v)", exp.Function, exp.Arguments)
 }
 
-// Evaluate evaluates the Function provided with the Arguments and Scope
+// Evaluate evaluates the Appliable provided with the Arguments and Scope
 func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 	exp.printStartExpression()
 	var result interfaces.Value
@@ -40,7 +40,7 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 		result = toMacro.Expand(exp.Arguments).Evaluate(sco)
 	} else {
 		function := evaluateToValue(function, sco)
-		if toFN, ok := function.(interfaces.Function); ok {
+		if toFN, ok := function.(interfaces.Appliable); ok {
 			result = toFN.Apply(exp.Arguments, sco)
 		}
 	}
