@@ -8,7 +8,7 @@ import (
 
 // ParsePrelude loads a number of definitions such as functions into global scope
 func ParsePrelude(scope interfaces.Scope) {
-	prelude := `
+	code := `
 	(do
 		(def defmacro (macro [n a e] (def n (macro a e))))
 		(defmacro defn [nn aa ee] (def nn (fn aa ee)))
@@ -22,7 +22,7 @@ func ParsePrelude(scope interfaces.Scope) {
 		)
 	)
 	`
-	exp, err := parser.Parse(prelude)
+	exp, err := parser.Parse(code)
 	if err != nil {
 		panic(fmt.Sprintf("Error parsing prelude, error %v", err))
 	}

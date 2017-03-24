@@ -47,7 +47,7 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 
 	exp.printEndExpression(result)
 	if result == nil {
-		panic(fmt.Sprintf("Evaluate : evaluation down to nil"))
+		panic("Evaluate : evaluation down to nil")
 	}
 	return result
 }

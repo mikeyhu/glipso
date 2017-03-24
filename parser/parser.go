@@ -18,17 +18,17 @@ func Parse(input string) (*common.EXP, error) {
 	var s scanner.Scanner
 	s.Filename = "input"
 	s.Init(strings.NewReader(input))
-	return parseRoot(s)
+	return root(s)
 }
 
 //ParseFile parses code from the provided file and returns an EXP that represents it
 func ParseFile(inputFile *os.File) (*common.EXP, error) {
 	var s scanner.Scanner
 	s.Init(inputFile)
-	return parseRoot(s)
+	return root(s)
 }
 
-func parseRoot(s scanner.Scanner) (*common.EXP, error) {
+func root(s scanner.Scanner) (*common.EXP, error) {
 	tok := s.Scan()
 	text := s.TokenText()
 	if tok == scanner.EOF {

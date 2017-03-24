@@ -35,7 +35,7 @@ func (fi FunctionInfo) Apply(arguments []interfaces.Type, sco interfaces.Scope) 
 		copy(unevaluatedArgs, arguments)
 		return fi.lazyEvaluator(unevaluatedArgs, sco)
 	}
-	panic(fmt.Sprintf("FunctionInfo : $v had neither an evaluator or lazy evaluator", fi.name))
+	panic(fmt.Sprintf("FunctionInfo : %v had neither an evaluator or lazy evaluator", fi.name))
 }
 
 var inbuilt map[REF]FunctionInfo
@@ -341,7 +341,7 @@ func printt(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 }
 
 func empty(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
-	var arg interfaces.Type = arguments[0]
+	var arg interfaces.Value = arguments[0]
 	if arg == nil {
 		return B(true)
 	}
