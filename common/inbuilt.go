@@ -63,7 +63,7 @@ func init() {
 		REF("lazypair"): {name: "lazypair", lazyEvaluator: lazypair},
 		REF("let"):      {name: "let", lazyEvaluator: let},
 		REF("macro"):    {name: "macro", lazyEvaluator: macro},
-		REF("map"):      {name: "map", lazyEvaluator: mapp},
+		REF("map"):      {name: "map", evaluator: mapp},
 		REF("print"):    {name: "print", evaluator: printt},
 		REF("range"):    {name: "range", evaluator: rnge},
 		REF("tail"):     {name: "tail", evaluator: tail},
@@ -82,7 +82,7 @@ func evaluateToResult(value interfaces.Type, sco interfaces.Scope) interfaces.Va
 	}
 }
 
-func plusAll(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func plusAll(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	all := I(0)
 	for _, v := range arguments {
 		all += v.(I)
@@ -90,7 +90,7 @@ func plusAll(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Valu
 	return all
 }
 
-func minusAll(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func minusAll(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	var all I
 	head := true
 	for _, v := range arguments {
@@ -104,7 +104,7 @@ func minusAll(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Val
 	return all
 }
 
-func multiplyAll(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func multiplyAll(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	var all I
 	head := true
 	for _, v := range arguments {
@@ -118,7 +118,7 @@ func multiplyAll(arguments []interfaces.Value, sco interfaces.Scope) interfaces.
 	return all
 }
 
-func mod(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func mod(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	a, aok := arguments[0].(I)
 	b, bok := arguments[1].(I)
 	if aok && bok {
@@ -127,7 +127,7 @@ func mod(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
 	panic("Mod : unsupported type")
 }
 
-func equals(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func equals(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	first, fok := arguments[0].(interfaces.Equalable)
 	second, sok := arguments[1].(interfaces.Equalable)
 
@@ -137,7 +137,7 @@ func equals(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value
 	panic(fmt.Sprintf("Equals : unsupported type %v  or %v\n", arguments[0], arguments[1]))
 }
 
-func lessThan(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func lessThan(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
@@ -146,7 +146,7 @@ func lessThan(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Val
 	panic(fmt.Sprintf("LessThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
 }
 
-func lessThanEqual(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func lessThanEqual(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
@@ -155,7 +155,7 @@ func lessThanEqual(arguments []interfaces.Value, sco interfaces.Scope) interface
 	panic(fmt.Sprintf("LessThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
 }
 
-func greaterThan(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func greaterThan(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
@@ -164,7 +164,7 @@ func greaterThan(arguments []interfaces.Value, sco interfaces.Scope) interfaces.
 	panic(fmt.Sprintf("GreaterThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
 }
 
-func greaterThanEqual(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func greaterThanEqual(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
@@ -173,7 +173,7 @@ func greaterThanEqual(arguments []interfaces.Value, sco interfaces.Scope) interf
 	panic(fmt.Sprintf("GreaterThan : unsupported type %v  or %v\n", arguments[0], arguments[1]))
 }
 
-func cons(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func cons(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	if len(arguments) == 0 {
 		return P{}
 	} else if len(arguments) == 1 {
@@ -187,7 +187,7 @@ func cons(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
 	return P{}
 }
 
-func first(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func first(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	pair, ok := arguments[0].(interfaces.Iterable)
 	if ok {
 		return pair.Head()
@@ -241,7 +241,7 @@ func do(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 	return result
 }
 
-func rnge(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func rnge(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	start := arguments[0].(I)
 	end := arguments[1].(I)
 	if start < end {
@@ -297,10 +297,10 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value
 	panic(fmt.Sprintf("filter : expected function and list. Recieved %v, %v\n", arguments[0], arguments[1]))
 }
 
-func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
+func mapp(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
 
-	var mp func(interfaces.Type, interfaces.Iterable) *P
-	mp = func(fn interfaces.Type, iterable interfaces.Iterable) *P {
+	var mp func(interfaces.Value, interfaces.Iterable) *P
+	mp = func(fn interfaces.Value, iterable interfaces.Iterable) *P {
 		head := iterable.Head()
 		res := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
 		if iterable.HasTail() {
@@ -309,7 +309,7 @@ func mapp(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
 		return &P{res, ENDED}
 	}
 
-	list := evaluateToResult(arguments[1], sco)
+	list := arguments[1]
 
 	if pair, pok := list.(interfaces.Iterable); pok {
 		return *mp(arguments[0], pair)
@@ -329,18 +329,18 @@ func lazypair(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Valu
 	return LAZYP{head, nil}
 }
 
-func macro(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
+func macro(arguments []interfaces.Type, _ interfaces.Scope) interfaces.Value {
 	return MAC{arguments[0].(VEC), arguments[1].(*EXP)}
 }
 
-func printt(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func printt(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	for _, arg := range arguments {
 		fmt.Printf("%v\n", arg)
 	}
 	return NILL
 }
 
-func empty(arguments []interfaces.Value, sco interfaces.Scope) interfaces.Value {
+func empty(arguments []interfaces.Value, _ interfaces.Scope) interfaces.Value {
 	var arg interfaces.Type = arguments[0]
 	if arg == nil {
 		return B(true)
