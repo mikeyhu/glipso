@@ -12,7 +12,8 @@ type MAC struct {
 }
 
 // IsType for MAC
-func (m MAC) IsType() {}
+func (m MAC) IsType()   {}
+func (m MAC) IsResult() {}
 
 // String representation of MAC
 func (m MAC) String() string {
@@ -20,7 +21,7 @@ func (m MAC) String() string {
 }
 
 //Expand will replace references to Arguments with arguments provided and then return it without evaluation
-func (m MAC) Expand(arguments []interfaces.Type) interfaces.Type {
+func (m MAC) Expand(arguments []interfaces.Type) interfaces.Evaluatable {
 	m.printStartExpand()
 	if len(arguments) != len(m.Arguments.Vector) {
 		panic(fmt.Sprintf("Expand : expected %v arguments\n", len(m.Arguments.Vector)))

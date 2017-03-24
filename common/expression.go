@@ -23,9 +23,9 @@ func (exp *EXP) String() string {
 }
 
 // Evaluate evaluates the Function provided with the Arguments and Scope
-func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
+func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 	exp.printStartExpression()
-	var result interfaces.Type
+	var result interfaces.Value
 	function := exp.Function
 
 	if toREF, ok := function.(REF); ok {
@@ -37,19 +37,17 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Type {
 	}
 
 	if toMacro, ok := function.(interfaces.Expandable); ok {
-		result = toMacro.Expand(exp.Arguments)
+		result = toMacro.Expand(exp.Arguments).Evaluate(sco)
 	} else {
-		if toEval, ok := function.(*EXP); ok {
-			function = toEval.Evaluate(sco)
-		}
+		function := evaluateToResult(function, sco)
 		if toFN, ok := function.(interfaces.Function); ok {
 			result = toFN.Apply(exp.Arguments, sco)
 		}
 	}
 
 	exp.printEndExpression(result)
-	if exp, ok := result.(*EXP); ok {
-		result = exp.Evaluate(sco)
+	if result == nil {
+		panic(fmt.Sprintf("Evaluate : evaluation down to nil"))
 	}
 	return result
 }
@@ -73,7 +71,7 @@ type BOUNDEXP struct {
 }
 
 // Evaluate on a Bound Expression replaces the provided scope with the bound scope
-func (bexp *BOUNDEXP) Evaluate(sco interfaces.Scope) interfaces.Type {
+func (bexp *BOUNDEXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 	return bexp.Evaluatable.Evaluate(bexp.Scope)
 }
 

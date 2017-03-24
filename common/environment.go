@@ -8,14 +8,17 @@ import (
 // Environment Provides a mechanism for creating and resolving variables
 type Environment struct {
 	id        int
-	variables map[REF]interfaces.Type
+	variables map[REF]interfaces.Value
 	parent    *Environment
 }
 
 // ResolveRef will try to resolve a provided reference to a value in this or parent scope
-func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
+func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Value, bool) {
 	if env.variables != nil {
 		if result, ok := env.variables[ref.(REF)]; ok {
+			if DEBUG {
+				fmt.Printf("found %v in scope %v\n", ref, env.id)
+			}
 			return result, true
 		}
 	}
@@ -23,18 +26,21 @@ func (env Environment) ResolveRef(ref interfaces.Type) (interfaces.Type, bool) {
 		return env.parent.ResolveRef(ref)
 	}
 	if fi, ok := inbuilt[ref.(REF)]; ok {
+		if DEBUG {
+			fmt.Printf("found %v in inbuilt\n", ref)
+		}
 		return fi, true
 	}
 	return nil, false
 }
 
 // CreateRef will create a variable in this scope
-func (env *Environment) CreateRef(name interfaces.Type, arg interfaces.Type) interfaces.Type {
+func (env *Environment) CreateRef(name interfaces.Type, arg interfaces.Value) interfaces.Type {
 	if DEBUG {
 		fmt.Printf("Adding %v %v to %v\n", name, arg, env)
 	}
 	if env.variables == nil {
-		env.variables = map[REF]interfaces.Type{}
+		env.variables = map[REF]interfaces.Value{}
 	}
 	env.variables[name.(REF)] = arg
 	return name
@@ -78,7 +84,7 @@ var GlobalEnvironment *Environment
 func init() {
 	GlobalEnvironment = &Environment{
 		id:        nextScopeID(),
-		variables: map[REF]interfaces.Type{},
+		variables: map[REF]interfaces.Value{},
 	}
 }
 
