@@ -64,6 +64,31 @@ func (exp *EXP) printEndExpression(result interfaces.Type) {
 	}
 }
 
+// REF (Reference)
+// symbol for something in scope, variable or function
+type REF string
+
+// IsType for REF
+func (r REF) IsType() {}
+
+// String representation of a REF
+func (r REF) String() string {
+	return string(r)
+}
+
+// Evaluate resolves a REF to something in scope
+func (r REF) Evaluate(sco interfaces.Scope) interfaces.Value {
+	if DEBUG {
+		env := sco.(*Environment)
+		fmt.Printf("%v being looked up in scope %v:\n", r, env.id)
+		env.DisplayEnvironment()
+	}
+	if resolved, ok := sco.ResolveRef(r); ok {
+		return resolved
+	}
+	panic(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
+}
+
 // BOUNDEXP provides a way for a Expression to be bound to a particular scope for later evaluation
 type BOUNDEXP struct {
 	Evaluatable interfaces.Evaluatable

@@ -62,3 +62,10 @@ func TestEvaluateFNHasLessArgumentsThanProvided(t *testing.T) {
 		exp.Evaluate(GlobalEnvironment)
 	})
 }
+
+func TestPanicsWhenEvaluatingUnresolvedREF(t *testing.T) {
+	ref := REF("notset")
+	assert.Panics(t, func() {
+		ref.Evaluate(GlobalEnvironment)
+	})
+}
