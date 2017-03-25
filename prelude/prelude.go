@@ -17,9 +17,13 @@ func ParsePrelude(scope interfaces.Scope) {
 			(if
 				(empty (tail list))
 				(first list)
-				(last (tail list))
-			)
-		)
+				(last (tail list))))
+
+		(defn repeat [item times]
+			(if
+				(> times 1)
+				(lazypair item (repeat item (- times 1)))
+				(cons item)))
 	)
 	`
 	exp, err := parser.Parse(code)

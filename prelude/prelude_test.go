@@ -41,3 +41,25 @@ func TestLastReturnsLastNumberInList(t *testing.T) {
 	result := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(5), result)
 }
+
+func TestRepeatReturnsTheItem(t *testing.T) {
+	ParsePrelude(common.GlobalEnvironment)
+	code := `
+	(first (repeat "s" 5))
+	`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.S("s"), result)
+}
+
+func TestRepeatReturnsTheItemNTimes(t *testing.T) {
+	ParsePrelude(common.GlobalEnvironment)
+	code := `
+	(apply + (repeat 10 5))
+	`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.I(50), result)
+}
