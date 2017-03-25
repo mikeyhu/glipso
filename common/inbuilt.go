@@ -8,36 +8,6 @@ import (
 type evaluator func([]interfaces.Value, interfaces.Scope) interfaces.Value
 type lazyEvaluator func([]interfaces.Type, interfaces.Scope) interfaces.Value
 
-// FI provides information about a built in function
-type FI struct {
-	name          string
-	evaluator     evaluator
-	lazyEvaluator lazyEvaluator
-}
-
-// IsType for FI
-func (fi FI) IsType()  {}
-func (fi FI) IsValue() {}
-
-// String for FI
-func (fi FI) String() string {
-	return fmt.Sprintf("FI(%s)", fi.name)
-}
-func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
-	if fi.evaluator != nil {
-		evaluatedArgs := make([]interfaces.Value, len(arguments))
-		for p, arg := range arguments {
-			evaluatedArgs[p] = evaluateToValue(arg, sco)
-		}
-		return fi.evaluator(evaluatedArgs, sco)
-	} else if fi.lazyEvaluator != nil {
-		unevaluatedArgs := make([]interfaces.Type, len(arguments))
-		copy(unevaluatedArgs, arguments)
-		return fi.lazyEvaluator(unevaluatedArgs, sco)
-	}
-	panic(fmt.Sprintf("FI : %v had neither an evaluator or lazy evaluator", fi.name))
-}
-
 var inbuilt map[REF]FI
 
 func init() {
