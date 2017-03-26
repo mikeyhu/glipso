@@ -27,6 +27,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (macro [args] exp)          creates a macro that will replace args in the exp with arguments provided for evaluation
 (map fn list)               generate a new list by applying fn to each element in a list
 (range start end)           creates a lazily evaluated list from start to end (inclusive)
+(repeat item times)         returns a list consisting of times number of items 
 (tail list)                 get tail of the list
 (take num list)             returns a lazily evaluated list that is the first 'num' elements in 'list'
 ```
