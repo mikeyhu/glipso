@@ -213,6 +213,34 @@ func BenchmarkSumRangefn(b *testing.B) {
 	}
 }
 
+func BenchmarkParseCode(b *testing.B) {
+	code := `
+	(do
+	    (defn notdivbyany [num listofdivs]
+		(empty
+		    (filter
+			(fn [z] (= 0 z))
+			(map (fn [head] (% num head)) listofdivs)
+		    )
+		)
+	    )
+
+	    (defn getprimes [num listofprimes]
+		(if
+		    (notdivbyany num listofprimes)
+		    (lazypair num (getprimes (+ num 1) (cons num listofprimes)))
+		    (getprimes (+ num 1) listofprimes)
+		)
+	    )
+
+	    (map print (take 100 (getprimes 3 (cons 2))))
+	)`
+	for i := 0; i < b.N; i++ {
+		_, err := parser.Parse(code)
+		assert.NoError(b, err)
+	}
+}
+
 func TestTakeReturnsFullListWhenSmallerThanTakeArgument(t *testing.T) {
 	prelude.ParsePrelude(common.GlobalEnvironment)
 	code := `(last (take 5 (range 1 3)))`
