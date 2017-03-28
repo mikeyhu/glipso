@@ -4,34 +4,35 @@ Package parser takes a string (either in memony or in a file) representation of 
 package parser
 
 import (
+	"bufio"
 	"errors"
 	"github.com/mikeyhu/glipso/common"
 	"github.com/mikeyhu/glipso/interfaces"
 	"os"
 	"strconv"
 	"strings"
-	"text/scanner"
 )
 
 //Parse parses a string containing some code and returns an EXP that represents it
 func Parse(input string) (*common.EXP, error) {
-	var s scanner.Scanner
-	s.Filename = "input"
-	s.Init(strings.NewReader(input))
+	var s *bufio.Scanner
+	s = bufio.NewScanner(strings.NewReader(input))
+	s.Split(ScanTokens)
 	return root(s)
 }
 
 //ParseFile parses code from the provided file and returns an EXP that represents it
 func ParseFile(inputFile *os.File) (*common.EXP, error) {
-	var s scanner.Scanner
-	s.Init(inputFile)
+	var s *bufio.Scanner
+	s = bufio.NewScanner(inputFile)
+	s.Split(ScanTokens)
 	return root(s)
 }
 
-func root(s scanner.Scanner) (*common.EXP, error) {
-	tok := s.Scan()
-	text := s.TokenText()
-	if tok == scanner.EOF {
+func root(s *bufio.Scanner) (*common.EXP, error) {
+	more := s.Scan()
+	text := s.Text()
+	if !more {
 		return nil, errors.New("Unexpected EOF")
 	}
 	if text == "(" {
@@ -41,13 +42,14 @@ func root(s scanner.Scanner) (*common.EXP, error) {
 	return nil, errors.New("no EXP found")
 }
 
-func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
+//
+func parseExpression(s *bufio.Scanner) (*bufio.Scanner, *common.EXP, error) {
 	args := []interfaces.Type{}
-	var tok rune
+	more := true
 	var err error
-	for tok != scanner.EOF {
-		tok = s.Scan()
-		token := s.TokenText()
+	for more {
+		more = s.Scan()
+		token := s.Text()
 		if token == ")" {
 			head := args[0]
 			tail := args[1:]
@@ -61,13 +63,13 @@ func parseExpression(s scanner.Scanner) (scanner.Scanner, *common.EXP, error) {
 	return s, nil, errors.New("Unexpected EOF while parsing EXP")
 }
 
-func parseVector(s scanner.Scanner) (scanner.Scanner, *common.VEC, error) {
+func parseVector(s *bufio.Scanner) (*bufio.Scanner, *common.VEC, error) {
 	vec := []interfaces.Type{}
-	var tok rune
+	more := true
 	var err error
-	for tok != scanner.EOF {
-		tok = s.Scan()
-		token := s.TokenText()
+	for more {
+		more = s.Scan()
+		token := s.Text()
 		if token == "]" {
 			return s, &common.VEC{vec}, nil
 		}
@@ -79,7 +81,7 @@ func parseVector(s scanner.Scanner) (scanner.Scanner, *common.VEC, error) {
 	return s, nil, errors.New("Unexpected EOF while parsing VEC")
 }
 
-func addElementToArray(s scanner.Scanner, list []interfaces.Type, token string) (scanner.Scanner, []interfaces.Type, error) {
+func addElementToArray(s *bufio.Scanner, list []interfaces.Type, token string) (*bufio.Scanner, []interfaces.Type, error) {
 	var err error
 	if token == "(" {
 		var exp *common.EXP

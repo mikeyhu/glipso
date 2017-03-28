@@ -29,8 +29,8 @@ func TestParserReturnsNestedExpression(t *testing.T) {
 	result, err := Parse("(+ 1 (+ 1 3))")
 	assert.NoError(t, err)
 	args := result.Arguments
-	assert.Equal(t, args[0].(common.I).Int(), 1, "1st element")
-	assert.Equal(t, len(result.Arguments), 2, "array length of outer arguements")
+	assert.Equal(t, 1, args[0].(common.I).Int(), "1st element")
+	assert.Equal(t, 2, len(result.Arguments), "array length of outer arguments")
 	assert.Equal(t, args[1].(*common.EXP).Function, common.REF("+"), "Nested Expression")
 }
 
@@ -70,4 +70,13 @@ func TestParserReturnsQuotedTextAsStrings(t *testing.T) {
 	args := result.Arguments
 	assert.Equal(t, args[0], common.S("hello"))
 	assert.Equal(t, args[1], common.S("world"))
+}
+
+func TestParserHandlesFunctionsWithDashes(t *testing.T) {
+	result, err := Parse(`(a-function 1 2)`)
+	assert.NoError(t, err)
+	assert.Equal(t, common.REF("a-function"), result.Function)
+	args := result.Arguments
+	assert.Equal(t, common.I(1), args[0])
+	assert.Equal(t, common.I(2), args[1])
 }
