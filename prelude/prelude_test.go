@@ -19,7 +19,7 @@ func TestPreludeDefnDoesNotShareScope(t *testing.T) {
 	`
 	exp, err := parser.Parse(code)
 	assert.NoError(t, err)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(105), result)
 }
 
@@ -38,7 +38,7 @@ func TestLastReturnsLastNumberInList(t *testing.T) {
 	`
 	exp, err := parser.Parse(code)
 	assert.NoError(t, err)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(5), result)
 }
 
@@ -49,7 +49,7 @@ func TestRepeatReturnsTheItem(t *testing.T) {
 	`
 	exp, err := parser.Parse(code)
 	assert.NoError(t, err)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.S("s"), result)
 }
 
@@ -60,6 +60,6 @@ func TestRepeatReturnsTheItemNTimes(t *testing.T) {
 	`
 	exp, err := parser.Parse(code)
 	assert.NoError(t, err)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(50), result)
 }

@@ -20,13 +20,14 @@ func (f FN) String() string {
 	return fmt.Sprintf("FN(%v, %v)", f.Arguments, f.Expression)
 }
 
-func (f FN) Apply(arguments []interfaces.Type, env interfaces.Scope) interfaces.Value {
+func (f FN) Apply(arguments []interfaces.Type, env interfaces.Scope) (interfaces.Value, error) {
 	if len(f.Arguments.Vector) != len(arguments) {
 		panic("Invalid number of arguments")
 	}
 	fnenv := env.NewChildScope()
 	for i, v := range f.Arguments.Vector {
-		fnenv.CreateRef(v.(REF), evaluateToValue(arguments[i], env))
+		eval, _ := evaluateToValue(arguments[i], env)
+		fnenv.CreateRef(v.(REF), eval)
 	}
 	return f.Expression.Evaluate(fnenv)
 }
@@ -46,11 +47,11 @@ func (fi FI) IsValue() {}
 func (fi FI) String() string {
 	return fmt.Sprintf("FI(%s)", fi.name)
 }
-func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) interfaces.Value {
+func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
 	if fi.evaluator != nil {
 		evaluatedArgs := make([]interfaces.Value, len(arguments))
 		for p, arg := range arguments {
-			evaluatedArgs[p] = evaluateToValue(arg, sco)
+			evaluatedArgs[p], _ = evaluateToValue(arg, sco)
 		}
 		return fi.evaluator(evaluatedArgs, sco)
 	} else if fi.lazyEvaluator != nil {

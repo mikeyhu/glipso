@@ -23,7 +23,7 @@ func (exp *EXP) String() string {
 }
 
 // Evaluate evaluates the Appliable provided with the Arguments and Scope
-func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
+func (exp *EXP) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 	exp.printStartExpression()
 	var result interfaces.Value
 	function := exp.Function
@@ -37,11 +37,12 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 	}
 
 	if toMacro, ok := function.(interfaces.Expandable); ok {
-		result = toMacro.Expand(exp.Arguments).Evaluate(sco)
+		result, _ = toMacro.Expand(exp.Arguments).Evaluate(sco)
+
 	} else {
-		function := evaluateToValue(function, sco)
+		function, _ := evaluateToValue(function, sco)
 		if toFN, ok := function.(interfaces.Appliable); ok {
-			result = toFN.Apply(exp.Arguments, sco)
+			result, _ = toFN.Apply(exp.Arguments, sco)
 		}
 	}
 
@@ -49,7 +50,7 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) interfaces.Value {
 	if result == nil {
 		panic("Evaluate : evaluation down to nil")
 	}
-	return result
+	return result, nil
 }
 
 func (exp *EXP) printStartExpression() {
@@ -77,14 +78,14 @@ func (r REF) String() string {
 }
 
 // Evaluate resolves a REF to something in scope
-func (r REF) Evaluate(sco interfaces.Scope) interfaces.Value {
+func (r REF) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 	if DEBUG {
 		env := sco.(*Environment)
 		fmt.Printf("%v being looked up in scope %v:\n", r, env.id)
 		env.DisplayEnvironment()
 	}
 	if resolved, ok := sco.ResolveRef(r); ok {
-		return resolved
+		return resolved, nil
 	}
 	panic(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
 }
@@ -96,7 +97,7 @@ type BOUNDEXP struct {
 }
 
 // Evaluate on a Bound Expression replaces the provided scope with the bound scope
-func (bexp *BOUNDEXP) Evaluate(sco interfaces.Scope) interfaces.Value {
+func (bexp *BOUNDEXP) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 	return bexp.Evaluatable.Evaluate(bexp.Scope)
 }
 

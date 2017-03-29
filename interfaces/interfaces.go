@@ -30,7 +30,7 @@ type Equalable interface {
 
 // Evaluatable interfaces are things such as Expressions or References that can be evaluated to return a Value
 type Evaluatable interface {
-	Evaluate(Scope) Value
+	Evaluate(Scope) (Value, error)
 }
 
 // Comparable interfaces are types that can be checked for equality and order
@@ -48,7 +48,7 @@ type Appliable interface {
 	IsType()
 	String() string
 	IsValue()
-	Apply([]Type, Scope) Value
+	Apply([]Type, Scope) (Value, error)
 }
 
 // Scope interfaces provice a mechanism for creating variables and looking up references

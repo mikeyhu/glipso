@@ -10,13 +10,13 @@ import (
 
 func TestAddNumbers(t *testing.T) {
 	exp, _ := parser.Parse("(+ 1 2 3 4 5)")
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(15), result)
 }
 
 func TestApplyAddNumbers(t *testing.T) {
 	exp, _ := parser.Parse("(apply + (cons 1 (cons 2 (cons 3))))")
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
 
@@ -25,7 +25,7 @@ func TestIfEvaluatesSecondExpression(t *testing.T) {
 	(if (= 1 1) (+ 2 2) (+ 3 3))
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(4), result)
 }
 
@@ -34,7 +34,7 @@ func TestIfEvaluatesThirdExpression(t *testing.T) {
 	(if (= 1 2) (+ 2 2) (+ 3 3))
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
 
@@ -46,13 +46,13 @@ func TestCreatesAndUsesVariable(t *testing.T) {
 		(+ one two))
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(3), result)
 }
 
 func TestSummingRange(t *testing.T) {
 	exp, _ := parser.Parse("(apply + (range 1 5))")
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(15), result)
 }
 
@@ -63,7 +63,7 @@ func TestGlobalAdd1Function(t *testing.T) {
 		(add1 5))
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
 
@@ -72,7 +72,7 @@ func TestAnonymousAdd1Function(t *testing.T) {
 	((fn [a] (+ 1 a)) 5)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
 
@@ -84,7 +84,7 @@ func TestEvenFunctionEvaluatesEvenNumber(t *testing.T) {
 	)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(true), result)
 }
 
@@ -96,7 +96,7 @@ func TestEvenFunctionEvaluatesOddNumber(t *testing.T) {
 	)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(false), result)
 }
 
@@ -108,7 +108,7 @@ func TestFilterEvenNumbers(t *testing.T) {
 	)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(6), result)
 }
 
@@ -120,7 +120,7 @@ func TestMapAdd1(t *testing.T) {
 	)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(2), result)
 }
 
@@ -132,7 +132,7 @@ func TestLazyPairHasAccessToClosure(t *testing.T) {
 	)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(11), result)
 }
 
@@ -154,7 +154,7 @@ func TestLazyPairCanBeUsedToCreateRange(t *testing.T) {
 	)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(true), result)
 }
 
@@ -162,7 +162,7 @@ func TestEmptyReturnsFalseWhenGivenAListWithContents(t *testing.T) {
 	code := `(empty (range 1 5))`
 
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(false), result)
 }
 
@@ -170,7 +170,7 @@ func TestEmptyReturnsTrueWhenGivenAListWithNoContents(t *testing.T) {
 	code := `(empty (filter (fn [num] (> num 10)) (range 1 5)))`
 
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(true), result)
 }
 
@@ -180,7 +180,7 @@ func BenchmarkSumRange(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		exp, _ := parser.Parse(code)
-		result := exp.Evaluate(common.GlobalEnvironment)
+		result, _ := exp.Evaluate(common.GlobalEnvironment)
 		assert.Equal(b, common.I(120), result)
 	}
 }
@@ -208,7 +208,7 @@ func BenchmarkSumRangefn(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		exp, _ := parser.Parse(code)
-		result := exp.Evaluate(common.GlobalEnvironment)
+		result, _ := exp.Evaluate(common.GlobalEnvironment)
 		assert.Equal(b, common.I(120), result)
 	}
 }
@@ -246,7 +246,7 @@ func TestTakeReturnsFullListWhenSmallerThanTakeArgument(t *testing.T) {
 	code := `(last (take 5 (range 1 3)))`
 
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(3), result)
 }
 
@@ -255,7 +255,7 @@ func TestTakeReturnsPartialList(t *testing.T) {
 	code := `(last (take 3 (range 1 5)))`
 
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(3), result)
 }
 
@@ -277,20 +277,20 @@ func TestReturningRefReturnsCorrectlyScopedValue(t *testing.T) {
 	)
 	`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.I(2), result)
 }
 
 func TestLetAcceptsExpressionsInVectors(t *testing.T) {
 	code := `(let [a (+ 1 2)] (= 3 a))`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(true), result)
 }
 
 func TestLetAcceptsValuesInVectors(t *testing.T) {
 	code := `(let [a 3] (= 3 a))`
 	exp, _ := parser.Parse(code)
-	result := exp.Evaluate(common.GlobalEnvironment)
+	result, _ := exp.Evaluate(common.GlobalEnvironment)
 	assert.Equal(t, common.B(true), result)
 }

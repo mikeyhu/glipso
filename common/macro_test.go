@@ -38,6 +38,6 @@ func TestMacroIsFoundAndExpanded(t *testing.T) {
 
 	expression := &EXP{REF("adder"), []interfaces.Type{I(10)}}
 
-	result := expression.Evaluate(GlobalEnvironment)
+	result, _ := expression.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(11), result)
 }

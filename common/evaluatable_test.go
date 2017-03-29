@@ -8,19 +8,19 @@ import (
 
 func TestEvaluatePlusWith2Arguments(t *testing.T) {
 	exp := EXP{Function: REF("+"), Arguments: []interfaces.Type{I(1), I(2)}}
-	result := exp.Evaluate(GlobalEnvironment)
+	result, _ := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(3), result)
 }
 
 func TestEvaluatePlusWithManyArguments(t *testing.T) {
 	exp := EXP{Function: REF("+"), Arguments: []interfaces.Type{I(1), I(2), I(3)}}
-	result := exp.Evaluate(GlobalEnvironment)
+	result, _ := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(6), result)
 }
 
 func TestEvaluateMinusWith2Arguments(t *testing.T) {
 	exp := EXP{Function: REF("-"), Arguments: []interfaces.Type{I(5), I(1)}}
-	result := exp.Evaluate(GlobalEnvironment)
+	result, _ := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(4), result)
 }
 
@@ -28,7 +28,7 @@ func TestEvaluateNestedFunction(t *testing.T) {
 	exp := &EXP{Function: REF("+"), Arguments: []interfaces.Type{
 		I(1),
 		&EXP{Function: REF("-"), Arguments: []interfaces.Type{I(2), I(1)}}}}
-	result := exp.Evaluate(GlobalEnvironment)
+	result, _ := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(2), result)
 }
 
@@ -37,7 +37,7 @@ func TestEvaluateFN(t *testing.T) {
 		VEC{[]interfaces.Type{REF("a")}},
 		&EXP{Function: REF("+"), Arguments: []interfaces.Type{REF("a"), I(1)}}},
 		Arguments: []interfaces.Type{I(2)}}
-	result := exp.Evaluate(GlobalEnvironment)
+	result, _ := exp.Evaluate(GlobalEnvironment)
 	assert.Equal(t, I(3), result)
 }
 

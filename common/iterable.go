@@ -82,7 +82,8 @@ func (l LAZYP) HasTail() bool {
 
 // Iterate will evaluate the tail of the LAZYP
 func (l LAZYP) Iterate(sco interfaces.Scope) interfaces.Iterable {
-	if nextIter, ok := l.tail.Evaluate(sco).(interfaces.Iterable); ok {
+	taileval, _ := l.tail.Evaluate(sco)
+	if nextIter, ok := taileval.(interfaces.Iterable); ok {
 		return nextIter
 	}
 	panic(fmt.Sprintf("Iterate : expected an LAZYP, got %v", l))

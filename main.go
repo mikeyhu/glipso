@@ -25,7 +25,7 @@ func main() {
 	} else {
 		exp, _ = parser.ParseFile(os.Stdin)
 	}
-	fmt.Println(exp.Evaluate(env))
-
+	output, _ := exp.Evaluate(env)
+	fmt.Println(output)
 	common.GlobalEnvironment.DisplayDiagnostics()
 }
