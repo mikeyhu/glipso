@@ -259,12 +259,14 @@ func TestTakeReturnsPartialList(t *testing.T) {
 	assert.Equal(t, common.I(3), result)
 }
 
-func TestPanicsWhenFunctionNotFound(t *testing.T) {
+func TestErrorsWhenFunctionNotFound(t *testing.T) {
 	code := `(notafunction 1)`
 	exp, _ := parser.Parse(code)
-	assert.Panics(t, func() {
-		exp.Evaluate(common.GlobalEnvironment)
-	})
+
+	result, err := exp.Evaluate(common.GlobalEnvironment)
+	assert.Equal(t, common.NILL, result)
+	assert.EqualError(t, err, "evaluate : function 'notafunction' not found")
+
 }
 
 func TestReturningRefReturnsCorrectlyScopedValue(t *testing.T) {

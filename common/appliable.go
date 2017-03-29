@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"github.com/mikeyhu/glipso/interfaces"
 )
@@ -21,12 +22,17 @@ func (f FN) String() string {
 }
 
 func (f FN) Apply(arguments []interfaces.Type, env interfaces.Scope) (interfaces.Value, error) {
-	if len(f.Arguments.Vector) != len(arguments) {
-		panic("Invalid number of arguments")
+	if len(f.Arguments.Vector) < len(arguments) {
+		return NILL, errors.New("too many arguments")
+	} else if len(f.Arguments.Vector) > len(arguments) {
+		return NILL, errors.New("too few arguments")
 	}
 	fnenv := env.NewChildScope()
 	for i, v := range f.Arguments.Vector {
-		eval, _ := evaluateToValue(arguments[i], env)
+		eval, err := evaluateToValue(arguments[i], env)
+		if err != nil {
+			return NILL, err
+		}
 		fnenv.CreateRef(v.(REF), eval)
 	}
 	return f.Expression.Evaluate(fnenv)

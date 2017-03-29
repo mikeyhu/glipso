@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"github.com/mikeyhu/glipso/interfaces"
 )
@@ -26,23 +27,32 @@ func (exp *EXP) String() string {
 func (exp *EXP) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 	exp.printStartExpression()
 	var result interfaces.Value
+	var err error
 	function := exp.Function
 
 	if toREF, ok := function.(REF); ok {
 		if fn, ok := sco.ResolveRef(toREF); ok {
 			function = fn
 		} else {
-			panic(fmt.Sprintf("evaluate : function %v not found", toREF))
+			return NILL, errors.New(fmt.Sprintf("evaluate : function '%v' not found", toREF))
 		}
 	}
 
 	if toMacro, ok := function.(interfaces.Expandable); ok {
-		result, _ = toMacro.Expand(exp.Arguments).Evaluate(sco)
-
+		result, err = toMacro.Expand(exp.Arguments).Evaluate(sco)
+		if err != nil {
+			return NILL, err
+		}
 	} else {
-		function, _ := evaluateToValue(function, sco)
+		function, err := evaluateToValue(function, sco)
+		if err != nil {
+			return NILL, err
+		}
 		if toFN, ok := function.(interfaces.Appliable); ok {
-			result, _ = toFN.Apply(exp.Arguments, sco)
+			result, err = toFN.Apply(exp.Arguments, sco)
+			if err != nil {
+				return NILL, err
+			}
 		}
 	}
 
@@ -87,7 +97,7 @@ func (r REF) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 	if resolved, ok := sco.ResolveRef(r); ok {
 		return resolved, nil
 	}
-	panic(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
+	return NILL, errors.New(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
 }
 
 // BOUNDEXP provides a way for a Expression to be bound to a particular scope for later evaluation
