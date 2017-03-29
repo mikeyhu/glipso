@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"github.com/mikeyhu/glipso/interfaces"
 )
@@ -107,7 +108,7 @@ func equals(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value,
 	if fok && sok {
 		return first.Equals(second), nil
 	}
-	panic(fmt.Sprintf("Equals : unsupported type %v  or %v\n", arguments[0], arguments[1]))
+	return NILL, errors.New(fmt.Sprintf("Equals : unsupported type %v or %v", arguments[0], arguments[1]))
 }
 
 func lessThan(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {

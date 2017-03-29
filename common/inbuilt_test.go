@@ -18,11 +18,13 @@ func TestEqualityEqual(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestEqualityPanicsIfTypesNotValid(t *testing.T) {
+func TestEqualityErrorsIfTypesNotValid(t *testing.T) {
 	exp := EXP{Function: REF("="), Arguments: []interfaces.Type{P{}, I(1)}}
-	assert.Panics(t, func() {
-		exp.Evaluate(GlobalEnvironment)
-	})
+
+	result, err := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "Equals : unsupported type P(<nil> <nil>) or 1")
+
 }
 
 func TestConsCreatesPairWithNil(t *testing.T) {
@@ -84,7 +86,7 @@ func TestIfTrueEvaluatesRefRatherThanReturning(t *testing.T) {
 
 func TestDefRecordsReferences(t *testing.T) {
 	exp := EXP{Function: REF("def"), Arguments: []interfaces.Type{REF("one"), I(1)}}
-	exp.Evaluate(GlobalEnvironment)
+	_, _ = exp.Evaluate(GlobalEnvironment)
 	resolved, _ := GlobalEnvironment.ResolveRef(REF("one"))
 	assert.Equal(t, I(1), resolved)
 }

@@ -30,5 +30,8 @@ func ParsePrelude(scope interfaces.Scope) {
 	if err != nil {
 		panic(fmt.Sprintf("Error parsing prelude, error %v", err))
 	}
-	exp.Evaluate(scope)
+	_, err = exp.Evaluate(scope)
+	if err != nil {
+		panic(fmt.Sprintf("Error evaluating prelude, error %v", err))
+	}
 }

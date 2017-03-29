@@ -200,8 +200,7 @@ func BenchmarkSumRangefn(b *testing.B) {
 		)
 	)`
 
-	exp, _ := parser.Parse(fn)
-	exp.Evaluate(common.GlobalEnvironment)
+	_, _ = parser.Parse(fn)
 
 	code := "(apply + (rangefn 1 15))"
 
