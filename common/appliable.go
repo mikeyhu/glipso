@@ -65,5 +65,5 @@ func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) (interface
 		copy(unevaluatedArgs, arguments)
 		return fi.lazyEvaluator(unevaluatedArgs, sco)
 	}
-	panic(fmt.Sprintf("FI : %v had neither an evaluator or lazy evaluator", fi.name))
+	return NILL, errors.New(fmt.Sprintf("FI : %v had neither an evaluator or lazy evaluator", fi.name))
 }
