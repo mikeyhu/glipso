@@ -13,7 +13,7 @@ Linting:"
 golint ./... || echo "golint not found!"
 echo "
 Errcheck:"
-errcheck ./... || echo "errcheck not found!"
+errcheck -blank ./... || echo "errcheck not found!"
 
 echo "
 Building:"
