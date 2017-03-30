@@ -45,17 +45,6 @@ func addInbuilt(info FI) {
 	inbuilt[REF(info.name)] = info
 }
 
-func evaluateToValue(value interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
-	switch v := value.(type) {
-	case interfaces.Evaluatable:
-		return v.Evaluate(sco)
-	case interfaces.Value:
-		return v, nil
-	default:
-		panic(fmt.Sprintf("evaluateToValue : value %v of type %v is neither evaluatable or a result", value, v))
-	}
-}
-
 func plusAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	all := I(0)
 	for _, v := range arguments {

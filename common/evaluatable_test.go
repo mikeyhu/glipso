@@ -83,3 +83,10 @@ func TestErrorsWhenFunctionNotFound(t *testing.T) {
 	assert.Equal(t, NILL, result)
 	assert.EqualError(t, err, "evaluate : function 'not-a-function' not found")
 }
+
+func TestErrorsWhenEvaluateToValueIsNeitherEvaluatableOrResult(t *testing.T) {
+	exp := EXP{}
+	result, err := exp.Evaluate(GlobalEnvironment)
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "evaluateToValue : value <nil> of type <nil> is neither evaluatable or a result")
+}

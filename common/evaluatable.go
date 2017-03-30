@@ -9,6 +9,17 @@ import (
 // DEBUG enable to display debug information for function evaluation
 var DEBUG = false
 
+func evaluateToValue(value interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
+	switch v := value.(type) {
+	case interfaces.Evaluatable:
+		return v.Evaluate(sco)
+	case interfaces.Value:
+		return v, nil
+	default:
+		return NILL, errors.New(fmt.Sprintf("evaluateToValue : value %v of type %v is neither evaluatable or a result", value, v))
+	}
+}
+
 // EXP is a an Expression that has a Appliable and Arguments and can be evaluated against a scope
 type EXP struct {
 	Function  interfaces.Type
@@ -57,9 +68,6 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 	}
 
 	exp.printEndExpression(result)
-	if result == nil {
-		panic("Evaluate : evaluation down to nil")
-	}
 	return result, nil
 }
 
