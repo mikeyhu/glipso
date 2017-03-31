@@ -97,7 +97,7 @@ func equals(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value,
 	if fok && sok {
 		return first.Equals(second), nil
 	}
-	return NILL, errors.New(fmt.Sprintf("Equals : unsupported type %v or %v", arguments[0], arguments[1]))
+	return NILL, fmt.Errorf("Equals : unsupported type %v or %v", arguments[0], arguments[1])
 }
 
 func lessThan(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
@@ -106,7 +106,7 @@ func lessThan(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Valu
 	if fok && sok {
 		return B(first.CompareTo(second) < 0), nil
 	}
-	return NILL, errors.New(fmt.Sprintf("lessThan : unsupported type %v or %v", arguments[0], arguments[1]))
+	return NILL, fmt.Errorf("lessThan : unsupported type %v or %v", arguments[0], arguments[1])
 }
 
 func lessThanEqual(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
@@ -115,7 +115,7 @@ func lessThanEqual(arguments []interfaces.Value, _ interfaces.Scope) (interfaces
 	if fok && sok {
 		return B(first.CompareTo(second) <= 0), nil
 	}
-	return NILL, errors.New(fmt.Sprintf("lessThanEqual : unsupported type %v or %v", arguments[0], arguments[1]))
+	return NILL, fmt.Errorf("lessThanEqual : unsupported type %v or %v", arguments[0], arguments[1])
 }
 
 func greaterThan(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
@@ -124,7 +124,7 @@ func greaterThan(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.V
 	if fok && sok {
 		return B(first.CompareTo(second) > 0), nil
 	}
-	return NILL, errors.New(fmt.Sprintf("greaterThan : unsupported type %v or %v", arguments[0], arguments[1]))
+	return NILL, fmt.Errorf("greaterThan : unsupported type %v or %v", arguments[0], arguments[1])
 }
 
 func greaterThanEqual(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
@@ -133,7 +133,7 @@ func greaterThanEqual(arguments []interfaces.Value, _ interfaces.Scope) (interfa
 	if fok && sok {
 		return B(first.CompareTo(second) >= 0), nil
 	}
-	return NILL, errors.New(fmt.Sprintf("greaterThanEqual : unsupported type %v or %v", arguments[0], arguments[1]))
+	return NILL, fmt.Errorf("greaterThanEqual : unsupported type %v or %v", arguments[0], arguments[1])
 }
 
 func cons(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
@@ -155,42 +155,50 @@ func first(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, 
 	if ok {
 		return pair.Head(), nil
 	}
-	return NILL, errors.New(fmt.Sprintf("first : %v is not of type Iterable", arguments[0]))
+	return NILL, fmt.Errorf("first : %v is not of type Iterable", arguments[0])
 }
 
 func tail(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value, error) {
 	pair, ok := arguments[0].(interfaces.Iterable)
 	if ok {
 		if pair.HasTail() {
-			return pair.Iterate(sco), nil
+			return pair.Iterate(sco)
 		}
 		return ENDED, nil
 	}
-	return NILL, errors.New(fmt.Sprintf("tail : %v is not of type Iterable", arguments[0]))
+	return NILL, fmt.Errorf("tail : %v is not of type Iterable", arguments[0])
 }
 
 func apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
 	if len(arguments) != 2 {
-		return NILL, errors.New(fmt.Sprintf("apply : invalid number of arguments [%d of 2]", len(arguments)))
+		return NILL, fmt.Errorf("apply : invalid number of arguments [%d of 2]", len(arguments))
 	}
 
 	list, _ := evaluateToValue(arguments[1], sco)
 	s, okRef := arguments[0].(REF)
 	p, okPair := list.(interfaces.Iterable)
 	if !okRef {
-		return NILL, errors.New(fmt.Sprintf("apply : expected function, found %v", arguments[0]))
+		return NILL, fmt.Errorf("apply : expected function, found %v", arguments[0])
 	} else if !okPair {
-		return NILL, errors.New(fmt.Sprintf("apply : expected pair, found %v", list))
+		return NILL, fmt.Errorf("apply : expected pair, found %v", list)
 	}
-	return evaluateToValue(&EXP{Function: s, Arguments: p.ToSlice(sco.NewChildScope())}, sco)
+	slice, err := p.ToSlice(sco.NewChildScope())
+	if err != nil {
+		return NILL, err
+	}
+	return evaluateToValue(&EXP{Function: s, Arguments: slice}, sco)
 }
 
 func iff(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
 	test, _ := evaluateToValue(arguments[0], sco)
-	if test.(B).Bool() {
-		return evaluateToValue(arguments[1], sco)
+
+	if iff, iok := test.(B); iok {
+		if iff {
+			return evaluateToValue(arguments[1], sco)
+		}
+		return evaluateToValue(arguments[2], sco)
 	}
-	return evaluateToValue(arguments[2], sco)
+	return NILL, fmt.Errorf("if : expected first argument to evaluate to boolean, recieved %v", test)
 }
 
 func def(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
@@ -236,7 +244,7 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, er
 
 func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value, error) {
 	if len(arguments) != 2 {
-		return NILL, errors.New(fmt.Sprintf("filter : invalid number of arguments [%d of 2]", len(arguments)))
+		return NILL, fmt.Errorf("filter : invalid number of arguments [%d of 2]", len(arguments))
 	}
 
 	fn, fnok := arguments[0].(FN)
@@ -251,7 +259,8 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 		if include, iok := res.(B); iok {
 			if bool(include) {
 				if it.HasTail() {
-					res, err := flt(it.Iterate(sco))
+					next, _ := it.Iterate(sco)
+					res, err := flt(next)
 					if err != nil {
 						return ENDED, err
 					}
@@ -259,17 +268,18 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 				}
 				return &P{head, ENDED}, nil
 			} else if it.HasTail() {
-				return flt(it.Iterate(sco))
+				next, _ := it.Iterate(sco)
+				return flt(next)
 			}
 			return ENDED, nil
 		}
-		return ENDED, errors.New(fmt.Sprintf("filter : expected boolean value, recieved %v", res))
+		return ENDED, fmt.Errorf("filter : expected boolean value, recieved %v", res)
 	}
 
 	if fnok && iok {
 		return flt(iter)
 	}
-	return NILL, errors.New(fmt.Sprintf("filter : expected function and list. Recieved %v, %v", arguments[0], arguments[1]))
+	return NILL, fmt.Errorf("filter : expected function and list. Recieved %v, %v", arguments[0], arguments[1])
 }
 
 func mapp(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value, error) {
@@ -279,7 +289,8 @@ func mapp(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 		head := iterable.Head()
 		res, _ := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
 		if iterable.HasTail() {
-			return &P{res, mp(fn, iterable.Iterate(sco))}
+			next, _ := iterable.Iterate(sco)
+			return &P{res, mp(fn, next)}
 		}
 		return &P{res, ENDED}
 	}
@@ -290,7 +301,7 @@ func mapp(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 		return *mp(arguments[0], pair), nil
 	}
 
-	return ENDED, errors.New(fmt.Sprintf("map : expected function and list, recieved %v, %v", arguments[0], arguments[1]))
+	return ENDED, fmt.Errorf("map : expected function and list, recieved %v, %v", arguments[0], arguments[1])
 }
 
 func lazypair(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
@@ -299,7 +310,7 @@ func lazypair(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Val
 		if tail, ok := arguments[1].(interfaces.Evaluatable); ok {
 			return LAZYP{head, BindEvaluation(tail, sco)}, nil
 		}
-		return NILL, errors.New(fmt.Sprintf("lazypair : expected EXP got %v", arguments[1]))
+		return NILL, fmt.Errorf("lazypair : expected EXP got %v", arguments[1])
 	}
 	return LAZYP{head, nil}, nil
 }
@@ -333,13 +344,14 @@ func take(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 
 	if nok && lok {
 		if num > 1 && list.HasTail() {
+			next, _ := list.Iterate(sco)
 			return LAZYP{
 				list.Head(),
 				&EXP{
 					Function: REF("take"),
 					Arguments: []interfaces.Type{
 						I(num - 1),
-						list.Iterate(sco),
+						next,
 					},
 				},
 			}, nil
@@ -359,7 +371,7 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 	if vok && eok {
 		count := vectors.Count()
 		if count%2 > 0 {
-			return NILL, errors.New(fmt.Sprintf("let : expected an even number of items in vector, recieved %v", count))
+			return NILL, fmt.Errorf("let : expected an even number of items in vector, recieved %v", count)
 		}
 		for i := 0; i < count/2; i++ {
 			val, _ := evaluateToValue(vectors.Get(i+1), sco)
@@ -367,5 +379,5 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 		}
 		return exp.Evaluate(childScope)
 	}
-	return NILL, errors.New(fmt.Sprintf("let : expected VEC and EXP, received: %v, %v", arguments[0], arguments[1]))
+	return NILL, fmt.Errorf("let : expected VEC and EXP, received: %v, %v", arguments[0], arguments[1])
 }

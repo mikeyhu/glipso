@@ -31,27 +31,27 @@ func (p P) HasTail() bool {
 }
 
 // Iterate not supported yet
-func (p P) Iterate(sco interfaces.Scope) interfaces.Iterable {
+func (p P) Iterate(sco interfaces.Scope) (interfaces.Iterable, error) {
 	if p.HasTail() {
-		return p.tail
+		return p.tail, nil
 	}
-	return ENDED
+	return ENDED, nil
 }
 
 // ToSlice returns an array from a P
-func (p P) ToSlice(sco interfaces.Scope) []interfaces.Type {
+func (p P) ToSlice(sco interfaces.Scope) ([]interfaces.Type, error) {
 	slice := []interfaces.Type{}
 	var tail interfaces.Iterable = p
 	for {
 		if tail != ENDED {
 			slice = append(slice, tail.Head())
 			if !tail.HasTail() {
-				return slice
+				return slice, nil
 			}
-			tail = tail.Iterate(sco)
+			tail, _ = tail.Iterate(sco)
 		}
 	}
-	return slice
+	return slice, nil
 }
 
 // LAZYP (Lazily evaluated Pair)
@@ -81,25 +81,30 @@ func (l LAZYP) HasTail() bool {
 }
 
 // Iterate will evaluate the tail of the LAZYP
-func (l LAZYP) Iterate(sco interfaces.Scope) interfaces.Iterable {
+func (l LAZYP) Iterate(sco interfaces.Scope) (interfaces.Iterable, error) {
 	taileval, _ := l.tail.Evaluate(sco)
 	if nextIter, ok := taileval.(interfaces.Iterable); ok {
-		return nextIter
+		return nextIter, nil
 	}
-	panic(fmt.Sprintf("Iterate : expected an LAZYP, got %v", l))
+	return ENDED, fmt.Errorf("lazypair : iterable expected got %v", taileval)
 }
 
 // ToSlice converts a LAZYP to a slice by iterating through it
-func (l LAZYP) ToSlice(sco interfaces.Scope) []interfaces.Type {
+func (l LAZYP) ToSlice(sco interfaces.Scope) ([]interfaces.Type, error) {
 	slice := []interfaces.Type{}
 	var next interfaces.Iterable = l
 	for {
 		slice = append(slice, next.Head())
 
 		if !next.HasTail() {
-			return slice
+			return slice, nil
 		}
-		next = next.Iterate(sco.NewChildScope()).(interfaces.Iterable)
+		res, err := next.Iterate(sco.NewChildScope())
+		if err != nil {
+			return slice, err
+		}
+		next = res
+
 	}
 }
 
@@ -118,11 +123,11 @@ func (e END) Head() interfaces.Value {
 func (e END) HasTail() bool {
 	return false
 }
-func (e END) Iterate(interfaces.Scope) interfaces.Iterable {
+func (e END) Iterate(interfaces.Scope) (interfaces.Iterable, error) {
 	panic("END : Iterate called on END")
 }
-func (e END) ToSlice(interfaces.Scope) []interfaces.Type {
-	return []interfaces.Type{}
+func (e END) ToSlice(interfaces.Scope) ([]interfaces.Type, error) {
+	return []interfaces.Type{}, nil
 }
 
 var ENDED = END{}

@@ -26,7 +26,7 @@ func TestEqualityEqual(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestEqualityErrorsIfTypesNotValid(t *testing.T) {
+func TestEqualityErrorsIfTypFesNotValid(t *testing.T) {
 	//given
 	exp := EXP{Function: REF("="), Arguments: []interfaces.Type{P{}, I(1)}}
 	//when
@@ -560,4 +560,16 @@ func TestLetExpectsEvenNumberSizedVector(t *testing.T) {
 	//then
 	assert.Equal(t, NILL, result)
 	assert.EqualError(t, err, "let : expected an even number of items in vector, recieved 1")
+}
+
+func TestIfErrorsIfNotBool(t *testing.T) {
+	//given
+	exp := EXP{Function: REF("if"), Arguments: []interfaces.Type{
+		&EXP{Function: REF("+"), Arguments: []interfaces.Type{I(1)}},
+	}}
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "if : expected first argument to evaluate to boolean, recieved 1")
 }

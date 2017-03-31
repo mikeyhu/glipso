@@ -19,8 +19,8 @@ type Iterable interface {
 	IsValue()
 	Head() Value
 	HasTail() bool
-	Iterate(Scope) Iterable
-	ToSlice(Scope) []Type
+	Iterate(Scope) (Iterable, error)
+	ToSlice(Scope) ([]Type, error)
 }
 
 // Equalable interfaces are types that can be checked for sameness
