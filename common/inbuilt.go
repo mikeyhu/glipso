@@ -176,8 +176,10 @@ func apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value,
 	if len(arguments) != 2 {
 		return NILL, fmt.Errorf("apply : invalid number of arguments [%d of 2]", len(arguments))
 	}
-
-	list, _ := evaluateToValue(arguments[1], sco)
+	list, err := evaluateToValue(arguments[1], sco)
+	if err != nil {
+		return NILL, err
+	}
 	s, okRef := arguments[0].(REF)
 	p, okPair := list.(interfaces.Iterable)
 	if !okRef {
@@ -193,8 +195,10 @@ func apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value,
 }
 
 func iff(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
-	test, _ := evaluateToValue(arguments[0], sco)
-
+	test, err := evaluateToValue(arguments[0], sco)
+	if err != nil {
+		return NILL, err
+	}
 	if iff, iok := test.(B); iok {
 		if iff {
 			return evaluateToValue(arguments[1], sco)
@@ -205,7 +209,10 @@ func iff(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 }
 
 func def(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
-	value, _ := evaluateToValue(arguments[1], sco)
+	value, err := evaluateToValue(arguments[1], sco)
+	if err != nil {
+		return NILL, err
+	}
 	GlobalEnvironment.CreateRef(arguments[0].(REF), value)
 	return NILL, nil
 }
@@ -213,7 +220,11 @@ func def(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 func do(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
 	var result interfaces.Value
 	for _, a := range arguments {
-		result, _ = evaluateToValue(a, sco.NewChildScope())
+		next, err := evaluateToValue(a, sco.NewChildScope())
+		if err != nil {
+			return NILL, err
+		}
+		result = next
 	}
 	return result, nil
 }
@@ -236,7 +247,10 @@ func rnge(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, e
 func fn(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
 	var argVec VEC
 	if args, ok := arguments[0].(REF); ok {
-		arg, _ := args.Evaluate(sco)
+		arg, err := args.Evaluate(sco)
+		if err != nil {
+			return NILL, err
+		}
 		argVec = arg.(VEC)
 	} else {
 		argVec = arguments[0].(VEC)
@@ -249,20 +263,27 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 	if len(arguments) != 2 {
 		return NILL, fmt.Errorf("filter : invalid number of arguments [%d of 2]", len(arguments))
 	}
-
 	fn, fnok := arguments[0].(FN)
-	list, _ := evaluateToValue(arguments[1], sco)
-
+	list, err := evaluateToValue(arguments[1], sco)
+	if err != nil {
+		return NILL, err
+	}
 	iter, iok := list.(interfaces.Iterable)
 
 	var flt func(interfaces.Iterable) (interfaces.Iterable, error)
 	flt = func(it interfaces.Iterable) (interfaces.Iterable, error) {
 		head := it.Head()
-		res, _ := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
+		res, err := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
+		if err != nil {
+			return ENDED, err
+		}
 		if include, iok := res.(B); iok {
 			if bool(include) {
 				if it.HasTail() {
-					next, _ := it.Iterate(sco)
+					next, err := it.Iterate(sco)
+					if err != nil {
+						return ENDED, err
+					}
 					res, err := flt(next)
 					if err != nil {
 						return ENDED, err
@@ -271,7 +292,10 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 				}
 				return &P{head, ENDED}, nil
 			} else if it.HasTail() {
-				next, _ := it.Iterate(sco)
+				next, err := it.Iterate(sco)
+				if err != nil {
+					return ENDED, err
+				}
 				return flt(next)
 			}
 			return ENDED, nil
