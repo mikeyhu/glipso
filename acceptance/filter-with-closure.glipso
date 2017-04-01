@@ -1,0 +1,41 @@
+code:
+	(do
+	    (defn multiple-of-ten [n] (= (% n 10) 0))
+	    (defn odd [a] (= (% a 2) 1))
+
+		(defn filtereither [a b list]
+		    (filter
+                (fn [v]
+                    (if
+                        (= true (a v))
+                        true
+                        (= true (b v))
+                    )
+                )
+                list
+            )
+		)
+
+		(apply
+		    print
+		    (filtereither
+		        multiple-of-ten
+		        odd
+		        (range 1 20)
+		    )
+		)
+	)
+expect:
+1
+3
+5
+7
+9
+10
+11
+13
+15
+17
+19
+20
+<NIL>

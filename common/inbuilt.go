@@ -282,10 +282,10 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 					}
 					return LAZYP{
 						head,
-						&EXP{
+						BindEvaluation(&EXP{
 							Function:  REF("filter"),
 							Arguments: []interfaces.Type{ap, next},
-						},
+						}, sco),
 					}, nil
 				}
 				return &P{head, ENDED}, nil
@@ -372,13 +372,13 @@ func take(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 			next, _ := list.Iterate(sco)
 			return LAZYP{
 				list.Head(),
-				&EXP{
+				BindEvaluation(&EXP{
 					Function: REF("take"),
 					Arguments: []interfaces.Type{
 						I(num - 1),
 						next,
 					},
-				},
+				}, sco),
 			}, nil
 		}
 		return P{list.Head(), ENDED}, nil
