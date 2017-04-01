@@ -253,13 +253,25 @@ func Test_if_TrueEvaluatesRefRatherThanReturning(t *testing.T) {
 func Test_if_ErrorsIfNotBool(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("if")).withArgs(
-		EXPBuild(REF("+")).withArgs(I(1)).build(),
+		EXPBuild(REF("+")).withArgs(I(1)).build(), I(1), I(2),
 	).build()
 	//when
 	result, err := exp.Evaluate(GlobalEnvironment)
 	//then
 	assert.Equal(t, NILL, result)
 	assert.EqualError(t, err, "if : expected first argument to evaluate to boolean, recieved 1")
+}
+
+func Test_if_InvalidNumberOfArguments(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("if")).withArgs(
+		EXPBuild(REF("+")).withArgs(I(1)).build(),
+	).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "if : invalid number of arguments [1 of 3]")
 }
 
 // def
@@ -355,7 +367,7 @@ func Test_mod_IncorrectNumberOfArguments(t *testing.T) {
 	result, err := exp.Evaluate(GlobalEnvironment)
 	//then
 	assert.Equal(t, NILL, result)
-	assert.EqualError(t, err, "mod : expected 2 arguments, recieved 1")
+	assert.EqualError(t, err, "% : invalid number of arguments [1 of 2]")
 }
 
 // lessThan <

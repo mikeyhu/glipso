@@ -17,28 +17,28 @@ func init() {
 	addInbuilt(FI{name: "+", evaluator: plusAll})
 	addInbuilt(FI{name: "-", evaluator: minusAll})
 	addInbuilt(FI{name: "*", evaluator: multiplyAll})
-	addInbuilt(FI{name: "%", evaluator: mod})
+	addInbuilt(FI{name: "%", evaluator: mod, argumentCount: 2})
 	addInbuilt(FI{name: "<", evaluator: lessThan})
 	addInbuilt(FI{name: ">", evaluator: greaterThan})
 	addInbuilt(FI{name: "<=", evaluator: lessThanEqual})
 	addInbuilt(FI{name: ">=", evaluator: greaterThanEqual})
-	addInbuilt(FI{name: "apply", lazyEvaluator: apply})
+	addInbuilt(FI{name: "apply", lazyEvaluator: apply, argumentCount: 2})
 	addInbuilt(FI{name: "cons", evaluator: cons})
-	addInbuilt(FI{name: "def", lazyEvaluator: def})
+	addInbuilt(FI{name: "def", lazyEvaluator: def, argumentCount: 2})
 	addInbuilt(FI{name: "do", lazyEvaluator: do})
-	addInbuilt(FI{name: "empty", evaluator: empty})
-	addInbuilt(FI{name: "if", lazyEvaluator: iff})
-	addInbuilt(FI{name: "filter", evaluator: filter})
-	addInbuilt(FI{name: "first", evaluator: first})
-	addInbuilt(FI{name: "fn", lazyEvaluator: fn})
+	addInbuilt(FI{name: "empty", evaluator: empty, argumentCount: 1})
+	addInbuilt(FI{name: "if", lazyEvaluator: iff, argumentCount: 3})
+	addInbuilt(FI{name: "filter", evaluator: filter, argumentCount: 2})
+	addInbuilt(FI{name: "first", evaluator: first, argumentCount: 1})
+	addInbuilt(FI{name: "fn", lazyEvaluator: fn, argumentCount: 2})
 	addInbuilt(FI{name: "lazypair", lazyEvaluator: lazypair})
-	addInbuilt(FI{name: "let", lazyEvaluator: let})
-	addInbuilt(FI{name: "macro", lazyEvaluator: macro})
-	addInbuilt(FI{name: "map", evaluator: mapp})
+	addInbuilt(FI{name: "let", lazyEvaluator: let, argumentCount: 2})
+	addInbuilt(FI{name: "macro", lazyEvaluator: macro, argumentCount: 2})
+	addInbuilt(FI{name: "map", evaluator: mapp, argumentCount: 2})
 	addInbuilt(FI{name: "print", evaluator: printt})
-	addInbuilt(FI{name: "range", evaluator: rnge})
-	addInbuilt(FI{name: "tail", evaluator: tail})
-	addInbuilt(FI{name: "take", evaluator: take})
+	addInbuilt(FI{name: "range", evaluator: rnge, argumentCount: 2})
+	addInbuilt(FI{name: "tail", evaluator: tail, argumentCount: 1})
+	addInbuilt(FI{name: "take", evaluator: take, argumentCount: 2})
 }
 
 func addInbuilt(info FI) {
@@ -82,9 +82,6 @@ func multiplyAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.V
 }
 
 func mod(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
-	if len(arguments) != 2 {
-		return NILL, fmt.Errorf("mod : expected 2 arguments, recieved %d", len(arguments))
-	}
 	a, aok := arguments[0].(I)
 	b, bok := arguments[1].(I)
 	if aok && bok {
@@ -141,7 +138,7 @@ func greaterThanEqual(arguments []interfaces.Value, _ interfaces.Scope) (interfa
 
 func cons(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	if len(arguments) == 0 {
-		return P{}, nil
+		return ENDED, nil
 	} else if len(arguments) == 1 {
 		return P{arguments[0], ENDED}, nil
 	} else if len(arguments) == 2 {
@@ -150,7 +147,7 @@ func cons(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, e
 			return P{arguments[0], tail}, nil
 		}
 	}
-	return P{}, nil
+	return ENDED, nil
 }
 
 func first(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
@@ -173,9 +170,6 @@ func tail(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 }
 
 func apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
-	if len(arguments) != 2 {
-		return NILL, fmt.Errorf("apply : invalid number of arguments [%d of 2]", len(arguments))
-	}
 	list, err := evaluateToValue(arguments[1], sco)
 	if err != nil {
 		return NILL, err
@@ -255,9 +249,6 @@ func fn(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, er
 }
 
 func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value, error) {
-	if len(arguments) != 2 {
-		return NILL, fmt.Errorf("filter : invalid number of arguments [%d of 2]", len(arguments))
-	}
 	ap, apok := arguments[0].(interfaces.Appliable)
 	iter, iok := arguments[1].(interfaces.Iterable)
 
@@ -269,21 +260,18 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 			return ENDED, err
 		}
 		if include, iok := res.(B); iok {
-			if bool(include) {
-				if it.HasTail() {
-					next, err := it.Iterate(sco)
-					if err != nil {
-						return ENDED, err
-					}
-					return createLAZYP(sco, head, REF("filter"), ap, next), nil
-				}
-				return &P{head, ENDED}, nil
-			} else if it.HasTail() {
+			if it.HasTail() {
 				next, err := it.Iterate(sco)
 				if err != nil {
 					return ENDED, err
 				}
+				if bool(include) {
+					return createLAZYP(sco, head, REF("filter"), ap, next), nil
+				}
 				return flt(next)
+			}
+			if bool(include) {
+				return &P{head, ENDED}, nil
 			}
 			return ENDED, nil
 		}
@@ -297,10 +285,6 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 }
 
 func mapp(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value, error) {
-	if len(arguments) != 2 {
-		return NILL, fmt.Errorf("map : invalid number of arguments [%d of 2]", len(arguments))
-	}
-
 	fn, fnok := arguments[0].(interfaces.Appliable)
 	list, lok := arguments[1].(interfaces.Iterable)
 

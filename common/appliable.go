@@ -43,6 +43,7 @@ type FI struct {
 	name          string
 	evaluator     evaluator
 	lazyEvaluator lazyEvaluator
+	argumentCount int
 }
 
 // IsType for FI
@@ -54,6 +55,9 @@ func (fi FI) String() string {
 	return fmt.Sprintf("FI(%s)", fi.name)
 }
 func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
+	if fi.argumentCount > 0 && len(arguments) != fi.argumentCount {
+		return NILL, fmt.Errorf("%v : invalid number of arguments [%d of %d]", fi.name, len(arguments), fi.argumentCount)
+	}
 	if fi.evaluator != nil {
 		evaluatedArgs := make([]interfaces.Value, len(arguments))
 		for p, arg := range arguments {
