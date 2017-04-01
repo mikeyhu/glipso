@@ -108,6 +108,12 @@ func (l LAZYP) ToSlice(sco interfaces.Scope) ([]interfaces.Type, error) {
 	}
 }
 
+func createLAZYP(sco interfaces.Scope, head interfaces.Value, function interfaces.Type, args ...interfaces.Type) LAZYP {
+	return LAZYP{
+		head,
+		BindEvaluation(&EXP{function, args}, sco)}
+}
+
 // END acts as the end of a list
 type END struct{}
 

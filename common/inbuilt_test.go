@@ -289,9 +289,9 @@ func Test_range_ReturnsLazyPair(t *testing.T) {
 	result, err := exp.Evaluate(GlobalEnvironment)
 	//then
 	assert.NoError(t, err)
-	assert.Equal(t,
-		LAZYP{I(1), &EXP{Function: REF("range"), Arguments: []interfaces.Type{I(2), I(10)}}},
-		result)
+	lazyp, ok := result.(LAZYP)
+	assert.True(t, ok)
+	assert.NotNil(t, lazyp)
 }
 
 // multiply *

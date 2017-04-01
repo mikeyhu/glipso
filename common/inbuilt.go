@@ -229,16 +229,11 @@ func do(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, er
 	return result, nil
 }
 
-func rnge(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+func rnge(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value, error) {
 	start := arguments[0].(I)
 	end := arguments[1].(I)
 	if start < end {
-		return LAZYP{
-			start,
-			&EXP{Function: REF("range"), Arguments: []interfaces.Type{
-				I(start.Int() + 1),
-				end,
-			}}}, nil
+		return createLAZYP(sco, start, REF("range"), I(start.Int()+1), end), nil
 	}
 	return P{end, ENDED}, nil
 
@@ -269,7 +264,7 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 	var flt func(interfaces.Iterable) (interfaces.Iterable, error)
 	flt = func(it interfaces.Iterable) (interfaces.Iterable, error) {
 		head := it.Head()
-		res, err := (&EXP{Function: ap, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
+		res, err := evaluateToValue(&EXP{Function: ap, Arguments: []interfaces.Type{head}}, sco.NewChildScope())
 		if err != nil {
 			return ENDED, err
 		}
@@ -280,13 +275,7 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 					if err != nil {
 						return ENDED, err
 					}
-					return LAZYP{
-						head,
-						BindEvaluation(&EXP{
-							Function:  REF("filter"),
-							Arguments: []interfaces.Type{ap, next},
-						}, sco),
-					}, nil
+					return createLAZYP(sco, head, REF("filter"), ap, next), nil
 				}
 				return &P{head, ENDED}, nil
 			} else if it.HasTail() {
@@ -312,7 +301,7 @@ func mapp(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 	var mp func(interfaces.Value, interfaces.Iterable) *P
 	mp = func(fn interfaces.Value, iterable interfaces.Iterable) *P {
 		head := iterable.Head()
-		res, _ := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
+		res, _ := evaluateToValue(&EXP{Function: fn, Arguments: []interfaces.Type{head}}, sco.NewChildScope())
 		if iterable.HasTail() {
 			next, _ := iterable.Iterate(sco)
 			return &P{res, mp(fn, next)}
@@ -370,16 +359,7 @@ func take(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 	if nok && lok {
 		if num > 1 && list.HasTail() {
 			next, _ := list.Iterate(sco)
-			return LAZYP{
-				list.Head(),
-				BindEvaluation(&EXP{
-					Function: REF("take"),
-					Arguments: []interfaces.Type{
-						I(num - 1),
-						next,
-					},
-				}, sco),
-			}, nil
+			return createLAZYP(sco, list.Head(), REF("take"), I(num-1), next), nil
 		}
 		return P{list.Head(), ENDED}, nil
 
