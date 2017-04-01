@@ -297,24 +297,27 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 }
 
 func mapp(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value, error) {
+	if len(arguments) != 2 {
+		return NILL, fmt.Errorf("map : invalid number of arguments [%d of 2]", len(arguments))
+	}
 
-	var mp func(interfaces.Value, interfaces.Iterable) *P
-	mp = func(fn interfaces.Value, iterable interfaces.Iterable) *P {
-		head := iterable.Head()
-		res, _ := evaluateToValue(&EXP{Function: fn, Arguments: []interfaces.Type{head}}, sco.NewChildScope())
-		if iterable.HasTail() {
-			next, _ := iterable.Iterate(sco)
-			return &P{res, mp(fn, next)}
+	fn, fnok := arguments[0].(interfaces.Appliable)
+	list, lok := arguments[1].(interfaces.Iterable)
+
+	if fnok && lok {
+		head := list.Head()
+		res, err := evaluateToValue(&EXP{Function: fn, Arguments: []interfaces.Type{head}}, sco.NewChildScope())
+		if err == nil {
+			if !list.HasTail() {
+				return &P{res, ENDED}, nil
+			}
+			next, err := list.Iterate(sco)
+			if err == nil {
+				return createLAZYP(sco, res, REF("map"), fn, next), nil
+			}
 		}
-		return &P{res, ENDED}
+		return ENDED, err
 	}
-
-	list := arguments[1]
-
-	if pair, pok := list.(interfaces.Iterable); pok {
-		return *mp(arguments[0], pair), nil
-	}
-
 	return ENDED, fmt.Errorf("map : expected function and list, recieved %v, %v", arguments[0], arguments[1])
 }
 

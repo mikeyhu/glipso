@@ -197,6 +197,16 @@ func Test_filter_ExpectedBoolean(t *testing.T) {
 
 // map
 
+func Test_map_InvalidNumberOfArguments(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("map")).withArgs().build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "map : invalid number of arguments [0 of 2]")
+}
+
 func Test_map_UnsupportedTypes(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("map")).withArgs(B(true), B(false)).build()

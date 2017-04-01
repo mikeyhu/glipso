@@ -16,5 +16,5 @@
         )
     )
 
-    (map print (take 100 (getprimes 3 (cons 2))))
+    (apply print (take 100 (getprimes 3 (cons 2))))
 )
