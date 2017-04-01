@@ -81,11 +81,11 @@ echo "(+ 1 2 3)" | ./glipso
 
 In no particular order:
 
+* implicit expression around parsed expressions to cope with multiple sequential expressions
+* support some kind of HashMap datatype along with :symbols
 * make `map` and `filter` functions work with lazy lists
 * make list functions work on lazy, non-lazy and vector lists
-* support some kind of HashMap datatype
 * support for more datatypes, i.e. Decimal
-* better parser support so names like `some-function` can be used
 * implement some goroutine support to push expressions onto other threads and receive notifications when complete
 * improve macro implementation with better substitution options
 
