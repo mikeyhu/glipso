@@ -82,6 +82,9 @@ func multiplyAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.V
 }
 
 func mod(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	if len(arguments) != 2 {
+		return NILL, fmt.Errorf("mod : expected 2 arguments, recieved %d", len(arguments))
+	}
 	a, aok := arguments[0].(I)
 	b, bok := arguments[1].(I)
 	if aok && bok {

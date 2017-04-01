@@ -6,7 +6,9 @@ import (
 	"testing"
 )
 
-func TestEqualityNotEqual(t *testing.T) {
+// equals =
+
+func Test_equals_NotEqual(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("=")).withArgs(B(true), B(false)).build()
 	//when
@@ -16,7 +18,7 @@ func TestEqualityNotEqual(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestEqualityEqual(t *testing.T) {
+func Test_equals_Equal(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("=")).withArgs(B(true), B(true)).build()
 	//when
@@ -26,7 +28,7 @@ func TestEqualityEqual(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestEqualityErrorsIfTypFesNotValid(t *testing.T) {
+func Test_equals_ErrorsIfTypFesNotValid(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("=")).withArgs(P{}, I(1)).build()
 	//when
@@ -36,7 +38,9 @@ func TestEqualityErrorsIfTypFesNotValid(t *testing.T) {
 	assert.EqualError(t, err, "Equals : unsupported type P(<nil> <nil>) or 1")
 }
 
-func TestConsCreatesPairWithNil(t *testing.T) {
+// cons
+
+func Test_cons_CreatesPairWithNil(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("cons")).withArgs(I(1)).build()
 	//when
@@ -46,7 +50,7 @@ func TestConsCreatesPairWithNil(t *testing.T) {
 	assert.Equal(t, P{I(1), ENDED}, result)
 }
 
-func TestConsCreatesPairWithTailPair(t *testing.T) {
+func Test_cons_CreatesPairWithTailPair(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("cons")).withArgs(I(1), P{I(2), ENDED}).build()
 	//when
@@ -58,7 +62,9 @@ func TestConsCreatesPairWithTailPair(t *testing.T) {
 	assert.False(t, result.(P).tail.HasTail())
 }
 
-func TestFirstRetrievesHeadOfPair(t *testing.T) {
+// first
+
+func Test_first_RetrievesHeadOfPair(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("first")).withArgs(P{I(3), ENDED}).build()
 	//when
@@ -68,7 +74,7 @@ func TestFirstRetrievesHeadOfPair(t *testing.T) {
 	assert.Equal(t, I(3), result)
 }
 
-func TestFirstUnsupportedType(t *testing.T) {
+func Test_first_UnsupportedType(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("first")).withArgs(B(true)).build()
 	//when
@@ -78,7 +84,9 @@ func TestFirstUnsupportedType(t *testing.T) {
 	assert.EqualError(t, err, "first : true is not of type Iterable")
 }
 
-func TestTailRetrievesTailOfPair(t *testing.T) {
+// tail
+
+func Test_tail_RetrievesTailOfPair(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("tail")).withArgs(P{I(5), &P{I(6), ENDED}}).build()
 	//when
@@ -88,7 +96,7 @@ func TestTailRetrievesTailOfPair(t *testing.T) {
 	assert.Equal(t, I(6), result.(*P).head)
 }
 
-func TestTailOfListWithoutTailRetrievesEND(t *testing.T) {
+func Test_tail_OfListWithoutTailRetrievesEND(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("tail")).withArgs(P{I(5), ENDED}).build()
 	//when
@@ -98,7 +106,7 @@ func TestTailOfListWithoutTailRetrievesEND(t *testing.T) {
 	assert.Equal(t, ENDED, result)
 }
 
-func TestTailUnsupportedType(t *testing.T) {
+func Test_tail_UnsupportedType(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("tail")).withArgs(B(true)).build()
 	//when
@@ -108,7 +116,9 @@ func TestTailUnsupportedType(t *testing.T) {
 	assert.EqualError(t, err, "tail : true is not of type Iterable")
 }
 
-func TestApplySendsListToFunction(t *testing.T) {
+// apply
+
+func Test_apply_SendsListToFunction(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("apply")).withArgs(REF("+"), P{I(2), &P{I(10), ENDED}}).build()
 	//when
@@ -118,7 +128,7 @@ func TestApplySendsListToFunction(t *testing.T) {
 	assert.Equal(t, I(12), result)
 }
 
-func TestApplyExpectedFunction(t *testing.T) {
+func Test_apply_ExpectedFunction(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("apply")).withArgs(B(true), B(false)).build()
 	//when
@@ -128,7 +138,7 @@ func TestApplyExpectedFunction(t *testing.T) {
 	assert.EqualError(t, err, "apply : expected function, found true")
 }
 
-func TestApplyExpectedPair(t *testing.T) {
+func Test_apply_ExpectedPair(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("apply")).withArgs(REF("+"), B(false)).build()
 	//when
@@ -138,7 +148,7 @@ func TestApplyExpectedPair(t *testing.T) {
 	assert.EqualError(t, err, "apply : expected pair, found false")
 }
 
-func TestApplyInvalidNumberOfArguments(t *testing.T) {
+func Test_apply_InvalidNumberOfArguments(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("apply")).withArgs().build()
 	//when
@@ -148,7 +158,9 @@ func TestApplyInvalidNumberOfArguments(t *testing.T) {
 	assert.EqualError(t, err, "apply : invalid number of arguments [0 of 2]")
 }
 
-func TestFilterInvalidNumberOfArguments(t *testing.T) {
+// filter
+
+func Test_filter_InvalidNumberOfArguments(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("filter")).withArgs().build()
 	//when
@@ -158,7 +170,7 @@ func TestFilterInvalidNumberOfArguments(t *testing.T) {
 	assert.EqualError(t, err, "filter : invalid number of arguments [0 of 2]")
 }
 
-func TestFilterUnsupportedTypes(t *testing.T) {
+func Test_filter_UnsupportedTypes(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("filter")).withArgs(B(true), B(false)).build()
 	//when
@@ -168,7 +180,7 @@ func TestFilterUnsupportedTypes(t *testing.T) {
 	assert.EqualError(t, err, "filter : expected function and list. Recieved true, false")
 }
 
-func TestFilterExpectedBoolean(t *testing.T) {
+func Test_filter_ExpectedBoolean(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("filter")).withArgs(
 		FNBuild().
@@ -183,7 +195,9 @@ func TestFilterExpectedBoolean(t *testing.T) {
 	assert.EqualError(t, err, "filter : expected boolean value, recieved 1")
 }
 
-func TestMapUnsupportedTypes(t *testing.T) {
+// map
+
+func Test_map_UnsupportedTypes(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("map")).withArgs(B(true), B(false)).build()
 	//when
@@ -193,7 +207,9 @@ func TestMapUnsupportedTypes(t *testing.T) {
 	assert.EqualError(t, err, "map : expected function and list, recieved true, false")
 }
 
-func TestIfTrueReturnsSecondArgument(t *testing.T) {
+// if
+
+func Test_if_TrueReturnsSecondArgument(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("if")).withArgs(B(true), I(1), I(2)).build()
 	//when
@@ -203,7 +219,7 @@ func TestIfTrueReturnsSecondArgument(t *testing.T) {
 	assert.Equal(t, I(1), result)
 }
 
-func TestIfFalseReturnsThirdArgument(t *testing.T) {
+func Test_if_FalseReturnsThirdArgument(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("if")).withArgs(B(false), I(1), I(2)).build()
 	//when
@@ -213,7 +229,7 @@ func TestIfFalseReturnsThirdArgument(t *testing.T) {
 	assert.Equal(t, I(2), result)
 }
 
-func TestIfTrueEvaluatesRefRatherThanReturning(t *testing.T) {
+func Test_if_TrueEvaluatesRefRatherThanReturning(t *testing.T) {
 	//given
 	GlobalEnvironment.CreateRef(REF("a"), I(3))
 	exp := EXPBuild(REF("if")).withArgs(B(true), REF("a"), REF("b")).build()
@@ -224,7 +240,21 @@ func TestIfTrueEvaluatesRefRatherThanReturning(t *testing.T) {
 	assert.Equal(t, I(3), result)
 }
 
-func TestDefRecordsReferences(t *testing.T) {
+func Test_if_ErrorsIfNotBool(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("if")).withArgs(
+		EXPBuild(REF("+")).withArgs(I(1)).build(),
+	).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "if : expected first argument to evaluate to boolean, recieved 1")
+}
+
+// def
+
+func Test_def_RecordsReferences(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("def")).withArgs(REF("one"), I(1)).build()
 	//when
@@ -238,7 +268,9 @@ func TestDefRecordsReferences(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func TestDoReturnsLastArgument(t *testing.T) {
+// do
+
+func Test_do_ReturnsLastArgument(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("do")).withArgs(I(1), I(2)).build()
 	//when
@@ -248,7 +280,9 @@ func TestDoReturnsLastArgument(t *testing.T) {
 	assert.Equal(t, I(2), result)
 }
 
-func TestRangeReturnsLazyPair(t *testing.T) {
+// range
+
+func Test_range_ReturnsLazyPair(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("range")).withArgs(I(1), I(10)).build()
 	//when
@@ -260,7 +294,9 @@ func TestRangeReturnsLazyPair(t *testing.T) {
 		result)
 }
 
-func TestEvaluateMultiply(t *testing.T) {
+// multiply *
+
+func Test_multiply_MultipliesTwoNumbers(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("*")).withArgs(I(2), I(3)).build()
 	//when
@@ -270,7 +306,9 @@ func TestEvaluateMultiply(t *testing.T) {
 	assert.Equal(t, I(6), result)
 }
 
-func TestEvaluateModEven(t *testing.T) {
+// mod %
+
+func Test_mod_Even(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("%")).withArgs(I(4), I(2)).build()
 	//when
@@ -280,7 +318,7 @@ func TestEvaluateModEven(t *testing.T) {
 	assert.Equal(t, I(0), result)
 }
 
-func TestEvaluateModOdd(t *testing.T) {
+func Test_mod_Odd(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("%")).withArgs(I(5), I(2)).build()
 	//when
@@ -290,7 +328,7 @@ func TestEvaluateModOdd(t *testing.T) {
 	assert.Equal(t, I(1), result)
 }
 
-func TestEvaluateModUnsupportedType(t *testing.T) {
+func Test_mod_UnsupportedType(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("%")).withArgs(B(true), B(false)).build()
 	//when
@@ -300,7 +338,19 @@ func TestEvaluateModUnsupportedType(t *testing.T) {
 	assert.EqualError(t, err, "mod : unsupported type")
 }
 
-func TestLessThanIntegersFirstIsHigher(t *testing.T) {
+func Test_mod_IncorrectNumberOfArguments(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("%")).withArgs(I(7)).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "mod : expected 2 arguments, recieved 1")
+}
+
+// lessThan <
+
+func Test_lessThan_IntegersFirstIsHigher(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<")).withArgs(I(6), I(1)).build()
 	//when
@@ -310,7 +360,7 @@ func TestLessThanIntegersFirstIsHigher(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestLessThanIntegersFirstIsLower(t *testing.T) {
+func Test_lessThan_IntegersFirstIsLower(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<")).withArgs(I(1), I(6)).build()
 	//when
@@ -320,7 +370,7 @@ func TestLessThanIntegersFirstIsLower(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestLessThanIntegersArgumentsAreTheSame(t *testing.T) {
+func Test_lessThan_IntegersArgumentsAreTheSame(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<")).withArgs(I(6), I(6)).build()
 	//when
@@ -330,7 +380,7 @@ func TestLessThanIntegersArgumentsAreTheSame(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestLessThanUnsupportedType(t *testing.T) {
+func Test_lessThan_UnsupportedType(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<")).withArgs(B(true), B(false)).build()
 	//when
@@ -340,7 +390,9 @@ func TestLessThanUnsupportedType(t *testing.T) {
 	assert.EqualError(t, err, "lessThan : unsupported type true or false")
 }
 
-func TestGreaterThanIntegersFirstIsHigher(t *testing.T) {
+// greaterThan >
+
+func Test_greaterThan_IntegersFirstIsHigher(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">")).withArgs(I(6), I(1)).build()
 	//when
@@ -350,7 +402,7 @@ func TestGreaterThanIntegersFirstIsHigher(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestGreaterThanIntegersFirstIsLower(t *testing.T) {
+func Test_greaterThan_IntegersFirstIsLower(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">")).withArgs(I(1), I(6)).build()
 	//when
@@ -360,7 +412,7 @@ func TestGreaterThanIntegersFirstIsLower(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestGreaterThanIntegersArgumentsAreTheSame(t *testing.T) {
+func Test_greaterThan_IntegersArgumentsAreTheSame(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">")).withArgs(I(6), I(6)).build()
 	//when
@@ -370,7 +422,7 @@ func TestGreaterThanIntegersArgumentsAreTheSame(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestGreaterThanUnsupportedType(t *testing.T) {
+func Test_greaterThan_UnsupportedType(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">")).withArgs(B(true), B(false)).build()
 	//when
@@ -380,7 +432,9 @@ func TestGreaterThanUnsupportedType(t *testing.T) {
 	assert.EqualError(t, err, "greaterThan : unsupported type true or false")
 }
 
-func TestLessThanEqualIntegersFirstIsHigher(t *testing.T) {
+// lessThanEqual <=
+
+func Test_lessThanEqual_IntegersFirstIsHigher(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<=")).withArgs(I(6), I(1)).build()
 	//when
@@ -390,7 +444,7 @@ func TestLessThanEqualIntegersFirstIsHigher(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestLessThanEqualIntegersFirstIsLower(t *testing.T) {
+func Test_lessThanEqual_IntegersFirstIsLower(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<=")).withArgs(I(1), I(6)).build()
 	//when
@@ -400,7 +454,7 @@ func TestLessThanEqualIntegersFirstIsLower(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestLessThanEqualIntegersArgumentsAreTheSame(t *testing.T) {
+func Test_lessThanEqual_IntegersArgumentsAreTheSame(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<=")).withArgs(I(6), I(6)).build()
 	//when
@@ -410,7 +464,7 @@ func TestLessThanEqualIntegersArgumentsAreTheSame(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestLessThanEqualUnsupportedType(t *testing.T) {
+func Test_lessThanEqual_UnsupportedType(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("<=")).withArgs(B(true), B(false)).build()
 	//when
@@ -420,7 +474,9 @@ func TestLessThanEqualUnsupportedType(t *testing.T) {
 	assert.EqualError(t, err, "lessThanEqual : unsupported type true or false")
 }
 
-func TestGreaterThanEqualIntegersFirstIsHigher(t *testing.T) {
+// greaterThanEqual >=
+
+func Test_greaterThanEqual_IntegersFirstIsHigher(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">=")).withArgs(I(6), I(1)).build()
 	//when
@@ -430,7 +486,7 @@ func TestGreaterThanEqualIntegersFirstIsHigher(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestGreaterThanEqualIntegersFirstIsLower(t *testing.T) {
+func Test_greaterThanEqual_IntegersFirstIsLower(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">=")).withArgs(I(1), I(6)).build()
 	//when
@@ -440,7 +496,7 @@ func TestGreaterThanEqualIntegersFirstIsLower(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestGreaterThanEqualIntegersArgumentsAreTheSame(t *testing.T) {
+func Test_greaterThanEqual_IntegersArgumentsAreTheSame(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">=")).withArgs(I(6), I(6)).build()
 	//when
@@ -450,7 +506,7 @@ func TestGreaterThanEqualIntegersArgumentsAreTheSame(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestGreaterEqualThanUnsupportedType(t *testing.T) {
+func Test_greaterThanEqual_UnsupportedType(t *testing.T) {
 	//given
 	exp := EXPBuild(REF(">=")).withArgs(B(true), B(false)).build()
 	//when
@@ -460,7 +516,9 @@ func TestGreaterEqualThanUnsupportedType(t *testing.T) {
 	assert.EqualError(t, err, "greaterThanEqual : unsupported type true or false")
 }
 
-func TestPrintReturnsNILL(t *testing.T) {
+// print
+
+func Test_print_ReturnsNILL(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("print")).withArgs(I(1)).build()
 	//when
@@ -470,7 +528,9 @@ func TestPrintReturnsNILL(t *testing.T) {
 	assert.Equal(t, NILL, result)
 }
 
-func TestEmptyReturnsFalseOnLongList(t *testing.T) {
+// empty
+
+func Test_empty_ReturnsFalseOnLongList(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("empty")).withArgs(P{I(1), P{I(2), ENDED}}).build()
 	//when
@@ -480,7 +540,7 @@ func TestEmptyReturnsFalseOnLongList(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestEmptyReturnsFalseOnNonEmptyList(t *testing.T) {
+func Test_empty_ReturnsFalseOnNonEmptyList(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("empty")).withArgs(P{I(1), ENDED}).build()
 	//when
@@ -490,7 +550,7 @@ func TestEmptyReturnsFalseOnNonEmptyList(t *testing.T) {
 	assert.Equal(t, B(false), result)
 }
 
-func TestEmptyReturnsTrueOnEmptyList(t *testing.T) {
+func Test_empty_ReturnsTrueOnEmptyList(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("empty")).withArgs(ENDED).build()
 	//when
@@ -500,7 +560,9 @@ func TestEmptyReturnsTrueOnEmptyList(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
-func TestTakeNumberReturnsLazyPairWhenGivenRange(t *testing.T) {
+// take
+
+func Test_take_NumberReturnsLazyPairWhenGivenRange(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("take")).withArgs(
 		I(3),
@@ -515,7 +577,7 @@ func TestTakeNumberReturnsLazyPairWhenGivenRange(t *testing.T) {
 	assert.Equal(t, I(1), lazyp.Head())
 }
 
-func TestTakeExpectsNumberAndPair(t *testing.T) {
+func Test_take_ExpectsNumberAndPair(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("take")).withArgs(I(3), I(4)).build()
 	//when
@@ -525,7 +587,9 @@ func TestTakeExpectsNumberAndPair(t *testing.T) {
 	assert.EqualError(t, err, "take : expected number and list")
 }
 
-func TestLazyPairExpectsExpression(t *testing.T) {
+// lazypair
+
+func Test_lazypair_ExpectsExpression(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("lazypair")).withArgs(B(true), B(false)).build()
 	//when
@@ -535,7 +599,9 @@ func TestLazyPairExpectsExpression(t *testing.T) {
 	assert.EqualError(t, err, "lazypair : expected EXP got false")
 }
 
-func TestLetExpectsVectorAndExpression(t *testing.T) {
+// let
+
+func Test_let_ExpectsVectorAndExpression(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("let")).withArgs(B(true), B(false)).build()
 	//when
@@ -545,7 +611,7 @@ func TestLetExpectsVectorAndExpression(t *testing.T) {
 	assert.EqualError(t, err, "let : expected VEC and EXP, received: true, false")
 }
 
-func TestLetExpectsEvenNumberSizedVector(t *testing.T) {
+func Test_let_ExpectsEvenNumberSizedVector(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("let")).withArgs(
 		VEC{[]interfaces.Type{REF("a")}},
@@ -555,16 +621,4 @@ func TestLetExpectsEvenNumberSizedVector(t *testing.T) {
 	//then
 	assert.Equal(t, NILL, result)
 	assert.EqualError(t, err, "let : expected an even number of items in vector, recieved 1")
-}
-
-func TestIfErrorsIfNotBool(t *testing.T) {
-	//given
-	exp := EXPBuild(REF("if")).withArgs(
-		EXPBuild(REF("+")).withArgs(I(1)).build(),
-	).build()
-	//when
-	result, err := exp.Evaluate(GlobalEnvironment)
-	//then
-	assert.Equal(t, NILL, result)
-	assert.EqualError(t, err, "if : expected first argument to evaluate to boolean, recieved 1")
 }
