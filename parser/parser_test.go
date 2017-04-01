@@ -80,3 +80,12 @@ func TestParserHandlesFunctionsWithDashes(t *testing.T) {
 	assert.Equal(t, common.I(1), args[0])
 	assert.Equal(t, common.I(2), args[1])
 }
+
+func TestParserHandlesBooleans(t *testing.T) {
+	result, err := Parse(`(= true false)`)
+	assert.NoError(t, err)
+	assert.Equal(t, common.REF("="), result.Function)
+	args := result.Arguments
+	assert.Equal(t, args[0], common.B(true))
+	assert.Equal(t, args[1], common.B(false))
+}
