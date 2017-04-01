@@ -263,17 +263,13 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 	if len(arguments) != 2 {
 		return NILL, fmt.Errorf("filter : invalid number of arguments [%d of 2]", len(arguments))
 	}
-	fn, fnok := arguments[0].(FN)
-	list, err := evaluateToValue(arguments[1], sco)
-	if err != nil {
-		return NILL, err
-	}
-	iter, iok := list.(interfaces.Iterable)
+	ap, apok := arguments[0].(interfaces.Appliable)
+	iter, iok := arguments[1].(interfaces.Iterable)
 
 	var flt func(interfaces.Iterable) (interfaces.Iterable, error)
 	flt = func(it interfaces.Iterable) (interfaces.Iterable, error) {
 		head := it.Head()
-		res, err := (&EXP{Function: fn, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
+		res, err := (&EXP{Function: ap, Arguments: []interfaces.Type{head}}).Evaluate(sco.NewChildScope())
 		if err != nil {
 			return ENDED, err
 		}
@@ -284,11 +280,13 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 					if err != nil {
 						return ENDED, err
 					}
-					res, err := flt(next)
-					if err != nil {
-						return ENDED, err
-					}
-					return &P{head, res}, nil
+					return LAZYP{
+						head,
+						&EXP{
+							Function:  REF("filter"),
+							Arguments: []interfaces.Type{ap, next},
+						},
+					}, nil
 				}
 				return &P{head, ENDED}, nil
 			} else if it.HasTail() {
@@ -303,7 +301,7 @@ func filter(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Valu
 		return ENDED, fmt.Errorf("filter : expected boolean value, recieved %v", res)
 	}
 
-	if fnok && iok {
+	if apok && iok {
 		return flt(iter)
 	}
 	return NILL, fmt.Errorf("filter : expected function and list. Recieved %v, %v", arguments[0], arguments[1])

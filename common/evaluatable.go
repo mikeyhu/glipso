@@ -45,30 +45,28 @@ func (exp *EXP) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 		if fn, ok := sco.ResolveRef(toREF); ok {
 			function = fn
 		} else {
-			return NILL, errors.New(fmt.Sprintf("evaluate : function '%v' not found", toREF))
+			return exp.returnAndPrint(NILL, fmt.Errorf("evaluate : function '%v' not found", toREF))
 		}
 	}
 
 	if toMacro, ok := function.(interfaces.Expandable); ok {
 		result, err = toMacro.Expand(exp.Arguments).Evaluate(sco)
 		if err != nil {
-			return NILL, err
+			return exp.returnAndPrint(NILL, err)
 		}
 	} else {
 		function, err := evaluateToValue(function, sco)
 		if err != nil {
-			return NILL, err
+			return exp.returnAndPrint(NILL, err)
 		}
 		if toFN, ok := function.(interfaces.Appliable); ok {
 			result, err = toFN.Apply(exp.Arguments, sco)
 			if err != nil {
-				return NILL, err
+				return exp.returnAndPrint(NILL, err)
 			}
 		}
 	}
-
-	exp.printEndExpression(result)
-	return result, nil
+	return exp.returnAndPrint(result, nil)
 }
 
 func (exp *EXP) printStartExpression() {
@@ -77,10 +75,14 @@ func (exp *EXP) printStartExpression() {
 	}
 }
 
-func (exp *EXP) printEndExpression(result interfaces.Type) {
+func (exp *EXP) returnAndPrint(result interfaces.Value, err error) (interfaces.Value, error) {
 	if DEBUG {
+		if err != nil {
+			fmt.Printf("%v caused ERROR : %v\n", exp, err)
+		}
 		fmt.Printf("%v = %v\n", exp, result)
 	}
+	return result, err
 }
 
 // REF (Reference)

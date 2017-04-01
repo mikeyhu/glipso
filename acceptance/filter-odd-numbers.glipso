@@ -1,7 +1,10 @@
 code:
 	(do
 		(def odd (fn [a] (= (% a 2) 1)))
-		(filter odd (cons 1 (cons 2 (cons 3 (cons 4)))))
+		(apply print (filter odd (cons 1 (cons 2 (cons 3 (cons 4))))))
 	)
 expect:
-P(1 P(3 <END>))
+1
+3
+<NIL>
+<NIL>
