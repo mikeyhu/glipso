@@ -582,6 +582,16 @@ func Test_empty_ReturnsTrueOnEmptyList(t *testing.T) {
 	assert.Equal(t, B(true), result)
 }
 
+func Test_empty_InvalidType(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("empty")).withArgs(I(1)).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.Equal(t, NILL, result)
+	assert.EqualError(t, err, "empty : expected Iterable got 1")
+}
+
 // take
 
 func Test_take_NumberReturnsLazyPairWhenGivenRange(t *testing.T) {

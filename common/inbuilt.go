@@ -328,11 +328,10 @@ func printt(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value,
 }
 
 func empty(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
-	var arg interfaces.Value = arguments[0]
-	if arg == nil {
-		return B(true), nil
+	list, ok := arguments[0].(interfaces.Iterable)
+	if !ok {
+		return ENDED, fmt.Errorf("empty : expected Iterable got %v", arguments[0])
 	}
-	list := arg.(interfaces.Iterable)
 	if list != ENDED {
 		return B(false), nil
 	}
