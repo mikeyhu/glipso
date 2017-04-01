@@ -10,14 +10,16 @@ import (
 )
 
 func main() {
+	env := common.GlobalEnvironment
+
+	prelude.ParsePrelude(env)
+
 	debug := flag.Bool("debug", false, "Enable debug output")
 	flag.Parse()
 
 	common.DEBUG = *debug
 	args := flag.Args()
 
-	env := common.GlobalEnvironment
-	prelude.ParsePrelude(env)
 	var exp *common.EXP
 	if len(args) > 0 {
 		file, _ := os.Open(args[0])
