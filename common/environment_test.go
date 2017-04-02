@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-func TestEnvironmentReturnsFalseIfReferenceNotFound(t *testing.T) {
+func Test_Environment_ReturnsFalseIfReferenceNotFound(t *testing.T) {
 	_, ok := GlobalEnvironment.ResolveRef(REF("unset"))
 	assert.False(t, ok)
 }
 
-func TestEnvironmentReturnsReferencesIfFound(t *testing.T) {
+func Test_Environment_ReturnsReferencesIfFound(t *testing.T) {
 	GlobalEnvironment.CreateRef(REF("one"), I(1))
 	result, _ := GlobalEnvironment.ResolveRef(REF("one"))
 	assert.Equal(t, I(1), result)

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestMacroIsExpanded(t *testing.T) {
+func Test_Macro_Expand(t *testing.T) {
 	macro := MAC{
 		VEC{[]interfaces.Type{REF("a")}},
 		&EXP{REF("+"), []interfaces.Type{REF("a"), I(1)}},
@@ -17,7 +17,7 @@ func TestMacroIsExpanded(t *testing.T) {
 	assert.Equal(t, &EXP{REF("+"), []interfaces.Type{I(10), I(1)}}, result)
 }
 
-func TestNestedMacroIsExpanded(t *testing.T) {
+func Test_Macro_NestedExpansion(t *testing.T) {
 	macro := MAC{
 		VEC{[]interfaces.Type{REF("a")}},
 		&EXP{REF("+"), []interfaces.Type{
@@ -30,7 +30,7 @@ func TestNestedMacroIsExpanded(t *testing.T) {
 	assert.Equal(t, &EXP{REF("+"), []interfaces.Type{I(10), I(1)}}, result.(*EXP).Arguments[0])
 }
 
-func TestMacroIsFoundAndExpanded(t *testing.T) {
+func Test_Macro_FoundAndExpanded(t *testing.T) {
 	GlobalEnvironment.CreateRef(REF("adder"), MAC{
 		VEC{[]interfaces.Type{REF("a")}},
 		&EXP{REF("+"), []interfaces.Type{REF("a"), I(1)}},

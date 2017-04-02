@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestPairCanIterateToTail(t *testing.T) {
+func Test_Pair_IterateToTail(t *testing.T) {
 	pair := P{I(1), &P{I(2), ENDED}}
 
 	assert.Equal(t, I(1), pair.Head())
@@ -17,7 +17,7 @@ func TestPairCanIterateToTail(t *testing.T) {
 	assert.False(t, next.HasTail())
 }
 
-func TestPairErrorsIfTailNotIterable(t *testing.T) {
+func Test_Pair_TailNotIterable(t *testing.T) {
 	pair := LAZYP{I(1), &EXP{REF("+"), []interfaces.Type{I(2)}}}
 
 	assert.Equal(t, I(1), pair.Head())

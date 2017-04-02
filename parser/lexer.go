@@ -6,7 +6,7 @@ type token int
 
 var DELIMITERS = []rune{'(', ')', '[', ']'}
 
-func ScanTokens(data []byte, atEOF bool) (advance int, token []byte, err error) {
+func Tokenize(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	start := 0
 	for width := 0; start < len(data); start += width {
 		var r rune

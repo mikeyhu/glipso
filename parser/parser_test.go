@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-func TestParserReturnsExpressionFunctionName(t *testing.T) {
+func Test_Parser_ExpressionFunctionName(t *testing.T) {
 	result, err := Parse("(+ 1 2)")
 	assert.NoError(t, err)
 	assert.Equal(t, result.Function, common.REF("+"))
 }
 
-func TestParserReturnsExpressionArguments(t *testing.T) {
+func Test_Parser_ExpressionArguments(t *testing.T) {
 	result, err := Parse("(+ 1 3)")
 	assert.NoError(t, err)
 	assert.Equal(t, result.Arguments[0].(common.I).Int(), 1, "1st element")
@@ -20,12 +20,12 @@ func TestParserReturnsExpressionArguments(t *testing.T) {
 	assert.Equal(t, len(result.Arguments), 2, "array length of arguments")
 }
 
-func TestParserReturnsErrorWhenNoClosingBrackets(t *testing.T) {
+func Test_Parser_ErrorWhenNoClosingBrackets(t *testing.T) {
 	_, err := Parse("(+ 1")
 	assert.EqualError(t, err, "Unexpected EOF while parsing EXP")
 }
 
-func TestParserReturnsNestedExpression(t *testing.T) {
+func Test_Parser_NestedExpression(t *testing.T) {
 	result, err := Parse("(+ 1 (+ 1 3))")
 	assert.NoError(t, err)
 	args := result.Arguments
@@ -34,14 +34,14 @@ func TestParserReturnsNestedExpression(t *testing.T) {
 	assert.Equal(t, args[1].(*common.EXP).Function, common.REF("+"), "Nested Expression")
 }
 
-func TestParserReturnsSymbolsAsScopes(t *testing.T) {
+func Test_Parser_Symbol(t *testing.T) {
 	result, err := Parse("(+ symbol)")
 	assert.NoError(t, err)
 	args := result.Arguments
 	assert.Equal(t, args[0].(common.REF).String(), "symbol")
 }
 
-func TestParserReturnsVectorsContainingIntegers(t *testing.T) {
+func Test_Parser_VectorContainingIntegers(t *testing.T) {
 	result, err := Parse("(+ [1 2])")
 	assert.NoError(t, err)
 	args := result.Arguments
@@ -49,7 +49,7 @@ func TestParserReturnsVectorsContainingIntegers(t *testing.T) {
 	assert.Equal(t, args[0].(common.VEC).Get(1), common.I(2))
 }
 
-func TestParserReturnsVectorsContainingStrings(t *testing.T) {
+func Test_Parser_VectorContainingStrings(t *testing.T) {
 	result, err := Parse(`(+ ["hello" "world"])`)
 	assert.NoError(t, err)
 	args := result.Arguments
@@ -57,14 +57,14 @@ func TestParserReturnsVectorsContainingStrings(t *testing.T) {
 	assert.Equal(t, args[0].(common.VEC).Get(1), common.S("world"))
 }
 
-func TestParserReturnsVectorWithSymbolsInside(t *testing.T) {
+func Test_Parser_VectorWithSymbolsInside(t *testing.T) {
 	result, err := Parse("(fn [a])")
 	assert.NoError(t, err)
 	args := result.Arguments
 	assert.Equal(t, args[0].(common.VEC).Get(0), common.REF("a"))
 }
 
-func TestParserReturnsQuotedTextAsStrings(t *testing.T) {
+func Test_Parser_QuotedTextAsStrings(t *testing.T) {
 	result, err := Parse(`(+ "hello" "world")`)
 	assert.NoError(t, err)
 	args := result.Arguments
@@ -72,7 +72,7 @@ func TestParserReturnsQuotedTextAsStrings(t *testing.T) {
 	assert.Equal(t, args[1], common.S("world"))
 }
 
-func TestParserHandlesFunctionsWithDashes(t *testing.T) {
+func Test_Parser_FunctionNameWithDashes(t *testing.T) {
 	result, err := Parse(`(a-function 1 2)`)
 	assert.NoError(t, err)
 	assert.Equal(t, common.REF("a-function"), result.Function)
@@ -81,7 +81,7 @@ func TestParserHandlesFunctionsWithDashes(t *testing.T) {
 	assert.Equal(t, common.I(2), args[1])
 }
 
-func TestParserHandlesBooleans(t *testing.T) {
+func Test_Parser_Booleans(t *testing.T) {
 	result, err := Parse(`(= true false)`)
 	assert.NoError(t, err)
 	assert.Equal(t, common.REF("="), result.Function)

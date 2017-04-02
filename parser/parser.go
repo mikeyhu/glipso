@@ -17,7 +17,7 @@ import (
 func Parse(input string) (*common.EXP, error) {
 	var s *bufio.Scanner
 	s = bufio.NewScanner(strings.NewReader(input))
-	s.Split(ScanTokens)
+	s.Split(Tokenize)
 	return root(s)
 }
 
@@ -25,7 +25,7 @@ func Parse(input string) (*common.EXP, error) {
 func ParseFile(inputFile *os.File) (*common.EXP, error) {
 	var s *bufio.Scanner
 	s = bufio.NewScanner(inputFile)
-	s.Split(ScanTokens)
+	s.Split(Tokenize)
 	return root(s)
 }
 

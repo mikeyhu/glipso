@@ -8,7 +8,7 @@ import (
 )
 
 // TODO : Refactor defn to macro
-func TestPreludeDefnDoesNotShareScope(t *testing.T) {
+func Test_PreludeDefnDoesNotShareScope(t *testing.T) {
 	ParsePrelude(common.GlobalEnvironment)
 	code := `
 	(do
@@ -23,7 +23,7 @@ func TestPreludeDefnDoesNotShareScope(t *testing.T) {
 	assert.Equal(t, common.I(105), result)
 }
 
-func TestPreludeDefines_defmacro(t *testing.T) {
+func Test_PreludeDefines_defmacro(t *testing.T) {
 	ParsePrelude(common.GlobalEnvironment)
 	result, ok := common.GlobalEnvironment.ResolveRef(common.REF("defmacro"))
 	assert.True(t, ok)
@@ -31,7 +31,7 @@ func TestPreludeDefines_defmacro(t *testing.T) {
 	assert.True(t, mok)
 }
 
-func TestLastReturnsLastNumberInList(t *testing.T) {
+func Test_LastReturnsLastNumberInList(t *testing.T) {
 	ParsePrelude(common.GlobalEnvironment)
 	code := `
 	(last (range 1 5))
@@ -42,7 +42,7 @@ func TestLastReturnsLastNumberInList(t *testing.T) {
 	assert.Equal(t, common.I(5), result)
 }
 
-func TestRepeatReturnsTheItem(t *testing.T) {
+func Test_RepeatReturnsTheItem(t *testing.T) {
 	ParsePrelude(common.GlobalEnvironment)
 	code := `
 	(first (repeat "s" 5))
@@ -53,7 +53,7 @@ func TestRepeatReturnsTheItem(t *testing.T) {
 	assert.Equal(t, common.S("s"), result)
 }
 
-func TestRepeatReturnsTheItemNTimes(t *testing.T) {
+func Test_RepeatReturnsTheItemNTimes(t *testing.T) {
 	ParsePrelude(common.GlobalEnvironment)
 	code := `
 	(apply + (repeat 10 5))
