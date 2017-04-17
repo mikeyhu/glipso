@@ -26,7 +26,10 @@ func Tokenize(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		for width, i := 0, start+1; i < len(data); i += width {
 			var r rune
 			r, width = utf8.DecodeRune(data[i:])
-			if isStringDelimiter(r) {
+			if isEscape(r) {
+				i += width
+				_, width = utf8.DecodeRune(data[i:])
+			} else if isStringDelimiter(r) {
 				return i + width, data[start : i+width], nil
 			}
 		}
@@ -47,6 +50,10 @@ func Tokenize(data []byte, atEOF bool) (advance int, token []byte, err error) {
 
 func isStringDelimiter(r rune) bool {
 	return r == '"'
+}
+
+func isEscape(r rune) bool {
+	return r == '\\'
 }
 
 func isSpace(r rune) bool {

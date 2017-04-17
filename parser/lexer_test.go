@@ -82,3 +82,11 @@ func Test_Tokenize_Error_UnclosedString(t *testing.T) {
 	_, _, err := Tokenize(data, true)
 	assert.EqualError(t, err, "string not closed")
 }
+
+func Test_Tokenize_QuotedStringContainingEscapedQuote(t *testing.T) {
+	data := []byte(`"quote \" here" `)
+	advance, token, err := Tokenize(data, true)
+	assert.NoError(t, err)
+	assert.Equal(t, 15, advance)
+	assert.Equal(t, []byte(`"quote \" here"`), token)
+}
