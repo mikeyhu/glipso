@@ -68,3 +68,17 @@ func Test_Tokenize_OpeningBracketAfterSpace(t *testing.T) {
 	assert.Equal(t, 2, advance)
 	assert.Equal(t, []byte("("), token)
 }
+
+func Test_Tokenize_QuotedStringWithSpaces(t *testing.T) {
+	data := []byte("\"hello world\" ")
+	advance, token, err := Tokenize(data, true)
+	assert.NoError(t, err)
+	assert.Equal(t, 13, advance)
+	assert.Equal(t, []byte("\"hello world\""), token)
+}
+
+func Test_Tokenize_Error_UnclosedString(t *testing.T) {
+	data := []byte("\"hello world ")
+	_, _, err := Tokenize(data, true)
+	assert.EqualError(t, err, "string not closed")
+}

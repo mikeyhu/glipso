@@ -1,6 +1,9 @@
 package parser
 
-import "unicode/utf8"
+import (
+	"errors"
+	"unicode/utf8"
+)
 
 type token int
 
@@ -19,6 +22,16 @@ func Tokenize(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	if isDelimiter(char) {
 		return start + width, data[start : start+width], nil
 	}
+	if isStringDelimiter(char) {
+		for width, i := 0, start+1; i < len(data); i += width {
+			var r rune
+			r, width = utf8.DecodeRune(data[i:])
+			if isStringDelimiter(r) {
+				return i + width, data[start : i+width], nil
+			}
+		}
+		return len(data), nil, errors.New("string not closed")
+	}
 	for width, i := 0, start; i < len(data); i += width {
 		var r rune
 		r, width = utf8.DecodeRune(data[i:])
@@ -30,6 +43,10 @@ func Tokenize(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		return len(data), data[start:], nil
 	}
 	return start, nil, nil
+}
+
+func isStringDelimiter(r rune) bool {
+	return r == '"'
 }
 
 func isSpace(r rune) bool {
