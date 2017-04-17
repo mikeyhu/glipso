@@ -101,7 +101,11 @@ func addElementToArray(s *bufio.Scanner, list []interfaces.Type, token string) (
 	}
 	if len(token) > 0 {
 		if token[0] == '"' {
-			list = append(list, common.S(token[1:len(token)-1]))
+			str, err := tokenToS(token)
+			if err != nil {
+				return s, nil, err
+			}
+			list = append(list, str)
 		} else if integer, err := strconv.Atoi(token); err == nil {
 			list = append(list, common.I(integer))
 		} else if b, err := strconv.ParseBool(token); err == nil {
@@ -111,4 +115,12 @@ func addElementToArray(s *bufio.Scanner, list []interfaces.Type, token string) (
 		}
 	}
 	return s, list, nil
+}
+
+func tokenToS(token string) (interfaces.Type, error) {
+	s, err := strconv.Unquote(token)
+	if err != nil {
+		return nil, err
+	}
+	return common.S(s), nil
 }

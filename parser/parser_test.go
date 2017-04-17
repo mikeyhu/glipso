@@ -89,3 +89,10 @@ func Test_Parser_Booleans(t *testing.T) {
 	assert.Equal(t, args[0], common.B(true))
 	assert.Equal(t, args[1], common.B(false))
 }
+
+func Test_Parser_QuotedTextWithEscapedCharacters(t *testing.T) {
+	result, err := Parse(`(+ "hi \"there\"")`)
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0], common.S(`hi "there"`))
+}
