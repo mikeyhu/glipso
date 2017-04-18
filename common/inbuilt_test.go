@@ -654,3 +654,14 @@ func Test_let_ExpectsEvenNumberSizedVector(t *testing.T) {
 	assert.Equal(t, NILL, result)
 	assert.EqualError(t, err, "let : expected an even number of items in vector, recieved 1")
 }
+
+// panic
+
+func Test_panic_PanicsWithMessage(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("panic")).withArgs(S("a message")).build()
+	//when
+	assert.Panics(t, func() {
+		_, _ = exp.Evaluate(GlobalEnvironment)
+	}, "Expected panic")
+}

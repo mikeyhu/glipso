@@ -36,6 +36,7 @@ func init() {
 	addInbuilt(FI{name: "macro", lazyEvaluator: macro, argumentCount: 2})
 	addInbuilt(FI{name: "map", evaluator: mapp, argumentCount: 2})
 	addInbuilt(FI{name: "print", evaluator: printt})
+	addInbuilt(FI{name: "panic", evaluator: panicc, argumentCount: 1})
 	addInbuilt(FI{name: "range", evaluator: rnge, argumentCount: 2})
 	addInbuilt(FI{name: "tail", evaluator: tail, argumentCount: 1})
 	addInbuilt(FI{name: "take", evaluator: take, argumentCount: 2})
@@ -380,4 +381,8 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 		return exp.Evaluate(childScope)
 	}
 	return NILL, fmt.Errorf("let : expected VEC and EXP, received: %v, %v", arguments[0], arguments[1])
+}
+
+func panicc(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	panic(arguments[0].String())
 }
