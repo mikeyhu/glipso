@@ -48,7 +48,11 @@ func (p P) ToSlice(sco interfaces.Scope) ([]interfaces.Type, error) {
 			if !tail.HasTail() {
 				return slice, nil
 			}
-			tail, _ = tail.Iterate(sco)
+			var err error
+			tail, err = tail.Iterate(sco)
+			if err != nil {
+				return slice, err
+			}
 		}
 	}
 	return slice, nil
@@ -82,7 +86,10 @@ func (l LAZYP) HasTail() bool {
 
 // Iterate will evaluate the tail of the LAZYP
 func (l LAZYP) Iterate(sco interfaces.Scope) (interfaces.Iterable, error) {
-	taileval, _ := l.tail.Evaluate(sco)
+	taileval, err := l.tail.Evaluate(sco)
+	if err != nil {
+		return ENDED, err
+	}
 	if nextIter, ok := taileval.(interfaces.Iterable); ok {
 		return nextIter, nil
 	}

@@ -306,7 +306,10 @@ func mapp(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 }
 
 func lazypair(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
-	head, _ := evaluateToValue(arguments[0], sco)
+	head, err := evaluateToValue(arguments[0], sco)
+	if err != nil {
+		return NILL, err
+	}
 	if len(arguments) > 1 {
 		if tail, ok := arguments[1].(interfaces.Evaluatable); ok {
 			return LAZYP{head, BindEvaluation(tail, sco)}, nil
@@ -344,7 +347,10 @@ func take(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 
 	if nok && lok {
 		if num > 1 && list.HasTail() {
-			next, _ := list.Iterate(sco)
+			next, err := list.Iterate(sco)
+			if err != nil {
+				return NILL, err
+			}
 			return createLAZYP(sco, list.Head(), REF("take"), I(num-1), next), nil
 		}
 		return P{list.Head(), ENDED}, nil
@@ -365,7 +371,10 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 			return NILL, fmt.Errorf("let : expected an even number of items in vector, recieved %v", count)
 		}
 		for i := 0; i < count/2; i++ {
-			val, _ := evaluateToValue(vectors.Get(i+1), sco)
+			val, err := evaluateToValue(vectors.Get(i+1), sco)
+			if err != nil {
+				return NILL, err
+			}
 			childScope.CreateRef(vectors.Get(i), val)
 		}
 		return exp.Evaluate(childScope)

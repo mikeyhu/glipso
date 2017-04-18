@@ -61,7 +61,11 @@ func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) (interface
 	if fi.evaluator != nil {
 		evaluatedArgs := make([]interfaces.Value, len(arguments))
 		for p, arg := range arguments {
-			evaluatedArgs[p], _ = evaluateToValue(arg, sco)
+			var err error
+			evaluatedArgs[p], err = evaluateToValue(arg, sco)
+			if err != nil {
+				return NILL, err
+			}
 		}
 		return fi.evaluator(evaluatedArgs, sco)
 	} else if fi.lazyEvaluator != nil {
