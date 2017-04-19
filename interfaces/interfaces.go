@@ -35,7 +35,7 @@ type Evaluatable interface {
 
 // Comparable interfaces are types that can be checked for equality and order
 type Comparable interface {
-	CompareTo(Comparable) int
+	CompareTo(Comparable) (int, error)
 }
 
 // Expandable interfaces are types that will be expanded prior to evaluation

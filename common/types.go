@@ -31,16 +31,20 @@ func (i I) Equals(o interfaces.Equalable) interfaces.Value {
 }
 
 // CompareTo compares one I to another I and returns -1, 0 or 1
-func (i I) CompareTo(o interfaces.Comparable) int {
+func (i I) CompareTo(o interfaces.Comparable) (int, error) {
 	if other, ok := o.(I); ok {
 		if i.Int() < other.Int() {
-			return -1
+			return -1, nil
 		} else if i.Int() == other.Int() {
-			return 0
+			return 0, nil
 		}
-		return 1
+		return 1, nil
 	}
-	panic(fmt.Sprintf("CompareTo : Cannot compare %v to %v", i, o))
+	if other, ok := o.(F); ok {
+		f := F(i.Int())
+		return f.CompareTo(other)
+	}
+	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", i, o)
 }
 
 // B (Boolean)
@@ -103,6 +107,10 @@ func (s S) String() string {
 	return string(s)
 }
 
+func (s S) CompareTo(o interfaces.Comparable) (int, error) {
+	panic("not implemented")
+}
+
 // NIL generally acts as a return type when a function performs a side effect
 type NIL struct{}
 
@@ -116,3 +124,44 @@ func (n NIL) String() string {
 }
 
 var NILL = NIL{}
+
+// F (Float)
+type F float64
+
+// IsType for F
+func (f F) IsType()  {}
+func (f F) IsValue() {}
+
+// String representation of F
+func (f F) String() string {
+	return fmt.Sprintf("%f", f.float())
+}
+
+// float unboxes a float from F
+func (f F) float() float64 {
+	return float64(f)
+}
+
+// Equals checks equality with another item of type Type
+func (f F) Equals(o interfaces.Equalable) interfaces.Value {
+	if other, ok := o.(F); ok {
+		return B(f.float() == other.float())
+	}
+	return B(false)
+}
+
+// CompareTo compares one F to another F and returns -1, 0 or 1
+func (f F) CompareTo(o interfaces.Comparable) (int, error) {
+	if other, ok := o.(F); ok {
+		if f.float() < other.float() {
+			return -1, nil
+		} else if f.float() == other.float() {
+			return 0, nil
+		}
+		return 1, nil
+	}
+	if other, ok := o.(I); ok {
+		return f.CompareTo(F(other.Int()))
+	}
+	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", f, o)
+}

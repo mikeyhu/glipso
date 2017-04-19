@@ -105,7 +105,14 @@ func lessThan(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Valu
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
-		return B(first.CompareTo(second) < 0), nil
+		compare, err := first.CompareTo(second)
+		if err != nil {
+			return NILL, err
+		}
+		if err != nil {
+			return NILL, err
+		}
+		return B(compare < 0), nil
 	}
 	return NILL, fmt.Errorf("lessThan : unsupported type %v or %v", arguments[0], arguments[1])
 }
@@ -114,7 +121,11 @@ func lessThanEqual(arguments []interfaces.Value, _ interfaces.Scope) (interfaces
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
-		return B(first.CompareTo(second) <= 0), nil
+		compare, err := first.CompareTo(second)
+		if err != nil {
+			return NILL, err
+		}
+		return B(compare <= 0), nil
 	}
 	return NILL, fmt.Errorf("lessThanEqual : unsupported type %v or %v", arguments[0], arguments[1])
 }
@@ -123,7 +134,11 @@ func greaterThan(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.V
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
-		return B(first.CompareTo(second) > 0), nil
+		compare, err := first.CompareTo(second)
+		if err != nil {
+			return NILL, err
+		}
+		return B(compare > 0), nil
 	}
 	return NILL, fmt.Errorf("greaterThan : unsupported type %v or %v", arguments[0], arguments[1])
 }
@@ -132,7 +147,11 @@ func greaterThanEqual(arguments []interfaces.Value, _ interfaces.Scope) (interfa
 	first, fok := arguments[0].(interfaces.Comparable)
 	second, sok := arguments[1].(interfaces.Comparable)
 	if fok && sok {
-		return B(first.CompareTo(second) >= 0), nil
+		compare, err := first.CompareTo(second)
+		if err != nil {
+			return NILL, err
+		}
+		return B(compare >= 0), nil
 	}
 	return NILL, fmt.Errorf("greaterThanEqual : unsupported type %v or %v", arguments[0], arguments[1])
 }
