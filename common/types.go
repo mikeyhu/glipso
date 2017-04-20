@@ -22,6 +22,15 @@ func (i I) Int() int {
 	return int(i)
 }
 
+// Int converts an int to a float64
+func (i I) float() float64 {
+	return float64(i)
+}
+
+func (i I) asF() F {
+	return F(i)
+}
+
 // Equals checks equality with another item of type Type
 func (i I) Equals(o interfaces.Equalable) interfaces.Value {
 	if other, ok := o.(I); ok {
@@ -45,6 +54,53 @@ func (i I) CompareTo(o interfaces.Comparable) (int, error) {
 		return f.CompareTo(other)
 	}
 	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", i, o)
+}
+
+func (i I) Add(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(I); ok {
+		return i + other
+	}
+	if other, ok := n.(F); ok {
+		return i.asF() + other
+	}
+	panic("not implemented")
+}
+
+func (i I) Subtract(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(I); ok {
+		return i - other
+	}
+	if other, ok := n.(F); ok {
+		return i.asF() - other
+	}
+	panic("not implemented")
+}
+
+func (i I) Multiply(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(I); ok {
+		return i * other
+	}
+	if other, ok := n.(F); ok {
+		return i.asF() * other
+	}
+	panic("not implemented")
+}
+
+func (i I) Divide(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(I); ok {
+		return i / other
+	}
+	if other, ok := n.(F); ok {
+		return i.asF() / other
+	}
+	panic("not implemented")
+}
+
+func (i I) Mod(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(I); ok {
+		return i % other
+	}
+	panic("not implemented")
 }
 
 // B (Boolean)
@@ -164,4 +220,41 @@ func (f F) CompareTo(o interfaces.Comparable) (int, error) {
 		return f.CompareTo(F(other.Int()))
 	}
 	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", f, o)
+}
+
+func (f F) Add(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(F); ok {
+		return f + other
+	}
+	if other, ok := n.(I); ok {
+		return f + other.asF()
+	}
+	panic("not implemented")
+}
+
+func (f F) Subtract(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(F); ok {
+		return f - other
+	}
+	if other, ok := n.(I); ok {
+		return f - other.asF()
+	}
+	panic("not implemented")
+}
+
+func (f F) Multiply(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(F); ok {
+		return f * other
+	}
+	if other, ok := n.(I); ok {
+		return f * other.asF()
+	}
+	panic("not implemented")
+}
+
+func (f F) Divide(n interfaces.Numeric) interfaces.Numeric {
+	if other, ok := n.(F); ok {
+		return f / other
+	}
+	panic("not implemented")
 }

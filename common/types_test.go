@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+// I Integer
+
 func Test_I_CompareTo_Equals(t *testing.T) {
 	//given
 	a := I(100)
@@ -42,6 +44,68 @@ func Test_I_CompareTo_InvalidType(t *testing.T) {
 	//then
 	assert.EqualError(t, err, "CompareTo : Cannot compare 100 to 100")
 }
+
+func Test_I_Add_I(t *testing.T) {
+	//given
+	a := I(100)
+	b := I(200)
+
+	//when
+	result := a.Add(b)
+
+	//then
+	assert.Equal(t, I(300), result)
+}
+
+func Test_I_Subtract_I(t *testing.T) {
+	//given
+	a := I(100)
+	b := I(50)
+
+	//when
+	result := a.Subtract(b)
+
+	//then
+	assert.Equal(t, I(50), result)
+}
+
+func Test_I_Multiply_I(t *testing.T) {
+	//given
+	a := I(2)
+	b := I(3)
+
+	//when
+	result := a.Multiply(b)
+
+	//then
+	assert.Equal(t, I(6), result)
+}
+
+func Test_I_Divide_I(t *testing.T) {
+	//given
+	a := I(100)
+	b := I(2)
+
+	//when
+	result := a.Divide(b)
+
+	//then
+	assert.Equal(t, I(50), result)
+}
+
+func Test_I_Mod_I(t *testing.T) {
+	//given
+	a := I(15)
+	b := I(7)
+
+	//when
+	result := a.Mod(b)
+
+	//then
+	assert.Equal(t, I(1), result)
+}
+
+// F Float
 
 func Test_F_CompareTo_Equals(t *testing.T) {
 	//given

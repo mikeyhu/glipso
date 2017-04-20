@@ -58,3 +58,13 @@ type Scope interface {
 	NewChildScope() Scope
 	String() string
 }
+
+type Numeric interface {
+	Add(Numeric) Numeric
+	Subtract(Numeric) Numeric
+	Multiply(Numeric) Numeric
+	Divide(Numeric) Numeric
+	IsType()
+	String() string
+	IsValue()
+}

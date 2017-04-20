@@ -96,3 +96,11 @@ func Test_Parser_QuotedTextWithEscapedCharacters(t *testing.T) {
 	args := result.Arguments
 	assert.Equal(t, args[0], common.S(`hi "there"`))
 }
+
+func Test_Parser_Floats(t *testing.T) {
+	result, err := Parse(`(+ 1.01 2.02)`)
+	assert.NoError(t, err)
+	args := result.Arguments
+	assert.Equal(t, args[0], common.F(1.01))
+	assert.Equal(t, args[1], common.F(2.02))
+}

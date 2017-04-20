@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_AddNumbers(t *testing.T) {
+func Test_Acceptance_AddNumbers(t *testing.T) {
 	exp, err := parser.Parse("(+ 1 2 3 4 5)")
 	assert.NoError(t, err)
 	result, err := exp.Evaluate(common.GlobalEnvironment)
@@ -16,7 +16,7 @@ func Test_AddNumbers(t *testing.T) {
 	assert.Equal(t, common.I(15), result)
 }
 
-func Test_ApplyAddNumbers(t *testing.T) {
+func Test_Acceptance_ApplyAddNumbers(t *testing.T) {
 	exp, err := parser.Parse("(apply + (cons 1 (cons 2 (cons 3))))")
 	assert.NoError(t, err)
 	result, err := exp.Evaluate(common.GlobalEnvironment)
@@ -24,7 +24,7 @@ func Test_ApplyAddNumbers(t *testing.T) {
 	assert.Equal(t, common.I(6), result)
 }
 
-func Test_IfEvaluatesSecondExpression(t *testing.T) {
+func Test_Acceptance_IfEvaluatesSecondExpression(t *testing.T) {
 	code := `
 	(if (= 1 1) (+ 2 2) (+ 3 3))
 	`
@@ -35,7 +35,7 @@ func Test_IfEvaluatesSecondExpression(t *testing.T) {
 	assert.Equal(t, common.I(4), result)
 }
 
-func Test_IfEvaluatesThirdExpression(t *testing.T) {
+func Test_Acceptance_IfEvaluatesThirdExpression(t *testing.T) {
 	code := `
 	(if (= 1 2) (+ 2 2) (+ 3 3))
 	`
@@ -46,7 +46,7 @@ func Test_IfEvaluatesThirdExpression(t *testing.T) {
 	assert.Equal(t, common.I(6), result)
 }
 
-func Test_CreatesAndUsesVariable(t *testing.T) {
+func Test_Acceptance_CreatesAndUsesVariable(t *testing.T) {
 	code := `
 	(do
 		(def one 1)
@@ -60,7 +60,7 @@ func Test_CreatesAndUsesVariable(t *testing.T) {
 	assert.Equal(t, common.I(3), result)
 }
 
-func Test_SummingRange(t *testing.T) {
+func Test_Acceptance_SummingRange(t *testing.T) {
 	exp, err := parser.Parse("(apply + (range 1 5))")
 	assert.NoError(t, err)
 	result, err := exp.Evaluate(common.GlobalEnvironment)
@@ -68,7 +68,7 @@ func Test_SummingRange(t *testing.T) {
 	assert.Equal(t, common.I(15), result)
 }
 
-func Test_CreateAdd1Function(t *testing.T) {
+func Test_Acceptance_CreateAdd1Function(t *testing.T) {
 	code := `
 	(do
 		(def add1 (fn [a] (+ 1 a)))
@@ -81,7 +81,7 @@ func Test_CreateAdd1Function(t *testing.T) {
 	assert.Equal(t, common.I(6), result)
 }
 
-func Test_AnonymousAdd1Function(t *testing.T) {
+func Test_Acceptance_AnonymousAdd1Function(t *testing.T) {
 	code := `
 	((fn [a] (+ 1 a)) 5)
 	`
@@ -92,7 +92,7 @@ func Test_AnonymousAdd1Function(t *testing.T) {
 	assert.Equal(t, common.I(6), result)
 }
 
-func Test_EvenFunctionEvaluatesEvenNumber(t *testing.T) {
+func Test_Acceptance_EvenFunctionEvaluatesEvenNumber(t *testing.T) {
 	code := `
 	(do
 		(def even (fn [a] (= (% a 2) 0)))
@@ -106,7 +106,7 @@ func Test_EvenFunctionEvaluatesEvenNumber(t *testing.T) {
 	assert.Equal(t, common.B(true), result)
 }
 
-func Test_EvenFunctionEvaluatesOddNumber(t *testing.T) {
+func Test_Acceptance_EvenFunctionEvaluatesOddNumber(t *testing.T) {
 	code := `
 	(do
 		(def even (fn [a] (= (% a 2) 0)))
@@ -120,7 +120,7 @@ func Test_EvenFunctionEvaluatesOddNumber(t *testing.T) {
 	assert.Equal(t, common.B(false), result)
 }
 
-func Test_FilterEvenNumbers(t *testing.T) {
+func Test_Acceptance_FilterEvenNumbers(t *testing.T) {
 	code := `
 	(do
 		(def even (fn [a] (= (% a 2) 0)))
@@ -134,7 +134,7 @@ func Test_FilterEvenNumbers(t *testing.T) {
 	assert.Equal(t, common.I(6), result)
 }
 
-func Test_MappingAdd1(t *testing.T) {
+func Test_Acceptance_MappingAdd1(t *testing.T) {
 	code := `
 	(do
 		(def add1 (fn [a] (+ a 1)))
@@ -148,7 +148,7 @@ func Test_MappingAdd1(t *testing.T) {
 	assert.Equal(t, common.I(2), result)
 }
 
-func Test_LazyPairHasAccessToClosure(t *testing.T) {
+func Test_Acceptance_LazyPairHasAccessToClosure(t *testing.T) {
 	code := `
 	(do
 		(def hasclosure (fn [a b] (lazypair a (lazypair b))))
@@ -162,7 +162,7 @@ func Test_LazyPairHasAccessToClosure(t *testing.T) {
 	assert.Equal(t, common.I(11), result)
 }
 
-func Test_LazyPairCanBeUsedToCreateRange(t *testing.T) {
+func Test_Acceptance_LazyPairCanBeUsedToCreateRange(t *testing.T) {
 	code := `
 	(do
 		(def rangefn
@@ -186,7 +186,7 @@ func Test_LazyPairCanBeUsedToCreateRange(t *testing.T) {
 	assert.Equal(t, common.B(true), result)
 }
 
-func Test_EmptyReturnsFalseWhenGivenAListWithContents(t *testing.T) {
+func Test_Acceptance_EmptyReturnsFalseWhenGivenAListWithContents(t *testing.T) {
 	code := `(empty (range 1 5))`
 
 	exp, err := parser.Parse(code)
@@ -196,7 +196,7 @@ func Test_EmptyReturnsFalseWhenGivenAListWithContents(t *testing.T) {
 	assert.Equal(t, common.B(false), result)
 }
 
-func Test_EmptyReturnsTrueWhenGivenAListWithNoContents(t *testing.T) {
+func Test_Acceptance_EmptyReturnsTrueWhenGivenAListWithNoContents(t *testing.T) {
 	code := `(empty (filter (fn [num] (> num 10)) (range 1 5)))`
 
 	exp, err := parser.Parse(code)
@@ -276,7 +276,7 @@ func BenchmarkParseCode(b *testing.B) {
 	}
 }
 
-func Test_TakeReturnsFullListWhenSmallerThanTakeArgument(t *testing.T) {
+func Test_Acceptance_TakeReturnsFullListWhenSmallerThanTakeArgument(t *testing.T) {
 	prelude.ParsePrelude(common.GlobalEnvironment)
 	code := `(last (take 5 (range 1 3)))`
 
@@ -287,7 +287,7 @@ func Test_TakeReturnsFullListWhenSmallerThanTakeArgument(t *testing.T) {
 	assert.Equal(t, common.I(3), result)
 }
 
-func Test_TakeReturnsPartialList(t *testing.T) {
+func Test_Acceptance_TakeReturnsPartialList(t *testing.T) {
 	prelude.ParsePrelude(common.GlobalEnvironment)
 	code := `(last (take 3 (range 1 5)))`
 
@@ -298,7 +298,7 @@ func Test_TakeReturnsPartialList(t *testing.T) {
 	assert.Equal(t, common.I(3), result)
 }
 
-func Test_ErrorsWhenFunctionNotFound(t *testing.T) {
+func Test_Acceptance_ErrorsWhenFunctionNotFound(t *testing.T) {
 	code := `(notafunction 1)`
 	exp, err := parser.Parse(code)
 	assert.NoError(t, err)
@@ -309,7 +309,7 @@ func Test_ErrorsWhenFunctionNotFound(t *testing.T) {
 
 }
 
-func Test_ReturningRefReturnsCorrectlyScopedValue(t *testing.T) {
+func Test_Acceptance_ReturningRefReturnsCorrectlyScopedValue(t *testing.T) {
 	prelude.ParsePrelude(common.GlobalEnvironment)
 	code := `
 	(do
@@ -325,7 +325,7 @@ func Test_ReturningRefReturnsCorrectlyScopedValue(t *testing.T) {
 	assert.Equal(t, common.I(2), result)
 }
 
-func Test_LetAcceptsExpressionsInVectors(t *testing.T) {
+func Test_Acceptance_LetAcceptsExpressionsInVectors(t *testing.T) {
 	code := `(let [a (+ 1 2)] (= 3 a))`
 	exp, err := parser.Parse(code)
 	assert.NoError(t, err)
@@ -334,11 +334,29 @@ func Test_LetAcceptsExpressionsInVectors(t *testing.T) {
 	assert.Equal(t, common.B(true), result)
 }
 
-func Test_LetAcceptsValuesInVectors(t *testing.T) {
+func Test_Acceptance_LetAcceptsValuesInVectors(t *testing.T) {
 	code := `(let [a 3] (= 3 a))`
 	exp, err := parser.Parse(code)
 	assert.NoError(t, err)
 	result, err := exp.Evaluate(common.GlobalEnvironment)
 	assert.NoError(t, err)
 	assert.Equal(t, common.B(true), result)
+}
+
+func Test_Acceptance_AddFloatingPointNumbers(t *testing.T) {
+	code := `(+ 1.1 2.2 3.3)`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result, err := exp.Evaluate(common.GlobalEnvironment)
+	assert.NoError(t, err)
+	assert.Equal(t, common.F(6.6), result)
+}
+
+func Test_Acceptance_CombiningNumerics(t *testing.T) {
+	code := `(- (* 2 (+ 1 1.5)) 2)`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result, err := exp.Evaluate(common.GlobalEnvironment)
+	assert.NoError(t, err)
+	assert.Equal(t, common.F(3), result)
 }

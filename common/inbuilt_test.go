@@ -318,7 +318,7 @@ func Test_range_ReturnsLazyPair(t *testing.T) {
 
 // multiply *
 
-func Test_multiply_MultipliesTwoNumbers(t *testing.T) {
+func Test_multiply_TwoIntegers(t *testing.T) {
 	//given
 	exp := EXPBuild(REF("*")).withArgs(I(2), I(3)).build()
 	//when
@@ -326,6 +326,36 @@ func Test_multiply_MultipliesTwoNumbers(t *testing.T) {
 	//then
 	assert.NoError(t, err)
 	assert.Equal(t, I(6), result)
+}
+
+func Test_multiply_TwoFloats(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("*")).withArgs(F(1.5), F(2.5)).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, F(3.75), result)
+}
+
+func Test_multiply_IByF(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("*")).withArgs(I(2), F(2.5)).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, F(5), result)
+}
+
+func Test_multiply_FByI(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("*")).withArgs(F(2.5), I(2)).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, F(5), result)
 }
 
 // mod %

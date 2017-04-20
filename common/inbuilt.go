@@ -46,47 +46,45 @@ func addInbuilt(info FI) {
 	inbuilt[REF(info.name)] = info
 }
 
-func plusAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
-	all := I(0)
-	for _, v := range arguments {
-		all += v.(I)
+type numericCombiner func(interfaces.Numeric, interfaces.Numeric) interfaces.Numeric
+
+func numericFlatten(args []interfaces.Value, combiner numericCombiner) interfaces.Value {
+	var all interfaces.Numeric
+	head := true
+	for _, v := range args {
+		if head {
+			all = v.(interfaces.Numeric)
+			head = false
+		} else {
+			all = combiner(all, v.(interfaces.Numeric))
+		}
 	}
-	return all, nil
+	return all
+}
+
+func plusAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	return numericFlatten(arguments, func(a interfaces.Numeric, b interfaces.Numeric) interfaces.Numeric {
+		return a.Add(b)
+	}), nil
 }
 
 func minusAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
-	var all I
-	head := true
-	for _, v := range arguments {
-		if head {
-			all = v.(I)
-			head = false
-		} else {
-			all -= v.(I)
-		}
-	}
-	return all, nil
+	return numericFlatten(arguments, func(a interfaces.Numeric, b interfaces.Numeric) interfaces.Numeric {
+		return a.Subtract(b)
+	}), nil
 }
 
 func multiplyAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
-	var all I
-	head := true
-	for _, v := range arguments {
-		if head {
-			all = v.(I)
-			head = false
-		} else {
-			all *= v.(I)
-		}
-	}
-	return all, nil
+	return numericFlatten(arguments, func(a interfaces.Numeric, b interfaces.Numeric) interfaces.Numeric {
+		return a.Multiply(b)
+	}), nil
 }
 
 func mod(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	a, aok := arguments[0].(I)
 	b, bok := arguments[1].(I)
 	if aok && bok {
-		return I(a % b), nil
+		return a.Mod(b), nil
 	}
 	return NILL, errors.New("mod : unsupported type")
 }
