@@ -26,31 +26,35 @@ Glipso has *very few* features. So far it supports the following functions:
 (let [arg pairs] exp)       creates a new scope for exp in which arg pairs have been evaluated and put into scope
 (macro [args] exp)          creates a macro that will replace args in the exp with arguments provided for evaluation
 (map fn list)               generate a new list by applying fn to each element in a list
+(panic message)             exit with a message
 (range start end)           creates a lazily evaluated list from start to end (inclusive)
 (repeat item times)         returns a list consisting of times number of items 
 (tail list)                 get tail of the list
 (take num list)             returns a lazily evaluated list that is the first 'num' elements in 'list'
 ```
 
-### Types
-
-Glipso internally supports the following types:
-```
-I   integer
-B   boolean
-P   pair/list
-EXP expression
-REF reference
-VEC Vector
-S   String
-```
-
 ### Example Code
 ```
-	(do
-		(def add1 (fn [a] (+ 1 a)))
-		(add1 5)
-	)
+(do
+    (defn notdivbyany [num listofdivs]
+        (empty
+            (filter
+                (fn [z] (= 0 z))
+                (map (fn [head] (% num head)) listofdivs)
+            )
+        )
+    )
+
+    (defn getprimes [num listofprimes]
+        (if
+            (notdivbyany num listofprimes)
+            (lazypair num (getprimes (+ num 1) (cons num listofprimes)))
+            (getprimes (+ num 1) listofprimes)
+        )
+    )
+
+    (apply print (take 100 (getprimes 3 (cons 2))))
+)
 ```
 
 ### Building
@@ -77,6 +81,38 @@ go test -bench=.
 echo "(+ 1 2 3)" | ./glipso
 ```
 
+### Types
+
+Glipso internally supports the following types:
+```
+B       boolean
+EXP     expression
+I       integer
+F       float
+LAZYP   lazily evaluated pair
+MAC     Macro
+P       pair/list
+REF     reference
+S       String
+VEC     Vector
+```
+
+### Interfaces
+
+The codebase uses a number of different interfaces:
+```
+Type        root type
+Appliable   functions (either inbuilt or defined) that can be applied
+Comparable  Comparable Values
+Equalable   Values with Equality
+Evaluatable s-expressions that have an Appliable, arguments and Scope and will return a Value
+Expandable  Macro expandable to Evaluatable
+Iterable    Values that have Head and Tails
+Numeric     Numeric Values
+Scope       provided to Appliables alongside arguments to lookup and store values
+Value       result of an Evaluatable
+```
+
 ## Roadmap
 
 In no particular order:
@@ -88,4 +124,3 @@ In no particular order:
 * support for more datatypes, i.e. Decimal
 * implement some goroutine support to push expressions onto other threads and receive notifications when complete
 * improve macro implementation with better substitution options
-
