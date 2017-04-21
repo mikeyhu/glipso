@@ -1,2 +1,4 @@
 glipso
 .idea/*
+.DS_store
+perf-reports/*
