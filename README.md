@@ -34,7 +34,7 @@ Glipso has *very few* features. So far it supports the following functions:
 ```
 
 ### Example Code
-```
+```lisp
 (do
     (defn notdivbyany [num listofdivs]
         (empty
