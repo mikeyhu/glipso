@@ -5,6 +5,22 @@ import (
 	"github.com/mikeyhu/glipso/interfaces"
 )
 
+type numericCombiner func(interfaces.Numeric, interfaces.Numeric) interfaces.Numeric
+
+func numericFlatten(args []interfaces.Value, combiner numericCombiner) interfaces.Value {
+	var all interfaces.Numeric
+	head := true
+	for _, v := range args {
+		if head {
+			all = v.(interfaces.Numeric)
+			head = false
+		} else {
+			all = combiner(all, v.(interfaces.Numeric))
+		}
+	}
+	return all
+}
+
 // I (Integer)
 type I int
 
@@ -34,7 +50,10 @@ func (i I) asF() F {
 // Equals checks equality with another item of type Type
 func (i I) Equals(o interfaces.Equalable) interfaces.Value {
 	if other, ok := o.(I); ok {
-		return B(i.Int() == other.Int())
+		return B(i == other)
+	}
+	if other, ok := o.(F); ok {
+		return B(i.asF() == other)
 	}
 	return B(false)
 }
@@ -42,15 +61,15 @@ func (i I) Equals(o interfaces.Equalable) interfaces.Value {
 // CompareTo compares one I to another I and returns -1, 0 or 1
 func (i I) CompareTo(o interfaces.Comparable) (int, error) {
 	if other, ok := o.(I); ok {
-		if i.Int() < other.Int() {
+		if i < other {
 			return -1, nil
-		} else if i.Int() == other.Int() {
+		} else if i == other {
 			return 0, nil
 		}
 		return 1, nil
 	}
 	if other, ok := o.(F); ok {
-		f := F(i.Int())
+		f := F(i)
 		return f.CompareTo(other)
 	}
 	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", i, o)
@@ -123,7 +142,10 @@ func (f F) float() float64 {
 // Equals checks equality with another item of type Type
 func (f F) Equals(o interfaces.Equalable) interfaces.Value {
 	if other, ok := o.(F); ok {
-		return B(f.float() == other.float())
+		return B(f == other)
+	}
+	if other, ok := o.(I); ok {
+		return B(f == other.asF())
 	}
 	return B(false)
 }
@@ -131,15 +153,15 @@ func (f F) Equals(o interfaces.Equalable) interfaces.Value {
 // CompareTo compares one F to another F and returns -1, 0 or 1
 func (f F) CompareTo(o interfaces.Comparable) (int, error) {
 	if other, ok := o.(F); ok {
-		if f.float() < other.float() {
+		if f < other {
 			return -1, nil
-		} else if f.float() == other.float() {
+		} else if f == other {
 			return 0, nil
 		}
 		return 1, nil
 	}
 	if other, ok := o.(I); ok {
-		return f.CompareTo(F(other.Int()))
+		return f.CompareTo(F(other))
 	}
 	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", f, o)
 }

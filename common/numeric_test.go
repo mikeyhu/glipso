@@ -7,6 +7,30 @@ import (
 
 // I Integer
 
+func Test_I_Equals_I(t *testing.T) {
+	//given
+	a := I(100)
+	b := I(100)
+
+	//when
+	result := a.Equals(b)
+
+	//then
+	assert.Equal(t, B(true), result)
+}
+
+func Test_I_Equals_F(t *testing.T) {
+	//given
+	a := I(200)
+	b := F(200)
+
+	//when
+	result := a.Equals(b)
+
+	//then
+	assert.Equal(t, B(true), result)
+}
+
 func Test_I_CompareTo_Equals(t *testing.T) {
 	//given
 	a := I(100)
@@ -106,6 +130,30 @@ func Test_I_Mod_I(t *testing.T) {
 }
 
 // F Float
+
+func Test_F_Equals_F(t *testing.T) {
+	//given
+	a := F(100.1)
+	b := F(100.1)
+
+	//when
+	result := a.Equals(b)
+
+	//then
+	assert.Equal(t, B(true), result)
+}
+
+func Test_F_Equals_I(t *testing.T) {
+	//given
+	a := F(200)
+	b := I(200)
+
+	//when
+	result := a.Equals(b)
+
+	//then
+	assert.Equal(t, B(true), result)
+}
 
 func Test_F_CompareTo_Equals(t *testing.T) {
 	//given

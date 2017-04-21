@@ -46,22 +46,6 @@ func addInbuilt(info FI) {
 	inbuilt[REF(info.name)] = info
 }
 
-type numericCombiner func(interfaces.Numeric, interfaces.Numeric) interfaces.Numeric
-
-func numericFlatten(args []interfaces.Value, combiner numericCombiner) interfaces.Value {
-	var all interfaces.Numeric
-	head := true
-	for _, v := range args {
-		if head {
-			all = v.(interfaces.Numeric)
-			head = false
-		} else {
-			all = combiner(all, v.(interfaces.Numeric))
-		}
-	}
-	return all
-}
-
 func plusAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	return numericFlatten(arguments, func(a interfaces.Numeric, b interfaces.Numeric) interfaces.Numeric {
 		return a.Add(b)
