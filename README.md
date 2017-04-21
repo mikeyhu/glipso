@@ -33,7 +33,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (take num list)             returns a lazily evaluated list that is the first 'num' elements in 'list'
 ```
 
-### Example Code
+### Example Code : A lazy list of primes
 ```lisp
 (do
     (defn notdivbyany [num listofdivs]
