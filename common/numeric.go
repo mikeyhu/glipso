@@ -25,7 +25,9 @@ func numericFlatten(args []interfaces.Value, combiner numericCombiner) interface
 type I int
 
 // IsType for I
-func (i I) IsType()  {}
+func (i I) IsType() {}
+
+// IsValue for I
 func (i I) IsValue() {}
 
 // String representation of I
@@ -75,6 +77,7 @@ func (i I) CompareTo(o interfaces.Comparable) (int, error) {
 	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", i, o)
 }
 
+// Add for I
 func (i I) Add(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(I); ok {
 		return i + other
@@ -85,6 +88,7 @@ func (i I) Add(n interfaces.Numeric) interfaces.Numeric {
 	panic("not implemented")
 }
 
+// Subtract for I
 func (i I) Subtract(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(I); ok {
 		return i - other
@@ -95,6 +99,7 @@ func (i I) Subtract(n interfaces.Numeric) interfaces.Numeric {
 	panic("not implemented")
 }
 
+// Multiply for I
 func (i I) Multiply(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(I); ok {
 		return i * other
@@ -105,6 +110,7 @@ func (i I) Multiply(n interfaces.Numeric) interfaces.Numeric {
 	panic("not implemented")
 }
 
+// Divide for I
 func (i I) Divide(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(I); ok {
 		return i / other
@@ -115,6 +121,7 @@ func (i I) Divide(n interfaces.Numeric) interfaces.Numeric {
 	panic("not implemented")
 }
 
+// Mod for I
 func (i I) Mod(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(I); ok {
 		return i % other
@@ -126,7 +133,9 @@ func (i I) Mod(n interfaces.Numeric) interfaces.Numeric {
 type F float64
 
 // IsType for F
-func (f F) IsType()  {}
+func (f F) IsType() {}
+
+// IsValue for F
 func (f F) IsValue() {}
 
 // String representation of F
@@ -166,6 +175,7 @@ func (f F) CompareTo(o interfaces.Comparable) (int, error) {
 	return 0, fmt.Errorf("CompareTo : Cannot compare %v to %v", f, o)
 }
 
+// Add for F
 func (f F) Add(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(F); ok {
 		return f + other
@@ -176,6 +186,7 @@ func (f F) Add(n interfaces.Numeric) interfaces.Numeric {
 	panic("not implemented")
 }
 
+// Subtract for F
 func (f F) Subtract(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(F); ok {
 		return f - other
@@ -186,6 +197,7 @@ func (f F) Subtract(n interfaces.Numeric) interfaces.Numeric {
 	panic("not implemented")
 }
 
+// Multiply for F
 func (f F) Multiply(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(F); ok {
 		return f * other
@@ -196,6 +208,7 @@ func (f F) Multiply(n interfaces.Numeric) interfaces.Numeric {
 	panic("not implemented")
 }
 
+// Divide for F
 func (f F) Divide(n interfaces.Numeric) interfaces.Numeric {
 	if other, ok := n.(F); ok {
 		return f / other

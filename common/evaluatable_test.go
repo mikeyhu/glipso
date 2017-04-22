@@ -1,7 +1,6 @@
 package common
 
 import (
-	"errors"
 	"github.com/mikeyhu/glipso/interfaces"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -73,7 +72,7 @@ func Test_Evaluate_UnresolvedREF(t *testing.T) {
 	ref := REF("notset")
 	result, err := ref.Evaluate(GlobalEnvironment)
 	assert.Equal(t, NILL, result)
-	assert.Error(t, errors.New("..."), err)
+	assert.EqualError(t, err, "unable to resolve REF('notset')")
 }
 
 func Test_Evaluate_FunctionNotFound(t *testing.T) {

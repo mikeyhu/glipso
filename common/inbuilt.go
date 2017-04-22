@@ -370,7 +370,7 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 	childScope := sco.NewChildScope()
 
 	if vok && eok {
-		count := vectors.Count()
+		count := vectors.count()
 		if count%2 > 0 {
 			return NILL, fmt.Errorf("let : expected an even number of items in vector, recieved %v", count)
 		}
@@ -391,7 +391,7 @@ func panicc(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value,
 }
 
 func hashmap(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
-	return InitialiseMAP(arguments)
+	return initialiseMAP(arguments)
 }
 
 func assoc(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
@@ -400,5 +400,5 @@ func assoc(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, 
 	if !ok {
 		return NILL, fmt.Errorf("assoc : first argument should be a MAP")
 	}
-	return mp.Associate(arguments[1:])
+	return mp.associate(arguments[1:])
 }

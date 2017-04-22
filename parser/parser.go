@@ -16,14 +16,14 @@ import (
 //Parse parses a string containing some code and returns an EXP that represents it
 func Parse(input string) (*common.EXP, error) {
 	s := bufio.NewScanner(strings.NewReader(input))
-	s.Split(Tokenize)
+	s.Split(tokenize)
 	return root(s)
 }
 
 //ParseFile parses code from the provided file and returns an EXP that represents it
 func ParseFile(inputFile *os.File) (*common.EXP, error) {
 	s := bufio.NewScanner(inputFile)
-	s.Split(Tokenize)
+	s.Split(tokenize)
 	return root(s)
 }
 

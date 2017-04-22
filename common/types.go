@@ -9,7 +9,9 @@ import (
 type B bool
 
 // IsType for B
-func (b B) IsType()  {}
+func (b B) IsType() {}
+
+// IsValue for B
 func (b B) IsValue() {}
 
 // String for B
@@ -36,7 +38,9 @@ type VEC struct {
 }
 
 // IsType for VEC
-func (v VEC) IsType()  {}
+func (v VEC) IsType() {}
+
+// IsValue for VEC
 func (v VEC) IsValue() {}
 
 // String output for VEC
@@ -49,7 +53,7 @@ func (v VEC) Get(loc int) interfaces.Type {
 	return v.Vector[loc]
 }
 
-func (v VEC) Count() int {
+func (v VEC) count() int {
 	return len(v.Vector)
 }
 
@@ -57,7 +61,9 @@ func (v VEC) Count() int {
 type S string
 
 // IsType for S
-func (s S) IsType()  {}
+func (s S) IsType() {}
+
+// IsValue for S
 func (s S) IsValue() {}
 
 //String output for S
@@ -65,6 +71,7 @@ func (s S) String() string {
 	return string(s)
 }
 
+//CompareTo for String
 func (s S) CompareTo(o interfaces.Comparable) (int, error) {
 	panic("not implemented")
 }
@@ -73,7 +80,9 @@ func (s S) CompareTo(o interfaces.Comparable) (int, error) {
 type NIL struct{}
 
 // IsType for NIL
-func (n NIL) IsType()  {}
+func (n NIL) IsType() {}
+
+// IsValue for NIL
 func (n NIL) IsValue() {}
 
 // String output for NIL
@@ -81,4 +90,5 @@ func (n NIL) String() string {
 	return "<NIL>"
 }
 
+// NILL should be used for NIL values rather than creating a new NIL each time
 var NILL = NIL{}

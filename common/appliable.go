@@ -13,7 +13,9 @@ type FN struct {
 }
 
 // IsType for FN
-func (f FN) IsType()  {}
+func (f FN) IsType() {}
+
+// IsValue for FN
 func (f FN) IsValue() {}
 
 // String output for FN
@@ -21,6 +23,7 @@ func (f FN) String() string {
 	return fmt.Sprintf("FN(%v, %v)", f.Arguments, f.Expression)
 }
 
+// Apply for FN : validates the number of args and then applies the FN to the arguments
 func (f FN) Apply(arguments []interfaces.Type, env interfaces.Scope) (interfaces.Value, error) {
 	if len(f.Arguments.Vector) < len(arguments) {
 		return NILL, errors.New("too many arguments")
@@ -47,13 +50,17 @@ type FI struct {
 }
 
 // IsType for FI
-func (fi FI) IsType()  {}
+func (fi FI) IsType() {}
+
+// IsValue for FI
 func (fi FI) IsValue() {}
 
 // String for FI
 func (fi FI) String() string {
 	return fmt.Sprintf("FI(%s)", fi.name)
 }
+
+// Apply for FI : validates the number of args and then applies the FI to the arguments
 func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, error) {
 	if fi.argumentCount > 0 && len(arguments) != fi.argumentCount {
 		return NILL, fmt.Errorf("%v : invalid number of arguments [%d of %d]", fi.name, len(arguments), fi.argumentCount)
@@ -73,5 +80,5 @@ func (fi FI) Apply(arguments []interfaces.Type, sco interfaces.Scope) (interface
 		copy(unevaluatedArgs, arguments)
 		return fi.lazyEvaluator(unevaluatedArgs, sco)
 	}
-	return NILL, errors.New(fmt.Sprintf("FI : %v had neither an evaluator or lazy evaluator", fi.name))
+	return NILL, fmt.Errorf("FI : %v had neither an evaluator or lazy evaluator", fi.name)
 }

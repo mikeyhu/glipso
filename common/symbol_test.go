@@ -36,46 +36,46 @@ func Test_MAP_InitialiseAndLookup(t *testing.T) {
 	v := I(10)
 
 	//when
-	m, err := InitialiseMAP([]interfaces.Value{k, v})
+	m, err := initialiseMAP([]interfaces.Value{k, v})
 
 	//then
 	assert.NoError(t, err)
-	result, ok := m.Lookup(SYM(":key"))
+	result, ok := m.lookup(SYM(":key"))
 	assert.Equal(t, true, ok)
 	assert.Equal(t, v, result)
 }
 
 func Test_MAP_AssociateAndLookup(t *testing.T) {
 	//given
-	m, _ := InitialiseMAP([]interfaces.Value{SYM(":a"), I(1)})
+	m, _ := initialiseMAP([]interfaces.Value{SYM(":a"), I(1)})
 
 	//when
-	n, err := m.Associate([]interfaces.Value{SYM(":b"), I(2)})
+	n, err := m.associate([]interfaces.Value{SYM(":b"), I(2)})
 	//then
 	assert.NoError(t, err)
 
-	a, ok := n.Lookup(SYM(":a"))
+	a, ok := n.lookup(SYM(":a"))
 	assert.Equal(t, true, ok)
 	assert.Equal(t, I(1), a)
 
-	b, ok := n.Lookup(SYM(":b"))
+	b, ok := n.lookup(SYM(":b"))
 	assert.Equal(t, true, ok)
 	assert.Equal(t, I(2), b)
 }
 
 func Test_MAP_AssociateIsImmutable(t *testing.T) {
 	//given
-	m, _ := InitialiseMAP([]interfaces.Value{SYM(":a"), I(1)})
+	m, _ := initialiseMAP([]interfaces.Value{SYM(":a"), I(1)})
 
 	//when
-	n, err := m.Associate([]interfaces.Value{SYM(":b"), I(2)})
+	n, err := m.associate([]interfaces.Value{SYM(":b"), I(2)})
 	//then
 	assert.NoError(t, err)
 
-	_, ok := m.Lookup(SYM(":b"))
+	_, ok := m.lookup(SYM(":b"))
 	assert.Equal(t, false, ok)
 
-	b, ok := n.Lookup(SYM(":b"))
+	b, ok := n.lookup(SYM(":b"))
 	assert.Equal(t, true, ok)
 	assert.Equal(t, I(2), b)
 }
@@ -86,7 +86,7 @@ func Test_SYM_Apply_FindsValue(t *testing.T) {
 	v := I(10)
 
 	//when
-	m, _ := InitialiseMAP([]interfaces.Value{k, v})
+	m, _ := initialiseMAP([]interfaces.Value{k, v})
 	exp := EXPBuild(k).withArgs(m).build()
 	result, err := exp.Evaluate(GlobalEnvironment.NewChildScope())
 

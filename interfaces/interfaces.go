@@ -6,6 +6,7 @@ type Type interface {
 	String() string
 }
 
+// Value interfaces represent results of Evaluating functions
 type Value interface {
 	IsType()
 	String() string
@@ -51,7 +52,7 @@ type Appliable interface {
 	Apply([]Type, Scope) (Value, error)
 }
 
-// Scope interfaces provice a mechanism for creating variables and looking up references
+// Scope interfaces provide a mechanism for creating variables and looking up references
 type Scope interface {
 	ResolveRef(argument Type) (Value, bool)
 	CreateRef(ref Type, arg Value) Type
@@ -59,6 +60,7 @@ type Scope interface {
 	String() string
 }
 
+// Numeric interfaces can be combined using mathematical operations
 type Numeric interface {
 	Add(Numeric) Numeric
 	Subtract(Numeric) Numeric

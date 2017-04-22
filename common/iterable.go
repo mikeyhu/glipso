@@ -12,7 +12,9 @@ type P struct {
 }
 
 // IsType for P
-func (p P) IsType()  {}
+func (p P) IsType() {}
+
+// IsValue for P
 func (p P) IsValue() {}
 
 // String representation of P
@@ -65,7 +67,9 @@ type LAZYP struct {
 }
 
 // IsType for LAZYP
-func (l LAZYP) IsType()  {}
+func (l LAZYP) IsType() {}
+
+// IsValue for LAZYP
 func (l LAZYP) IsValue() {}
 
 // String representation of LAZYP
@@ -123,23 +127,36 @@ func createLAZYP(sco interfaces.Scope, head interfaces.Value, function interface
 // END acts as the end of a list
 type END struct{}
 
-func (e END) IsType()  {}
+// IsType for END
+func (e END) IsType() {}
+
+// IsValue for END
 func (e END) IsValue() {}
 
+// String representation of END
 func (e END) String() string {
 	return "<END>"
 }
+
+// Head of END returns NILL
 func (e END) Head() interfaces.Value {
 	return NILL
 }
+
+// HasTail of END is false
 func (e END) HasTail() bool {
 	return false
 }
+
+// Iterate on END will panic
 func (e END) Iterate(interfaces.Scope) (interfaces.Iterable, error) {
 	panic("END : Iterate called on END")
 }
+
+// ToSlice returns an empty slice
 func (e END) ToSlice(interfaces.Scope) ([]interfaces.Type, error) {
 	return []interfaces.Type{}, nil
 }
 
+// ENDED should be used to signify a list has ended rather than creating a new END for each list
 var ENDED = END{}

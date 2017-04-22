@@ -7,9 +7,9 @@ import (
 
 type token int
 
-var DELIMITERS = []rune{'(', ')', '[', ']'}
+var delimiters = [...]rune{'(', ')', '[', ']'}
 
-func Tokenize(data []byte, atEOF bool) (advance int, token []byte, err error) {
+func tokenize(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	start := 0
 	for width := 0; start < len(data); start += width {
 		var r rune
@@ -81,7 +81,7 @@ func isSpaceOrDelimiter(r rune) bool {
 }
 
 func isDelimiter(r rune) bool {
-	for _, d := range DELIMITERS {
+	for _, d := range delimiters {
 		if d == r {
 			return true
 		}

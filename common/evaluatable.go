@@ -1,7 +1,6 @@
 package common
 
 import (
-	"errors"
 	"fmt"
 	"github.com/mikeyhu/glipso/interfaces"
 )
@@ -16,7 +15,7 @@ func evaluateToValue(value interfaces.Type, sco interfaces.Scope) (interfaces.Va
 	case interfaces.Value:
 		return v, nil
 	default:
-		return NILL, errors.New(fmt.Sprintf("evaluateToValue : value %v of type %v is neither evaluatable or a result", value, v))
+		return NILL, fmt.Errorf("evaluateToValue : value %v of type %v is neither evaluatable or a result", value, v)
 	}
 }
 
@@ -107,7 +106,7 @@ func (r REF) Evaluate(sco interfaces.Scope) (interfaces.Value, error) {
 	if resolved, ok := sco.ResolveRef(r); ok {
 		return resolved, nil
 	}
-	return NILL, errors.New(fmt.Sprintf("Unable to resolve REF('%v')\n", r))
+	return NILL, fmt.Errorf("unable to resolve REF('%v')", r)
 }
 
 // BOUNDEXP provides a way for a Expression to be bound to a particular scope for later evaluation

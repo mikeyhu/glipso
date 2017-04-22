@@ -14,6 +14,7 @@ type MAC struct {
 // IsType for MAC
 func (m MAC) IsType() {}
 
+// IsValue for MAC
 func (m MAC) IsValue() {}
 
 // String representation of MAC
