@@ -22,6 +22,7 @@ func init() {
 	addInbuilt(FI{name: ">", evaluator: greaterThan})
 	addInbuilt(FI{name: "<=", evaluator: lessThanEqual})
 	addInbuilt(FI{name: ">=", evaluator: greaterThanEqual})
+	addInbuilt(FI{name: "assoc", evaluator: assoc})
 	addInbuilt(FI{name: "apply", lazyEvaluator: apply, argumentCount: 2})
 	addInbuilt(FI{name: "cons", evaluator: cons})
 	addInbuilt(FI{name: "def", lazyEvaluator: def, argumentCount: 2})
@@ -31,6 +32,7 @@ func init() {
 	addInbuilt(FI{name: "filter", evaluator: filter, argumentCount: 2})
 	addInbuilt(FI{name: "first", evaluator: first, argumentCount: 1})
 	addInbuilt(FI{name: "fn", lazyEvaluator: fn, argumentCount: 2})
+	addInbuilt(FI{name: "hash-map", evaluator: hashmap})
 	addInbuilt(FI{name: "lazypair", lazyEvaluator: lazypair})
 	addInbuilt(FI{name: "let", lazyEvaluator: let, argumentCount: 2})
 	addInbuilt(FI{name: "macro", lazyEvaluator: macro, argumentCount: 2})
@@ -372,7 +374,7 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 		if count%2 > 0 {
 			return NILL, fmt.Errorf("let : expected an even number of items in vector, recieved %v", count)
 		}
-		for i := 0; i < count/2; i++ {
+		for i := 0; i < count; i += 2 {
 			val, err := evaluateToValue(vectors.Get(i+1), sco)
 			if err != nil {
 				return NILL, err
@@ -386,4 +388,17 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 
 func panicc(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	panic(arguments[0].String())
+}
+
+func hashmap(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	return InitialiseMAP(arguments)
+}
+
+func assoc(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	mp, ok := arguments[0].(*MAP)
+
+	if !ok {
+		return NILL, fmt.Errorf("assoc : first argument should be a MAP")
+	}
+	return mp.Associate(arguments[1:])
 }

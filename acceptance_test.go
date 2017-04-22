@@ -343,6 +343,19 @@ func Test_Acceptance_LetAcceptsValuesInVectors(t *testing.T) {
 	assert.Equal(t, common.B(true), result)
 }
 
+func Test_Acceptance_LetAcceptsMultipleValuesInVectors(t *testing.T) {
+	code := `(let
+		[
+		a 3
+		b 5
+		] (+ a b))`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result, err := exp.Evaluate(common.GlobalEnvironment)
+	assert.NoError(t, err)
+	assert.Equal(t, common.I(8), result)
+}
+
 func Test_Acceptance_AddFloatingPointNumbers(t *testing.T) {
 	code := `(+ 1.1 2.2 3.3)`
 	exp, err := parser.Parse(code)
@@ -359,4 +372,30 @@ func Test_Acceptance_CombiningNumerics(t *testing.T) {
 	result, err := exp.Evaluate(common.GlobalEnvironment)
 	assert.NoError(t, err)
 	assert.Equal(t, common.F(3), result)
+}
+
+func Test_Acceptance_MAPLookupWithSYM(t *testing.T) {
+	code := `
+	(let
+		[m (hash-map :key "a value")]
+		(:key m)
+	)`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result, err := exp.Evaluate(common.GlobalEnvironment)
+	assert.NoError(t, err)
+	assert.Equal(t, common.S("a value"), result)
+}
+
+func Test_Acceptance_MAPInitialisedWithMultipleKeys(t *testing.T) {
+	code := `
+	(let
+		[m (hash-map :key "a value" :anotherKey "another value")]
+		(:anotherKey m)
+	)`
+	exp, err := parser.Parse(code)
+	assert.NoError(t, err)
+	result, err := exp.Evaluate(common.GlobalEnvironment)
+	assert.NoError(t, err)
+	assert.Equal(t, common.S("another value"), result)
 }

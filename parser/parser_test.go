@@ -34,11 +34,11 @@ func Test_Parser_NestedExpression(t *testing.T) {
 	assert.Equal(t, args[1].(*common.EXP).Function, common.REF("+"), "Nested Expression")
 }
 
-func Test_Parser_Symbol(t *testing.T) {
-	result, err := Parse("(+ symbol)")
+func Test_Parser_REF(t *testing.T) {
+	result, err := Parse("(+ ref)")
 	assert.NoError(t, err)
 	args := result.Arguments
-	assert.Equal(t, args[0].(common.REF).String(), "symbol")
+	assert.Equal(t, args[0].(common.REF).String(), "ref")
 }
 
 func Test_Parser_VectorContainingIntegers(t *testing.T) {
@@ -103,4 +103,12 @@ func Test_Parser_Floats(t *testing.T) {
 	args := result.Arguments
 	assert.Equal(t, args[0], common.F(1.01))
 	assert.Equal(t, args[1], common.F(2.02))
+}
+
+func Test_Parser_Symbol(t *testing.T) {
+	result, err := Parse(`(:key :value)`)
+	assert.NoError(t, err)
+	assert.Equal(t, result.Function, common.SYM(":key"))
+	args := result.Arguments
+	assert.Equal(t, args[0], common.SYM(":value"))
 }

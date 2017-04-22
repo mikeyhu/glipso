@@ -695,3 +695,22 @@ func Test_panic_PanicsWithMessage(t *testing.T) {
 		_, _ = exp.Evaluate(GlobalEnvironment)
 	}, "Expected panic")
 }
+
+//assoc
+
+func Test_assoc_ReturnsNewMAP(t *testing.T) {
+	//given
+	m, _ := InitialiseMAP([]interfaces.Value{SYM(":key"), I(10)})
+
+	//when
+	n, err := EXPBuild(REF("assoc")).withArgs(m, SYM(":key"), I(20)).build().Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	l, err := EXPBuild(SYM(":key")).withArgs(n).build().Evaluate(GlobalEnvironment)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, I(20), l)
+
+}

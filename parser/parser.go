@@ -106,6 +106,8 @@ func addElementToArray(s *bufio.Scanner, list []interfaces.Type, token string) (
 				return s, nil, err
 			}
 			list = append(list, common.S(str))
+		} else if token[0] == ':' {
+			list = append(list, common.SYM(token))
 		} else if integer, err := strconv.Atoi(token); err == nil {
 			list = append(list, common.I(integer))
 		} else if float, err := strconv.ParseFloat(token, 64); err == nil {
