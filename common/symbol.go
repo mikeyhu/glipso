@@ -13,7 +13,7 @@ func (s SYM) IsValue() {}
 
 // String for SYM
 func (s SYM) String() string {
-	return fmt.Sprintf("%v", s)
+	return string(s)
 }
 
 // Equals checks equality with another item of type Type

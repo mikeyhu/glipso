@@ -15,16 +15,14 @@ import (
 
 //Parse parses a string containing some code and returns an EXP that represents it
 func Parse(input string) (*common.EXP, error) {
-	var s *bufio.Scanner
-	s = bufio.NewScanner(strings.NewReader(input))
+	s := bufio.NewScanner(strings.NewReader(input))
 	s.Split(Tokenize)
 	return root(s)
 }
 
 //ParseFile parses code from the provided file and returns an EXP that represents it
 func ParseFile(inputFile *os.File) (*common.EXP, error) {
-	var s *bufio.Scanner
-	s = bufio.NewScanner(inputFile)
+	s := bufio.NewScanner(inputFile)
 	s.Split(Tokenize)
 	return root(s)
 }
@@ -100,23 +98,35 @@ func addElementToArray(s *bufio.Scanner, list []interfaces.Type, token string) (
 		return s, append(list, *vec), nil
 	}
 	if len(token) > 0 {
-		if token[0] == '"' {
-			str, err := strconv.Unquote(token)
-			if err != nil {
-				return s, nil, err
-			}
-			list = append(list, common.S(str))
-		} else if token[0] == ':' {
-			list = append(list, common.SYM(token))
-		} else if integer, err := strconv.Atoi(token); err == nil {
-			list = append(list, common.I(integer))
-		} else if float, err := strconv.ParseFloat(token, 64); err == nil {
-			list = append(list, common.F(float))
-		} else if b, err := strconv.ParseBool(token); err == nil {
-			list = append(list, common.B(b))
-		} else {
-			list = append(list, common.REF(token))
+		t, err := parseTokenToType(token)
+		if err != nil {
+			return s, nil, err
 		}
+		list = append(list, t)
 	}
 	return s, list, nil
+}
+
+func parseTokenToType(token string) (interfaces.Type, error) {
+	if token[0] == '"' {
+		str, err := strconv.Unquote(token)
+		if err != nil {
+			return nil, err
+		}
+		return common.S(str), nil
+	}
+	if token[0] == ':' {
+		return common.SYM(token), nil
+	}
+	if integer, err := strconv.Atoi(token); err == nil {
+		return common.I(integer), nil
+	}
+	if float, err := strconv.ParseFloat(token, 64); err == nil {
+		return common.F(float), nil
+	}
+	if b, err := strconv.ParseBool(token); err == nil {
+		return common.B(b), nil
+	}
+	return common.REF(token), nil
+
 }

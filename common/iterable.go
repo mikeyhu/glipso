@@ -55,7 +55,6 @@ func (p P) ToSlice(sco interfaces.Scope) ([]interfaces.Type, error) {
 			}
 		}
 	}
-	return slice, nil
 }
 
 // LAZYP (Lazily evaluated Pair)

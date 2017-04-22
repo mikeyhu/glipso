@@ -355,7 +355,7 @@ func take(arguments []interfaces.Value, sco interfaces.Scope) (interfaces.Value,
 			if err != nil {
 				return NILL, err
 			}
-			return createLAZYP(sco, list.Head(), REF("take"), I(num-1), next), nil
+			return createLAZYP(sco, list.Head(), REF("take"), num-1, next), nil
 		}
 		return P{list.Head(), ENDED}, nil
 
