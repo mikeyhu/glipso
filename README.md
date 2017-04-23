@@ -11,6 +11,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (+ arg...)                  sum all arguments
 (- arg...)                  minus all arguments from the first argument
 (apply func list)           apply list of items as arguments to func
+(assoc hash key val ...)    creates a new hash map that combines the original whash map with provided new key value pairs
 (cons arg list?)            add arg to beginning of list. If list is not provided then creates a new list
 (def var exp)               set a variable in the global environment
 (defn name [args] exp)      performs 'def' and 'fn' functions together
@@ -20,6 +21,7 @@ Glipso has *very few* features. So far it supports the following functions:
 (filter fn list)            filter out items in a list by applying fn to them and dropping false responses
 (first list)                get first element in list
 (fn [args] exp)             creates a function that accepts n arguments are an expression
+(hash-map key val ...)      creates a hashmap with the provided key value pairs
 (if test exp1 exp2)         if test is 'true' evaluate exp1, otherwise evaluate exp2
 (last list)                 returns the last value in list
 (lazypair a b)              returns a pair with head 'a' that will evaluate 'b' lazily to generate a tail
