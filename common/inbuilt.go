@@ -31,6 +31,7 @@ func init() {
 	addInbuilt(FI{name: "if", lazyEvaluator: iff, argumentCount: 3})
 	addInbuilt(FI{name: "filter", evaluator: filter, argumentCount: 2})
 	addInbuilt(FI{name: "first", evaluator: first, argumentCount: 1})
+	addInbuilt(FI{name: "get", evaluator: get, argumentCount: 2})
 	addInbuilt(FI{name: "fn", lazyEvaluator: fn, argumentCount: 2})
 	addInbuilt(FI{name: "hash-map", evaluator: hashmap})
 	addInbuilt(FI{name: "lazypair", lazyEvaluator: lazypair})
@@ -401,4 +402,18 @@ func assoc(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, 
 		return NILL, fmt.Errorf("assoc : first argument should be a MAP")
 	}
 	return mp.associate(arguments[1:])
+}
+
+func get(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	k, kok := arguments[0].(interfaces.Equalable)
+	mp, mok := arguments[1].(*MAP)
+
+	if kok && mok {
+		v, found := mp.lookup(k)
+		if found {
+			return v, nil
+		}
+		return NILL, nil
+	}
+	return NILL, fmt.Errorf("get : expected key and map")
 }

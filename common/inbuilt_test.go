@@ -710,7 +710,31 @@ func Test_assoc_ReturnsNewMAP(t *testing.T) {
 	l, err := EXPBuild(SYM(":key")).withArgs(n).build().Evaluate(GlobalEnvironment)
 
 	assert.NoError(t, err)
-
 	assert.Equal(t, I(20), l)
+}
 
+//get
+
+func Test_get_I_AsKey(t *testing.T) {
+	//given
+	m, _ := initialiseMAP([]interfaces.Value{I(1), I(10)})
+
+	//when
+	l, err := EXPBuild(REF("get")).withArgs(I(1), m).build().Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, I(10), l)
+}
+
+func Test_get_I_AsKey_NotFound(t *testing.T) {
+	//given
+	m, _ := initialiseMAP([]interfaces.Value{})
+
+	//when
+	l, err := EXPBuild(REF("get")).withArgs(I(1), m).build().Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, NILL, l)
 }
