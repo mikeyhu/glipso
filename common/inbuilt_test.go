@@ -685,6 +685,21 @@ func Test_let_ExpectsEvenNumberSizedVector(t *testing.T) {
 	assert.EqualError(t, err, "let : expected an even number of items in vector, recieved 1")
 }
 
+func Test_let_CanUseVariableDefinedInLetWithinLet(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("let")).withArgs(
+		VEC{[]interfaces.Type{
+			REF("a"), I(1),
+			REF("b"), REF("a"),
+		}},
+		REF("b")).build()
+	//when
+	result, err := exp.Evaluate(GlobalEnvironment)
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, I(1), result)
+}
+
 // panic
 
 func Test_panic_PanicsWithMessage(t *testing.T) {
@@ -738,6 +753,8 @@ func Test_get_I_AsKey_NotFound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, NILL, l)
 }
+
+//and
 
 func Test_and_WithAllTrue(t *testing.T) {
 	//given

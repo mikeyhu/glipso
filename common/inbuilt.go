@@ -181,7 +181,7 @@ func apply(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value,
 		return NILL, err
 	}
 	s, okRef := arguments[0].(REF)
-	p, okPair := list.(interfaces.Iterable)
+	p, okPair := list.(interfaces.Sliceable)
 	if !okRef {
 		return NILL, fmt.Errorf("apply : expected function, found %v", arguments[0])
 	} else if !okPair {
@@ -377,7 +377,7 @@ func let(arguments []interfaces.Type, sco interfaces.Scope) (interfaces.Value, e
 			return NILL, fmt.Errorf("let : expected an even number of items in vector, recieved %v", count)
 		}
 		for i := 0; i < count; i += 2 {
-			val, err := evaluateToValue(vectors.Get(i+1), sco)
+			val, err := evaluateToValue(vectors.Get(i+1), childScope)
 			if err != nil {
 				return NILL, err
 			}
@@ -430,5 +430,4 @@ func and(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, er
 		}
 	}
 	return B(true), nil
-
 }
