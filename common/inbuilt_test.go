@@ -738,3 +738,39 @@ func Test_get_I_AsKey_NotFound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, NILL, l)
 }
+
+func Test_and_WithAllTrue(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("and")).withArgs(B(true), B(true)).build()
+
+	//when
+	r, err := exp.Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, B(true), r)
+}
+
+func Test_and_WithSomeFalse(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("and")).withArgs(B(true), B(false)).build()
+
+	//when
+	r, err := exp.Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, B(false), r)
+}
+
+func Test_and_WithAllFalse(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("and")).withArgs(B(false), B(false)).build()
+
+	//when
+	r, err := exp.Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, B(false), r)
+}

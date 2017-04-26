@@ -22,6 +22,7 @@ func init() {
 	addInbuilt(FI{name: ">", evaluator: greaterThan})
 	addInbuilt(FI{name: "<=", evaluator: lessThanEqual})
 	addInbuilt(FI{name: ">=", evaluator: greaterThanEqual})
+	addInbuilt(FI{name: "and", evaluator: and})
 	addInbuilt(FI{name: "assoc", evaluator: assoc})
 	addInbuilt(FI{name: "apply", lazyEvaluator: apply, argumentCount: 2})
 	addInbuilt(FI{name: "cons", evaluator: cons})
@@ -416,4 +417,18 @@ func get(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, er
 		return NILL, nil
 	}
 	return NILL, fmt.Errorf("get : expected key and map")
+}
+
+func and(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	for _, a := range arguments {
+		if asB, ok := a.(B); ok {
+			if !asB {
+				return B(false), nil
+			}
+		} else {
+			return NILL, fmt.Errorf("and : expected all arguments to be B")
+		}
+	}
+	return B(true), nil
+
 }
