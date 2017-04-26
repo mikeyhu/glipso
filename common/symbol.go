@@ -94,3 +94,16 @@ func (m *MAP) associate(arguments []interfaces.Value) (*MAP, error) {
 	}
 	return mp, nil
 }
+
+func (m *MAP) ToSlice(interfaces.Scope) ([]interfaces.Type, error) {
+	keys := make([]interfaces.Type, len(m.store)*2)
+
+	i := 0
+	for k, v := range m.store {
+		keys[i] = k
+		i++
+		keys[i] = v
+		i++
+	}
+	return keys, nil
+}

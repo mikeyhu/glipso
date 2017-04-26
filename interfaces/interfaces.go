@@ -24,8 +24,17 @@ type Iterable interface {
 	ToSlice(Scope) ([]Type, error)
 }
 
+type Sliceable interface {
+	IsType()
+	String() string
+	IsValue()
+	ToSlice(Scope) ([]Type, error)
+}
+
 // Equalable interfaces are types that can be checked for sameness
 type Equalable interface {
+	IsType()
+	String() string
 	Equals(Equalable) Value
 }
 
