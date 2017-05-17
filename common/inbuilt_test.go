@@ -791,3 +791,41 @@ func Test_and_WithAllFalse(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, B(false), r)
 }
+
+//or
+
+func Test_or_WithAllTrue(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("or")).withArgs(B(true), B(true)).build()
+
+	//when
+	r, err := exp.Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, B(true), r)
+}
+
+func Test_or_WithSomeTrue(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("or")).withArgs(B(true), B(false)).build()
+
+	//when
+	r, err := exp.Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, B(true), r)
+}
+
+func Test_or_WithAllFalse(t *testing.T) {
+	//given
+	exp := EXPBuild(REF("or")).withArgs(B(false), B(false)).build()
+
+	//when
+	r, err := exp.Evaluate(GlobalEnvironment)
+
+	//then
+	assert.NoError(t, err)
+	assert.Equal(t, B(false), r)
+}

@@ -39,6 +39,7 @@ func init() {
 	addInbuilt(FI{name: "let", lazyEvaluator: let, argumentCount: 2})
 	addInbuilt(FI{name: "macro", lazyEvaluator: macro, argumentCount: 2})
 	addInbuilt(FI{name: "map", evaluator: mapp, argumentCount: 2})
+	addInbuilt(FI{name: "or", evaluator: or})
 	addInbuilt(FI{name: "print", evaluator: printt})
 	addInbuilt(FI{name: "panic", evaluator: panicc, argumentCount: 1})
 	addInbuilt(FI{name: "range", evaluator: rnge, argumentCount: 2})
@@ -430,4 +431,17 @@ func and(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, er
 		}
 	}
 	return B(true), nil
+}
+
+func or(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
+	for _, a := range arguments {
+		if asB, ok := a.(B); ok {
+			if asB {
+				return B(true), nil
+			}
+		} else {
+			return NILL, fmt.Errorf("and : expected all arguments to be B")
+		}
+	}
+	return B(false), nil
 }
