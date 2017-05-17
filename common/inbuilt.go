@@ -54,19 +54,19 @@ func addInbuilt(info FI) {
 func plusAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	return numericFlatten(arguments, func(a interfaces.Numeric, b interfaces.Numeric) interfaces.Numeric {
 		return a.Add(b)
-	}), nil
+	})
 }
 
 func minusAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	return numericFlatten(arguments, func(a interfaces.Numeric, b interfaces.Numeric) interfaces.Numeric {
 		return a.Subtract(b)
-	}), nil
+	})
 }
 
 func multiplyAll(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {
 	return numericFlatten(arguments, func(a interfaces.Numeric, b interfaces.Numeric) interfaces.Numeric {
 		return a.Multiply(b)
-	}), nil
+	})
 }
 
 func mod(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, error) {

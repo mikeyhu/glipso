@@ -7,18 +7,22 @@ import (
 
 type numericCombiner func(interfaces.Numeric, interfaces.Numeric) interfaces.Numeric
 
-func numericFlatten(args []interfaces.Value, combiner numericCombiner) interfaces.Value {
+func numericFlatten(args []interfaces.Value, combiner numericCombiner) (interfaces.Value, error) {
 	var all interfaces.Numeric
 	head := true
 	for _, v := range args {
+		vAsN, ok := v.(interfaces.Numeric)
+		if !ok {
+			return NILL, fmt.Errorf("numericFlatten : expected Numeric, received %v", v)
+		}
 		if head {
-			all = v.(interfaces.Numeric)
+			all = vAsN
 			head = false
 		} else {
-			all = combiner(all, v.(interfaces.Numeric))
+			all = combiner(all, vAsN)
 		}
 	}
-	return all
+	return all, nil
 }
 
 // I (Integer)
