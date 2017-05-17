@@ -75,10 +75,10 @@ func (exp *EXP) printStartExpression() {
 }
 
 func (exp *EXP) returnAndPrint(result interfaces.Value, err error) (interfaces.Value, error) {
+	if err != nil {
+		fmt.Printf("%v\n\tcaused ERROR : %v\n", exp, err)
+	}
 	if DEBUG {
-		if err != nil {
-			fmt.Printf("%v caused ERROR : %v\n", exp, err)
-		}
 		fmt.Printf("%v = %v\n", exp, result)
 	}
 	return result, err
