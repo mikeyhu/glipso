@@ -32,7 +32,11 @@ func (s SYM) Apply(arguments []interfaces.Type, env interfaces.Scope) (interface
 	if len(arguments) != 1 {
 		return NILL, fmt.Errorf("SYM Apply : expected 1 argument, recieved %d", len(arguments))
 	}
-	val, _ := evaluateToValue(arguments[0], env)
+
+	val, err := evaluateToValue(arguments[0], env)
+	if err != nil {
+		return nil, err
+	}
 
 	if mp, ok := val.(*MAP); ok {
 		if v, found := mp.lookup(s); found {
