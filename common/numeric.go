@@ -10,10 +10,10 @@ type numericCombiner func(interfaces.Numeric, interfaces.Numeric) interfaces.Num
 func numericFlatten(args []interfaces.Value, combiner numericCombiner) (interfaces.Value, error) {
 	var all interfaces.Numeric
 	head := true
-	for _, v := range args {
+	for i, v := range args {
 		vAsN, ok := v.(interfaces.Numeric)
 		if !ok {
-			return NILL, fmt.Errorf("numericFlatten : expected Numeric, received %v", v)
+			return NILL, fmt.Errorf("numericFlatten : expected Numeric but argument %v was %v", i+1, v)
 		}
 		if head {
 			all = vAsN

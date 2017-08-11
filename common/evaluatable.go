@@ -30,7 +30,8 @@ func (exp *EXP) IsType() {}
 
 // String representation of EXP
 func (exp *EXP) String() string {
-	return fmt.Sprintf("(%v %v)", exp.Function, exp.Arguments)
+	argAsS := fmt.Sprintf("%v", exp.Arguments)
+	return fmt.Sprintf("(%v %v)", exp.Function, argAsS[1:len(argAsS)-1])
 }
 
 // Evaluate evaluates the Appliable provided with the Arguments and Scope
