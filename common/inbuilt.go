@@ -440,7 +440,7 @@ func or(arguments []interfaces.Value, _ interfaces.Scope) (interfaces.Value, err
 				return B(true), nil
 			}
 		} else {
-			return NILL, fmt.Errorf("and : expected all arguments to be B")
+			return NILL, fmt.Errorf("or : expected all arguments to be B")
 		}
 	}
 	return B(false), nil
